@@ -1,0 +1,118 @@
+/* About Page Styles */
+.about-hero {
+    padding: 6rem 0;
+    text-align: center;
+    background: #f8f9fa;
+}
+
+.about-hero h1 {
+    font-size: 3rem;
+    color: var(--color-active);
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+}
+
+/* Diagram Section */
+.diagram-section {
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.diagram-container {
+    padding: 2rem;
+    position: relative;
+}
+
+/* Core Values */
+.core-values {
+    background: #eef6fc;
+    padding: 6rem 0;
+}
+
+.value-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 100%;
+    width: 280px;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 0 auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.value-card:hover {
+    border-color: var(--color-active);
+    transform: translateY(-5px);
+}
+
+.value-icon {
+    font-size: 2.5rem;
+    color: var(--color-active);
+    margin-bottom: 1rem;
+}
+
+.value-card h3 {
+    text-transform: uppercase;
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.value-card p {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Vision & Mission */
+.vision-mission-section {
+    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.vm-block {
+    position: relative;
+    margin-bottom: 6rem;
+    padding: 2rem;
+}
+
+.vm-bg-text {
+    font-size: 8rem;
+    font-weight: 900;
+    color: rgba(0, 77, 170, 0.05); /* Very subtle watermark look */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.vm-content {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 3rem;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    border: 1px solid #eee;
+}
+
+.vm-content h2 {
+    color: var(--color-active);
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}

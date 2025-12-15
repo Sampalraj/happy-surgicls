@@ -1,0 +1,150 @@
+/* Mega Menu Container */
+.megamenu-overlay {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: transparent;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    /* Space between header and menu */
+}
+
+.megamenu-container {
+    width: 1200px;
+    max-width: 95vw;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #eee;
+    animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Grid Structure */
+.megamenu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 32px;
+    padding: 32px;
+}
+
+/* Column Content */
+.megamenu-title {
+    font-size: 1rem;
+    font-weight: 600;
+    /* Medium weight */
+    color: #1a202c;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.megamenu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.megamenu-list a {
+    text-decoration: none;
+    color: #4a5568;
+    font-size: 0.95rem;
+    font-weight: 400;
+    /* Regular weight */
+    display: block;
+    padding-left: 0;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+/* Visual Rules - Hover */
+.megamenu-list a:hover {
+    color: var(--color-primary);
+    /* Medical Blue */
+    padding-left: 8px;
+    /* Indent */
+    border-left-color: var(--color-primary);
+    /* Left indicator bar */
+}
+
+/* Services Section (Bottom Strip) */
+.megamenu-services {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f7fafc;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #eee;
+}
+
+.service-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #2d3748;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.service-icon {
+    color: var(--color-primary);
+}
+
+.btn-bulk-quote {
+    background: #d32f2f;
+    color: white;
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.btn-bulk-quote:hover {
+    background: #b71c1c;
+}
+
+/* Responsive - Tablet (2 Column) */
+@media (max-width: 1024px) {
+    .megamenu-container {
+        width: 95vw;
+    }
+
+    .megamenu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+
+    /* Mobile styles would typically replace this with an accordion in the main mobile menu */
+    /* For this component, we might need adjustments if it's shown on mobile at all.
+       Since this is a hover menu, usually it's only for desktop. 
+       Mobile menu is handled by the hamburger usually. 
+    */
+    .megamenu-overlay {
+        display: none;
+        /* Hide on mobile, use mobile nav instead */
+    }
+}

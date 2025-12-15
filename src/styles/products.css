@@ -1,0 +1,286 @@
+/* B2B Category Listing Styles */
+
+.products-page {
+    background-color: #F8FAFC;
+    min-height: 100vh;
+    padding-bottom: 5rem;
+}
+
+/* Category Hero */
+.category-hero {
+    background: white;
+    padding: 3rem 0;
+    border-bottom: 1px solid #E2E8F0;
+    margin-bottom: 2rem;
+}
+
+.breadcrumb {
+    font-size: 0.9rem;
+    color: #64748B;
+    margin-bottom: 1rem;
+}
+
+.breadcrumb a {
+    color: #64748B;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    color: var(--color-primary);
+}
+
+.category-title {
+    font-size: 2.25rem;
+    color: #1E293B;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.category-desc {
+    color: #64748B;
+    max-width: 800px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Main Layout Grid */
+.category-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    position: relative;
+    padding-top: 2rem;
+}
+
+/* Sticky Sidebar */
+.filter-sidebar {
+    position: sticky;
+    top: 100px;
+    /* Offset for sticky header */
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.filter-group {
+    border-bottom: 1px solid #F1F5F9;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-group:last-child {
+    border-bottom: none;
+}
+
+.filter-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1E293B;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #475569;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    accent-color: var(--color-primary);
+    width: 16px;
+    height: 16px;
+}
+
+/* Products Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+/* Product Card - B2B Specs */
+.b2b-product-card {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.b2b-product-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    border-color: #CBD5E1;
+}
+
+.card-img-wrapper {
+    height: 200px;
+    background: #F8FAFC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.card-img-wrapper img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+.card-content {
+    padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-category {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #64748B;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    color: #1E293B;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.specs-list {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.spec-item {
+    font-size: 0.85rem;
+    color: #64748B;
+    display: flex;
+    justify-content: space-between;
+}
+
+.spec-label {
+    font-weight: 500;
+    color: #94A3B8;
+}
+
+.card-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-view {
+    flex: 1;
+    padding: 0.6rem;
+    border: 1px solid #E2E8F0;
+    background: white;
+    color: #475569;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-view:hover {
+    border-color: #CBD5E1;
+    background: #F8FAFC;
+}
+
+.btn-quote {
+    flex: 1;
+    padding: 0.6rem;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-quote:hover {
+    background: #1e3a8a;
+    /* Darker blue */
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.page-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #E2E8F0;
+    border-radius: 4px;
+    background: white;
+    color: #64748B;
+    cursor: pointer;
+}
+
+.page-btn.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .category-layout {
+        display: block;
+        /* Stack */
+    }
+
+    .filter-sidebar {
+        display: none;
+        /* Hide default sidebar on mobile, use bottom sheet logic later */
+    }
+
+    /* Mobile Filter Trigger would go here */
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+}

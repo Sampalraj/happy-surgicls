@@ -1,0 +1,236 @@
+/* Product Detail Reference Styles */
+
+/* Main Product Section */
+.product-main-section {
+    background: white;
+    padding: 2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+
+.product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.main-image-frame {
+    border: 1px solid #eee;
+    padding: 1rem;
+    border-radius: 4px;
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.best-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 60px;
+    height: 60px;
+    background: gold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #555;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-thumbs {
+    display: flex;
+    gap: 10px;
+}
+
+.thumb-box {
+    width: 80px;
+    height: 80px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumb-box.more {
+    background: #333;
+    color: white;
+    font-size: 0.8rem;
+    text-align: center;
+    opacity: 0.8;
+}
+
+/* Product Info Right */
+.product-info-right h1 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.brand-text {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.stock-status {
+    color: #28a745;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.btn-inquiry {
+    background: white;
+    color: #e53935;
+    border: 1px solid #e53935;
+    padding: 0.75rem 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-inquiry:hover {
+    background: #e53935;
+    color: white;
+}
+
+/* Features Section (Blue BG) */
+.features-section {
+    background: #f0f7ff;
+    padding: 3rem;
+    border-radius: 8px;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.feature-list li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 1rem;
+    color: #444;
+}
+
+.feature-list li::before {
+    content: "•";
+    color: #ff9800;
+    font-size: 2rem;
+    position: absolute;
+    left: 0;
+    top: -10px;
+}
+
+.feature-icons {
+    display: flex;
+    gap: 2rem;
+}
+
+.feature-icon-box {
+    text-align: center;
+}
+
+.feature-icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    /* border: 2px solid #e53935; */
+    /* Reference logic varying */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.5rem auto;
+    color: #d32f2f;
+}
+
+.feature-icon-text {
+    font-size: 0.75rem;
+    color: #d32f2f;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Policies */
+.policy-section {
+    margin-bottom: 3rem;
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.policy-section h4 {
+    color: #004daa;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+/* Related Products */
+.related-products {
+    margin-bottom: 4rem;
+}
+
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-left: 4px solid #004daa;
+    padding-left: 1rem;
+}
+
+/* Brand Banner */
+.brand-banner {
+    background: #2b5c9e;
+    /* Muted blue from reference */
+    padding: 2rem;
+    border-radius: 4px;
+    color: white;
+}
+
+.brand-scroll {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+}
+
+.brand-logo-box {
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    height: 60px;
+    width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

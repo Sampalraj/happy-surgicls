@@ -6,83 +6,214 @@
 const STORAGE_KEYS = {
     ENQUIRIES: 'surgical_enquiries',
     PRODUCTS: 'surgical_products',
-    CATEGORIES: 'surgical_categories'
+    CATEGORIES: 'surgical_categories',
+    CERTIFICATES: 'surgical_certificates',
+    ACTIVITY_LOG: 'surgical_activity_log',
+    SETTINGS: 'surgical_settings',
+    PAGES: 'surgical_pages',
+    USERS: 'surgical_users'
 };
 
-// Helper to get data
+
 const getStoredData = (key) => {
     const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : [];
+    try {
+        return data ? JSON.parse(data) : [];
+    } catch (e) {
+        console.error(`Error parsing data for ${key}:`, e);
+        return [];
+    }
 };
 
-// Helper to set data
 const setStoredData = (key, data) => {
     localStorage.setItem(key, JSON.stringify(data));
 };
 
-// Seed Data (Initial Population)
+// Seed Data
 const seedData = () => {
-    // Only seed if categories are empty to avoid overwriting user changes? 
-    // For this demo, we'll force seed if the old "Tables" category exists or if empty.
     const currentCats = getStoredData(STORAGE_KEYS.CATEGORIES);
     const hasOldData = currentCats.some(c => c.name === 'Tables');
+    const currentCerts = getStoredData(STORAGE_KEYS.CERTIFICATES);
+    const currentSettings = getStoredData(STORAGE_KEYS.SETTINGS);
+    const currentPages = getStoredData(STORAGE_KEYS.PAGES);
+    const currentUsers = getStoredData(STORAGE_KEYS.USERS);
 
+    // Seed Categories & Products if empty
     if (!currentCats.length || hasOldData) {
         const initialCategories = [
-            { id: '1', name: 'Medical Consumables', count: 120 },
-            { id: '2', name: 'Medical Equipment & Devices', count: 45 },
-            { id: '3', name: 'Respiratory Care Products', count: 18 },
-            { id: '4', name: 'Hospital Furniture & Mobility', count: 32 },
-            { id: '5', name: 'Orthopedic & Support Products', count: 24 },
-            { id: '6', name: 'Personal Care & Hygiene', count: 50 },
-            { id: '7', name: 'Industrial & Institutional Safety', count: 15 },
-            { id: '8', name: 'Instruments & Accessories', count: 80 },
-            { id: '9', name: 'Services (Equipment Rental)', count: 5 }
+            { id: '1', name: 'OT Tables', count: 12 },
+            { id: '2', name: 'OT Lights', count: 8 },
+            { id: '3', name: 'Suction Machines', count: 5 },
+            { id: '4', name: 'Hospital Beds', count: 15 }
         ];
         setStoredData(STORAGE_KEYS.CATEGORIES, initialCategories);
 
-        // Also reset products if we resetting categories to match
         const initialProducts = [
-            { id: '101', name: 'Nitrile Examination Gloves (Box of 100)', category: 'Medical Consumables', price: '450', stock: 'In Stock', img: '/placeholder.jpg', description: 'Powder-free nitrile gloves for medical examination.' },
-            { id: '102', name: '3-Ply Surgical Mask (Pack of 50)', category: 'Medical Consumables', price: '150', stock: 'In Stock', img: '/placeholder.jpg', description: 'Fluid resistant 3-ply masks with ear loops.' },
-            { id: '201', name: 'Multi-Para Patient Monitor', category: 'Medical Equipment & Devices', price: '45000', stock: 'In Stock', img: '/placeholder.jpg', description: '5-para monitor for ICU/OT use.' },
-            { id: '202', name: 'Syringe Infusion Pump', category: 'Medical Equipment & Devices', price: '22000', stock: 'Low Stock', img: '/placeholder.jpg', description: 'Precise drug delivery system.' },
-            { id: '301', name: 'Portable Oxygen Concentrator 5L', category: 'Respiratory Care Products', price: '35000', stock: 'In Stock', img: '/placeholder.jpg', description: 'Compact and silent oxygen concentrator.' },
-            { id: '401', name: 'ICU Bed (5 Function, Electric)', category: 'Hospital Furniture & Mobility', price: '85000', stock: 'In Stock', img: '/placeholder.jpg', description: 'Advanced electric ICU bed with remote control.' },
-            { id: '801', name: 'General Surgery Instrument Set', category: 'Instruments & Accessories', price: '12000', stock: 'In Stock', img: '/placeholder.jpg', description: 'Complete set of stainless steel instruments for general surgery.' },
-            { id: '701', name: 'Industrial Safety Helmet', category: 'Industrial & Institutional Safety', price: '450', stock: 'In Stock', img: '/placeholder.jpg', description: 'High-impact resistant safety helmet.' }
+            { id: '101', name: 'Hydraulic OT Table', category: 'OT Tables', price: '1,50,000', stock: 'In Stock', status: 'Active' },
+            { id: '102', name: 'LED OT Light Double Dome', category: 'OT Lights', price: '85,000', stock: 'Low Stock', status: 'Active' }
         ];
         setStoredData(STORAGE_KEYS.PRODUCTS, initialProducts);
     }
+
+    // Seed Certificates if empty
+    if (!currentCerts.length) {
+        const initialCerts = [
+            { id: 'c1', name: 'ISO 13485:2016', issuer: 'TUV Nord', expiry: '2025-12-31', status: 'Active' },
+            { id: 'c2', name: 'CE Certification', issuer: 'EuroCert', expiry: '2024-06-30', status: 'Expiring' }
+        ];
+        setStoredData(STORAGE_KEYS.CERTIFICATES, initialCerts);
+    }
+
+    // Seed Global Settings (New)
+    if (!currentSettings || Object.keys(currentSettings).length === 0) {
+        const initialSettings = {
+            siteName: 'Happy Surgicals',
+            logo: '',
+            email: 'sales@happysurgicals.com',
+            phone: '+91 98765 43210',
+            footerDesc: 'Your trusted partner for high-quality medical supplies and hospital equipment. ISO 13485:2016 Certified.',
+            address: '123, Medical Park, Industrial Area, New Delhi - 110020',
+            socials: {
+                facebook: 'https://facebook.com',
+                twitter: 'https://twitter.com',
+                linkedin: 'https://linkedin.com',
+                instagram: 'https://instagram.com'
+            }
+        };
+        setStoredData(STORAGE_KEYS.SETTINGS, initialSettings);
+    }
+
+
+    // Seed Page Content (New)
+    if (!currentPages || Object.keys(currentPages).length === 0) {
+        const initialPages = {
+            home: {
+                heroTitle: 'Premium Medical Equipment Manufacturer',
+                heroSubtitle: 'ISO 13485:2016 Certified | Global Exporter | Trusted by 500+ Hospitals',
+                stats: { experience: '25+', products: '500+', clients: '1000+' },
+                features: [
+                    { title: 'Global Standards', desc: 'ISO certified manufacturing processes.' },
+                    { title: '24/7 Support', desc: 'Dedicated technical support team.' },
+                    { title: 'Fast Delivery', desc: 'Efficient logistics network worldwide.' }
+                ]
+            },
+            about: {
+                title: 'About Happy Surgicals',
+                subtitle: 'Pioneering Excellence in Medical Technology Since 1998',
+                content: 'Happy Surgicals is a leading manufacturer and exporter of high-quality medical and hospital equipment. With over two decades of experience, we have established ourselves as a trusted name in the healthcare industry, known for our commitment to quality, innovation, and customer satisfaction.',
+                mission: 'To provide world-class medical solutions that improve patient outcomes and healthcare delivery globally.',
+                vision: 'To be the most preferred partner for healthcare institutions worldwide through innovation and reliability.',
+                image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1000',
+                coreValues: [
+                    { title: 'Quality', desc: 'Quality is First In Everything We Do.' },
+                    { title: 'Commitment', desc: 'Adherence to Best Products & Services.' },
+                    { title: 'Performance', desc: 'Creating success via results-driven plans.' },
+                    { title: 'Safety', desc: 'Ensuring Safety above all else.' }
+                ],
+                diagram: {
+                    title: 'How Are We Different?',
+                    philosophy: 'Customer centric approach in everything we do.',
+                    whatWeDo: 'Supplying premium quality medical equipment.'
+                }
+            },
+            contact: {
+                title: 'Get in Touch',
+                subtitle: 'We are here to help you with your medical equipment needs',
+                mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.943929457788!2d77.0678563150821!3d28.60156398243003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1b3796d19bb1%3A0xe5a3c988c5d80b4d!2sHappy%20Surgicals!5e0!3m2!1sen!2sin!4v1647856642158!5m2!1sen!2sin',
+                contactInfo: {
+                    address: 'Happy Surgical Industry\nSambrial, Sialkot\nPakistan 51310',
+                    email: 'info@happysurgicals.com\nsales@happysurgicals.com',
+                    phone: '+92 300 1234567\n+1 555 0123 456'
+                }
+            },
+            manufacturing: {
+                title: 'State-of-the-Art Manufacturing',
+                subtitle: 'Precision Engineering meets Medical Safety',
+                content: 'Our manufacturing facility spans 50,000 sq. ft. and is equipped with the latest CNC machines, laser cutters, and automated assembly lines. We follow strict quality control protocols at every stage of production.',
+                facilities: [
+                    { title: 'CNC Machining', desc: 'High precision components production' },
+                    { title: 'Laser Cutting', desc: 'Accurate metal fabrication' },
+                    { title: 'Sterilization Unit', desc: 'Post-production sterilization' }
+                ],
+                image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000'
+            },
+            services: {
+                title: 'Our Services',
+                subtitle: 'Comprehensive Support for Your Healthcare Facility',
+                items: [
+                    { title: 'Equipment Installation', desc: 'Professional installation by certified engineers' },
+                    { title: 'Annual Maintenance', desc: 'Regular checkups and preventive maintenance' },
+                    { title: 'Staff Training', desc: 'Operational training for hospital staff' },
+                    { title: 'Technical Support', desc: '24/7 remote and on-site assistance' }
+                ]
+            }
+        };
+        setStoredData(STORAGE_KEYS.PAGES, initialPages);
+    }
+
+    // Seed Users (New)
+    const users = currentUsers || [];
+    const myAdminEmail = 'sampalraj2001@gmail.com';
+    const myAdminUser = { id: 'u_custom', name: 'Sampalraj', email: myAdminEmail, role: 'Super Admin', password: 'Sblove@0321' };
+
+    if (!users.find(u => u.email === myAdminEmail)) {
+        // Add or ensure user exists
+        users.push(myAdminUser);
+        setStoredData(STORAGE_KEYS.USERS, users);
+    } else if (users.length === 0) {
+        // Initial seed fallback
+        const initialUsers = [
+            myAdminUser,
+            { id: 'u2', name: 'Content Editor', email: 'editor@happysurgicals.com', role: 'Editor', password: 'editor' }
+        ];
+        setStoredData(STORAGE_KEYS.USERS, initialUsers);
+    }
 };
 
-// Run seed on load
-seedData();
+// ...
 
 export const mockBackend = {
-    // --- ENQUIRIES ---
-    saveEnquiry: (data) => {
-        const enquiries = getStoredData(STORAGE_KEYS.ENQUIRIES);
-        const newEnquiry = {
-            id: Date.now().toString(),
-            date: new Date().toISOString(),
-            status: 'New',
-            ...data
-        };
-        enquiries.unshift(newEnquiry);
-        setStoredData(STORAGE_KEYS.ENQUIRIES, enquiries);
-        return newEnquiry;
+    // --- AUTHENTICATION ---
+    login: (email, password) => {
+        const users = getStoredData(STORAGE_KEYS.USERS);
+        const user = users.find(u => u.email === email && u.password === password);
+        if (user) {
+            // "Session" is just returning the user object to store in app state/localstorage
+            const { password, ...safeUser } = user; // Exclude password
+            mockBackend.logActivity(safeUser.name, 'Login', 'System', 'User logged in');
+            return safeUser;
+        }
+        return null;
     },
 
-    getEnquiries: () => getStoredData(STORAGE_KEYS.ENQUIRIES),
+    // ... existing methods ...
 
-    updateEnquiryStatus: (id, status) => {
-        const enquiries = getStoredData(STORAGE_KEYS.ENQUIRIES);
-        const updated = enquiries.map(e => e.id === id ? { ...e, status } : e);
-        setStoredData(STORAGE_KEYS.ENQUIRIES, updated);
-        return updated;
+    // --- SETTINGS ---
+    getSettings: () => getStoredData(STORAGE_KEYS.SETTINGS),
+
+    saveSettings: (settings) => {
+        setStoredData(STORAGE_KEYS.SETTINGS, settings);
+        mockBackend.logActivity('Admin', 'Updated', 'Global Settings', 'Site configuration changed');
+        return settings;
     },
 
+    // --- PAGES ---
+    getPageContent: (pageKey) => {
+        const pages = getStoredData(STORAGE_KEYS.PAGES);
+        return pages[pageKey] || {};
+    },
+
+    savePageContent: (pageKey, content) => {
+        const pages = getStoredData(STORAGE_KEYS.PAGES);
+        pages[pageKey] = content;
+        setStoredData(STORAGE_KEYS.PAGES, pages);
+        mockBackend.logActivity('Admin', 'Updated', `Page Content: ${pageKey}`, 'Content updated');
+        return content;
+    },
+
+    getAllPages: () => getStoredData(STORAGE_KEYS.PAGES),
+
+    // --- ENQUIRIES --- (keep existing)
     deleteEnquiry: (id) => {
         const enquiries = getStoredData(STORAGE_KEYS.ENQUIRIES);
         const filtered = enquiries.filter(e => e.id !== id);
@@ -110,14 +241,17 @@ export const mockBackend = {
             const newProduct = { ...data, id: Date.now().toString() };
             products.unshift(newProduct);
             setStoredData(STORAGE_KEYS.PRODUCTS, products);
+            mockBackend.logActivity('Admin', 'Created', `Product: ${data.name}`, 'Product created');
             return newProduct;
         }
     },
 
     deleteProduct: (id) => {
         const products = getStoredData(STORAGE_KEYS.PRODUCTS);
+        const product = products.find(p => p.id === id);
         const filtered = products.filter(p => p.id !== id);
         setStoredData(STORAGE_KEYS.PRODUCTS, filtered);
+        mockBackend.logActivity('Admin', 'Deleted', `Product: ${product ? product.name : id}`, 'Product deleted');
         return filtered;
     },
 
@@ -130,13 +264,16 @@ export const mockBackend = {
         const newCat = { ...data, id: Date.now().toString() };
         categories.push(newCat);
         setStoredData(STORAGE_KEYS.CATEGORIES, categories);
+        mockBackend.logActivity('Admin', 'Created', `Category: ${data.name}`, 'Category created');
         return newCat;
     },
 
     deleteCategory: (id) => {
         const categories = getStoredData(STORAGE_KEYS.CATEGORIES);
+        const category = categories.find(c => c.id === id);
         const filtered = categories.filter(c => c.id !== id);
         setStoredData(STORAGE_KEYS.CATEGORIES, filtered);
+        mockBackend.logActivity('Admin', 'Deleted', `Category: ${category ? category.name : id}`, 'Category deleted');
         return filtered;
     },
 
@@ -145,11 +282,170 @@ export const mockBackend = {
         const enquiries = getStoredData(STORAGE_KEYS.ENQUIRIES);
         const products = getStoredData(STORAGE_KEYS.PRODUCTS);
         const categories = getStoredData(STORAGE_KEYS.CATEGORIES);
+        const certificates = getStoredData(STORAGE_KEYS.CERTIFICATES);
         return {
             totalEnquiries: enquiries.length,
             newEnquiries: enquiries.filter(e => e.status === 'New').length,
             products: products.length,
-            categories: categories.length
+            categories: categories.length,
+            certificates: certificates.length
         };
+    },
+
+    // --- CERTIFICATES ---
+    getCertificates: () => getStoredData(STORAGE_KEYS.CERTIFICATES),
+
+    getCertificate: (id) => {
+        const certificates = getStoredData(STORAGE_KEYS.CERTIFICATES);
+        return certificates.find(c => c.id === id);
+    },
+
+    saveCertificate: (data) => {
+        const certificates = getStoredData(STORAGE_KEYS.CERTIFICATES);
+        if (data.id) {
+            // Update
+            const updated = certificates.map(c => c.id === data.id ? { ...c, ...data, updated_at: new Date().toISOString() } : c);
+            setStoredData(STORAGE_KEYS.CERTIFICATES, updated);
+            return data;
+        } else {
+            // Create
+            const newCert = {
+                ...data,
+                id: Date.now().toString(),
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            };
+            certificates.push(newCert);
+            setStoredData(STORAGE_KEYS.CERTIFICATES, certificates);
+            return newCert;
+        }
+    },
+
+    checkCertificateUsage: (certId) => {
+        const categories = getStoredData(STORAGE_KEYS.CATEGORIES);
+        const products = getStoredData(STORAGE_KEYS.PRODUCTS);
+
+        // Check which categories use this certificate
+        const usedByCategories = categories.filter(cat => {
+            const certs = mockBackend.getCertificatesForCategory(cat.id);
+            return certs.some(c => c.id === certId);
+        });
+
+        // Check which products explicitly use this certificate (override mode)
+        const usedByProducts = products.filter(p =>
+            p.inherit_certificates === false &&
+            p.certificate_ids &&
+            p.certificate_ids.includes(certId)
+        );
+
+        return {
+            inUse: usedByCategories.length > 0 || usedByProducts.length > 0,
+            categories: usedByCategories.map(c => c.name),
+            products: usedByProducts.map(p => p.name)
+        };
+    },
+
+    deleteCertificate: (id) => {
+        const certificates = getStoredData(STORAGE_KEYS.CERTIFICATES);
+        const filtered = certificates.filter(c => c.id !== id);
+        setStoredData(STORAGE_KEYS.CERTIFICATES, filtered);
+        return filtered;
+    },
+
+    getCertificatesForCategory: (categoryId) => {
+        const certificates = getStoredData(STORAGE_KEYS.CERTIFICATES);
+        // Find active certificates that include this categoryId in their list
+        return certificates.filter(c =>
+            c.status === 'Active' &&
+            c.category_ids &&
+            c.category_ids.includes(categoryId)
+        );
+    },
+
+    getEffectiveCertificates: (product) => {
+        if (!product) return [];
+
+        // Default to inheritance = true if undefined
+        const inherit = product.inherit_certificates !== false;
+
+        if (inherit) {
+            const categories = getStoredData(STORAGE_KEYS.CATEGORIES);
+            // Match by Name as that is what is stored in product.category
+            const cat = categories.find(c => c.name === product.category);
+            if (!cat) return [];
+
+            // Re-use logic (internal call requires access to self, or just duplicate logic)
+            // Simpler to just duplicate the filter logic to avoid 'this' issues in simple object
+            const certificates = getStoredData(STORAGE_KEYS.CERTIFICATES);
+            return certificates.filter(c =>
+                c.status === 'Active' &&
+                c.category_ids &&
+                c.category_ids.includes(cat.id)
+            );
+        } else {
+            // Return specific certs
+            const allCerts = getStoredData(STORAGE_KEYS.CERTIFICATES);
+            const ids = product.certificate_ids || [];
+            return allCerts.filter(c => ids.includes(c.id) && c.status === 'Active');
+        }
+    },
+
+    // --- SEARCH ---
+    searchAdmin: (query) => {
+        if (!query) return [];
+        const q = query.toLowerCase();
+        const results = [];
+
+        // Search Products
+        const products = getStoredData(STORAGE_KEYS.PRODUCTS);
+        products.forEach(p => {
+            if (p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)) {
+                results.push({ type: 'Product', title: p.name, subtitle: p.category, link: `/admin/products/edit/${p.id}` });
+            }
+        });
+
+        // Search Pages
+        const pages = getStoredData(STORAGE_KEYS.PAGES);
+        Object.entries(pages).forEach(([key, data]) => {
+            if (key.includes(q)) {
+                results.push({ type: 'Page', title: key.charAt(0).toUpperCase() + key.slice(1), subtitle: 'Page Content', link: `/admin/pages` });
+            }
+        });
+
+        // Search Enquiries
+        const enquiries = getStoredData(STORAGE_KEYS.ENQUIRIES);
+        enquiries.forEach(e => {
+            if (e.name.toLowerCase().includes(q) || e.email.toLowerCase().includes(q)) {
+                results.push({ type: 'Enquiry', title: e.name, subtitle: e.email, link: `/admin/enquiries` });
+            }
+        });
+
+        return results;
+    },
+
+    // --- ACTIVITY LOG ---
+    getLogs: () => {
+        const logs = getStoredData(STORAGE_KEYS.ACTIVITY_LOG);
+        return logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    },
+
+    logActivity: (user, action, target, details) => {
+        const logs = getStoredData(STORAGE_KEYS.ACTIVITY_LOG);
+        const newLog = {
+            id: Date.now().toString(),
+            timestamp: new Date().toISOString(),
+            user: user || 'Admin', // Default to Admin if not specified
+            action,
+            target,
+            details
+        };
+        logs.unshift(newLog);
+        // Keep only last 100 logs
+        if (logs.length > 100) logs.pop();
+        setStoredData(STORAGE_KEYS.ACTIVITY_LOG, logs);
+        return newLog;
     }
 };
+
+// Initialize Data
+seedData();

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { mockBackend } from '../utils/mockBackend';
-import '../styles/home.css'; // Reusing some home styles for consistency
+import '../styles/home.css';
 
 const Contact = () => {
     const [searchParams] = useSearchParams();
@@ -14,10 +14,26 @@ const Contact = () => {
         message: ''
     });
 
+    const [content, setContent] = useState({
+        title: 'Contact Us',
+        subtitle: 'We\'d love to hear from you.',
+        mapUrl: '',
+        contactInfo: {
+            address: 'Loading...',
+            email: 'Loading...',
+            phone: 'Loading...'
+        }
+    });
+
     useEffect(() => {
         const subjectParam = searchParams.get('subject');
         if (subjectParam) {
             setFormData(prev => ({ ...prev, subject: subjectParam }));
+        }
+
+        const pageContent = mockBackend.getPageContent('contact');
+        if (pageContent) {
+            setContent(prev => ({ ...prev, ...pageContent }));
         }
     }, [searchParams]);
 
@@ -27,15 +43,12 @@ const Contact = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // Save to mock backend
         mockBackend.saveEnquiry({
             ...formData,
             source: 'Contact Page'
         });
-
         setSubmitted(true);
-        setFormData({ name: '', email: '', subject: '', message: '' }); // Reset
+        setFormData({ name: '', email: '', subject: '', message: '' });
     };
 
     if (submitted) {
@@ -61,8 +74,8 @@ const Contact = () => {
         <div className="contact-page">
             {/* Page Header */}
             <div className="page-header-bg" style={{ background: '#f8f9fa', padding: '6rem 0 4rem', textAlign: 'center' }}>
-                <h1 style={{ fontSize: '3rem', fontWeight: '800', color: '#1a202c', marginBottom: '1rem' }}>Contact Us</h1>
-                <p style={{ color: '#718096', fontSize: '1.1rem' }}>We'd love to hear from you. Get in touch with us.</p>
+                <h1 style={{ fontSize: '3rem', fontWeight: '800', color: '#1a202c', marginBottom: '1rem' }}>{content.title}</h1>
+                <p style={{ color: '#718096', fontSize: '1.1rem' }}>{content.subtitle}</p>
             </div>
 
             <div className="container" style={{ padding: '5rem 0' }}>
@@ -81,10 +94,8 @@ const Contact = () => {
                             </div>
                             <div>
                                 <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Our Location</h4>
-                                <p style={{ color: '#666', lineHeight: '1.6' }}>
-                                    Happy Surgical Industry<br />
-                                    Sambrial, Sialkot<br />
-                                    Pakistan 51310
+                                <p style={{ color: '#666', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
+                                    {content.contactInfo?.address || content.headOffice /* fallback if old data */}
                                 </p>
                             </div>
                         </div>
@@ -95,8 +106,7 @@ const Contact = () => {
                             </div>
                             <div>
                                 <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Email Us</h4>
-                                <p style={{ color: '#666' }}>info@happysurgicals.com</p>
-                                <p style={{ color: '#666' }}>sales@happysurgicals.com</p>
+                                <p style={{ color: '#666', whiteSpace: 'pre-line' }}>{content.contactInfo?.email}</p>
                             </div>
                         </div>
 
@@ -106,8 +116,7 @@ const Contact = () => {
                             </div>
                             <div>
                                 <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Call Us</h4>
-                                <p style={{ color: '#666' }}>+92 300 1234567</p>
-                                <p style={{ color: '#666' }}>+1 555 0123 456</p>
+                                <p style={{ color: '#666', whiteSpace: 'pre-line' }}>{content.contactInfo?.phone}</p>
                             </div>
                         </div>
 
@@ -117,6 +126,7 @@ const Contact = () => {
                     <div className="contact-form-wrapper" style={{ background: 'white', padding: '3rem', borderRadius: '12px', boxShadow: 'var(--shadow-lg)' }}>
                         <h3 style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>Send us a Message</h3>
                         <form onSubmit={handleSubmit}>
+                            {/* ... Fields ... */}
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
                                 <div className="form-group">
                                     <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Your Name</label>

@@ -26,8 +26,15 @@ const ProductForm = () => {
     // Dynamic Specs
     const [specs, setSpecs] = useState([{ id: 1, key: 'Material', value: 'Stainless Steel' }]);
 
+    // Compliance Data
+    const [allCertificates, setAllCertificates] = useState([]);
+    const [allCategories, setAllCategories] = useState([]);
+
     // Load data if edit mode
     useEffect(() => {
+        setAllCertificates(mockBackend.getCertificates());
+        setAllCategories(mockBackend.getCategories());
+
         if (isEditMode) {
             const product = mockBackend.getProduct(id);
             if (product) {
@@ -36,15 +43,20 @@ const ProductForm = () => {
                     code: product.code || '',
                     category: product.category || '',
                     price: product.price || '',
-                    status: product.stock !== 'Out of Stock' ? 'Active' : 'Hidden', // Mapping old stock field to status if needed
+                    status: product.stock !== 'Out of Stock' ? 'Active' : 'Hidden',
                     description: product.description || '',
                     shortDescription: product.description ? product.description.substring(0, 100) : '',
-                    img: product.img || '/placeholder-bed.png'
+                    img: product.img || '/placeholder-bed.png',
+                    inherit_certificates: product.inherit_certificates !== false, // default true
+                    certificate_ids: product.certificate_ids || []
                 });
                 if (product.features) {
                     setSpecs(product.features.map((f, i) => ({ id: i, key: 'Feature', value: f })));
                 }
             }
+        } else {
+            // New Product defaults
+            setFormData(prev => ({ ...prev, inherit_certificates: true, certificate_ids: [] }));
         }
     }, [id, isEditMode]);
 
@@ -66,6 +78,19 @@ const ProductForm = () => {
         };
 
         mockBackend.saveProduct(productData);
+
+        // Audit Logging
+        const action = isEditMode ? 'Updated Product' : 'Created Product';
+        let details = `Product: ${formData.name}`;
+
+        if (!formData.inherit_certificates) {
+            details += ` | Compliance Override: ENABLED (${formData.certificate_ids?.length || 0} certs selected)`;
+        } else {
+            details += ` | Compliance: Inherited`;
+        }
+
+        mockBackend.logActivity('Admin', action, formData.name, details);
+
         alert('Product Saved Successfully!');
         navigate('/admin/products');
     };
@@ -189,6 +214,94 @@ const ProductForm = () => {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+
+                    {/* F. COMPLIANCE & CERTIFICATIONS */}
+                    <div className="form-card">
+                        <h3>Compliance & Certifications</h3>
+
+                        <div style={{ padding: '1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                            {/* Inheritance Toggle */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                <div>
+                                    <h4 style={{ margin: 0, fontSize: '0.95rem' }}>Inherit certificates from category</h4>
+                                    <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748b' }}>
+                                        When ON, this product automatically displays certificates assigned to <strong>{formData.category || 'its category'}</strong>.
+                                    </p>
+                                </div>
+                                <label className="toggle-switch" style={{ position: 'relative', display: 'inline-block', width: '48px', height: '24px' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.inherit_certificates}
+                                        onChange={(e) => setFormData({ ...formData, inherit_certificates: e.target.checked })}
+                                        style={{ opacity: 0, width: 0, height: 0 }}
+                                    />
+                                    <span style={{
+                                        position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
+                                        backgroundColor: formData.inherit_certificates ? '#004daa' : '#ccc',
+                                        borderRadius: '24px', transition: '0.4s'
+                                    }}></span>
+                                    <span style={{
+                                        position: 'absolute', content: '""', height: '18px', width: '18px', left: '3px', bottom: '3px',
+                                        backgroundColor: 'white', borderRadius: '50%', transition: '0.4s',
+                                        transform: formData.inherit_certificates ? 'translateX(24px)' : 'translateX(0)'
+                                    }}></span>
+                                </label>
+                            </div>
+
+                            {/* Logic: If Inherit ON, show read-only list. If OFF, show selectable list */}
+                            {formData.inherit_certificates ? (
+                                <div style={{ borderTop: '1px solid #eee', paddingTop: '1rem' }}>
+                                    <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#666', textTransform: 'uppercase' }}>Inherited Certificates:</span>
+                                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+                                        {/* Helper logic to find inherited */}
+                                        {(() => {
+                                            const cat = allCategories.find(c => c.name === formData.category);
+                                            // Get ID if found
+                                            const inherited = cat ? mockBackend.getCertificatesForCategory(cat.id) : [];
+
+                                            if (inherited.length === 0) return <span style={{ fontSize: '0.9rem', color: '#999', fontStyle: 'italic' }}>No certificates mapped to this category.</span>;
+
+                                            return inherited.map(cert => (
+                                                <div key={cert.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: '#e2e8f0', borderRadius: '20px', fontSize: '0.85rem', color: '#475569', cursor: 'not-allowed' }}>
+                                                    <img src={cert.image} alt="" style={{ width: 16, height: 16 }} />
+                                                    {cert.name}
+                                                </div>
+                                            ));
+                                        })()}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={{ borderTop: '1px solid #eee', paddingTop: '1rem' }}>
+                                    <div className="alert-warning" style={{ background: '#fffbeb', border: '1px solid #fcd34d', color: '#92400e', padding: '0.75rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                                        <strong>⚠ Override Mode:</strong> You are manually selecting certificates for this product. Updates to the category will NOT affect this product.
+                                    </div>
+                                    <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#666', textTransform: 'uppercase' }}>Select Applicable Certificates:</span>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem', marginTop: '0.5rem' }}>
+                                        {allCertificates.map(cert => (
+                                            <label key={cert.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', border: '1px solid #e2e8f0', borderRadius: '6px', background: 'white', cursor: 'pointer' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.certificate_ids?.includes(cert.id)}
+                                                    onChange={(e) => {
+                                                        const checked = e.target.checked;
+                                                        const current = formData.certificate_ids || [];
+                                                        setFormData({
+                                                            ...formData,
+                                                            certificate_ids: checked
+                                                                ? [...current, cert.id]
+                                                                : current.filter(id => id !== cert.id)
+                                                        });
+                                                    }}
+                                                />
+                                                <img src={cert.image} alt="" style={{ width: 20, height: 20 }} />
+                                                <span style={{ fontSize: '0.9rem' }}>{cert.name}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                 </div>

@@ -153,6 +153,12 @@ const ProductDetail = () => {
                                 )}
                             </ul>
 
+                            {/* Dynamic Compliance Badges */}
+                            <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #eee' }}>
+                                <h4 style={{ fontSize: '0.95rem', textTransform: 'uppercase', color: '#666', marginBottom: '1rem' }}>Applicable Certifications</h4>
+                                <ProductCertificates product={product} />
+                            </div>
+
                             <div className="feature-icons">
                                 <div className="feature-icon-box">
                                     <div className="feature-icon-circle"><Truck size={32} /></div>
@@ -228,6 +234,36 @@ const ProductDetail = () => {
                 </div>
 
             </div>
+        </div>
+    );
+};
+
+const ProductCertificates = ({ product }) => {
+    const [certs, setCerts] = useState([]);
+
+    useEffect(() => {
+        if (product) {
+            const applicableCerts = mockBackend.getEffectiveCertificates(product);
+            // Also filter by 'show_on_products' logic if we want to enforce it strict? user guide said 'show_on_products' checkbox.
+            // Usually overrides might bypass this if explicitly selected, but sticking to global visibility rules is safer. 
+            // Let's assume specific selection implies visibility, but category inheritance respects the flag.
+            // For simplicity, effective certs checks "Active", we can filter show_on_products too if it comes from category.
+            // Since getEffectiveCertificates returns the final list, lets just filter by show_on_products for consistency with frontend rules.
+            const displayCerts = applicableCerts.filter(c => c.show_on_products);
+            setCerts(displayCerts);
+        }
+    }, [product]);
+
+    if (certs.length === 0) return null;
+
+    return (
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            {certs.map(cert => (
+                <div key={cert.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4 }}>
+                    <img src={cert.image} alt={cert.name} style={{ width: 24, height: 24, objectFit: 'contain' }} />
+                    <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155' }}>{cert.name}</span>
+                </div>
+            ))}
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Activity, Truck, Users } from 'lucide-react';
+import { Activity, Truck, Users, Rotate3D } from 'lucide-react';
 
 const MegaMenu = ({ isVisible, onClose }) => {
     if (!isVisible) return null;
@@ -76,6 +76,10 @@ const MegaMenu = ({ isVisible, onClose }) => {
                         <Users size={20} className="service-icon" />
                         <span>Distributor Partnerships</span>
                     </div>
+                    <Link to="/virtual-tour" className="service-item" onClick={onClose} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Rotate3D size={20} className="service-icon" style={{ color: '#0ea5e9' }} />
+                        <span style={{ fontWeight: '600', color: '#0ea5e9' }}>Virtual Tour</span>
+                    </Link>
                     <Link to="/contact" className="btn-bulk-quote" onClick={onClose}>
                         Request Bulk Quote
                     </Link>

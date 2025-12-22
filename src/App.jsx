@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
+import VirtualTour from './pages/VirtualTour';
 import About from './pages/About';
 import Career from './pages/Career';
 import Contact from './pages/Contact';
@@ -21,6 +22,12 @@ import AdminLogin from './pages/admin/AdminLogin';
 import Enquiries from './pages/admin/Enquiries';
 import MediaLibrary from './pages/admin/MediaLibrary';
 import PageManager from './pages/admin/PageManager';
+import CertificatesList from './pages/admin/CertificatesList';
+import CertificateForm from './pages/admin/CertificateForm';
+import AuditLog from './pages/admin/AuditLog';
+import ReportGenerator from './pages/admin/ReportGenerator';
+import AuditReportPrint from './pages/admin/AuditReportPrint';
+import GeneralSettings from './pages/admin/GeneralSettings';
 
 import './styles/index.css';
 
@@ -50,10 +57,17 @@ function App() {
           <Route path="categories" element={<CategoryManager />} />
           <Route path="branding" element={<Branding />} />
           <Route path="enquiries" element={<Enquiries />} />
+          <Route path="certificates" element={<CertificatesList />} />
+          <Route path="certificates/new" element={<CertificateForm />} />
+          <Route path="certificates/edit/:id" element={<CertificateForm />} />
+          <Route path="audit" element={<AuditLog />} />
           <Route path="media" element={<MediaLibrary />} />
           <Route path="pages" element={<PageManager />} />
-          <Route path="settings" element={<div style={{ padding: '2rem' }}><h2>Settings</h2><p>Coming Soon</p></div>} />
+          <Route path="settings" element={<GeneralSettings />} />
+          <Route path="audit-reports" element={<ReportGenerator />} />
         </Route>
+        <Route path="/admin/reports/print" element={<AuditReportPrint />} />
+        <Route path="/virtual-tour" element={<VirtualTour />} />
       </Routes>
     </Router>
   );

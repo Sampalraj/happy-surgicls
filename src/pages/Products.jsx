@@ -74,11 +74,18 @@ const Products = () => {
                         <span> Products </span> <ChevronRight size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
                         <span style={{ color: '#004daa', fontWeight: 'bold' }}>{categoryTitle}</span>
                     </div>
-                    <h1 className="category-title">{categoryTitle}</h1>
-                    <p className="category-desc">
-                        Explore our premium range of {categoryTitle.toLowerCase()}.
-                        Manufactured to ISO 13485 standards ensuring safety and reliability for healthcare institutions.
-                    </p>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem' }}>
+                        <div>
+                            <h1 className="category-title">{categoryTitle}</h1>
+                            <p className="category-desc">
+                                Explore our premium range of {categoryTitle.toLowerCase()}.
+                                Manufactured to ISO 13485 standards ensuring safety and reliability for healthcare institutions.
+                            </p>
+                        </div>
+                        {selectedCategory !== 'All' && (
+                            <CategoryCertificates categoryName={selectedCategory} />
+                        )}
+                    </div>
                 </div>
             </header>
 
@@ -171,6 +178,40 @@ const Products = () => {
                         )}
                     </div>
                 </div>
+            </div>
+        </div>
+    );
+};
+
+const CategoryCertificates = ({ categoryName }) => {
+    const [certs, setCerts] = useState([]);
+
+    useEffect(() => {
+        // Find category ID by name
+        const allCats = mockBackend.getCategories();
+        const cat = allCats.find(c => c.name === categoryName);
+
+        if (cat) {
+            // Fetch ALL active certificates for this category (regardless of show_on_products, usually category pages show broad compliance)
+            // But let's stick to consistent logic: getCertificatesForCategory returns active && mapped
+            const applicableCerts = mockBackend.getCertificatesForCategory(cat.id);
+            setCerts(applicableCerts);
+        } else {
+            setCerts([]);
+        }
+    }, [categoryName]);
+
+    if (certs.length === 0) return null;
+
+    return (
+        <div style={{ background: 'rgba(255,255,255,0.9)', padding: '1rem', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', maxWidth: '300px' }}>
+            <h5 style={{ margin: '0 0 0.5rem 0', fontSize: '0.8rem', textTransform: 'uppercase', color: '#64748b' }}>Verified Compliance</h5>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {certs.map(cert => (
+                    <div key={cert.id} title={cert.name} style={{ width: 32, height: 32, padding: 4, border: '1px solid #e2e8f0', borderRadius: 4, background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <img src={cert.image} alt={cert.name} style={{ maxWidth: '100%', maxHeight: '100%' }} />
+                    </div>
+                ))}
             </div>
         </div>
     );

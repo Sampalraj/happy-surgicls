@@ -41,16 +41,64 @@ const seedData = () => {
     // Seed Categories & Products if empty
     if (!currentCats.length || hasOldData) {
         const initialCategories = [
-            { id: '1', name: 'OT Tables', count: 12 },
-            { id: '2', name: 'OT Lights', count: 8 },
-            { id: '3', name: 'Suction Machines', count: 5 },
-            { id: '4', name: 'Hospital Beds', count: 15 }
+            { id: 'cat_healthcare', name: 'Healthcare', count: 120, image: 'https://images.unsplash.com/photo-1584036561566-b452ae589666?auto=format&fit=crop&q=80&w=500', subtitle: 'Medical-grade consumables' },
+            { id: 'cat_equipment', name: 'Medical Equipment', count: 45, image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500', subtitle: 'Heavy duty hospital machinery' },
+            { id: 'cat_industrial', name: 'Industrial Safety', count: 30, image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=500', subtitle: 'Workplace protection gear' },
+            { id: 'cat_respiratory', name: 'Respiratory Care', count: 25, image: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&q=80&w=500', subtitle: 'Oxygen & breathing support' },
+            { id: 'cat_ortho', name: 'Orthopedic & Support', count: 15, image: 'https://images.unsplash.com/photo-1583912267550-d41398b11151?auto=format&fit=crop&q=80&w=500', subtitle: 'Mobility & rehabilitation' },
+            { id: 'cat_hygiene', name: 'Personal Care & Hygiene', count: 50, image: 'https://images.unsplash.com/photo-1584634731339-252c581abfc5?auto=format&fit=crop&q=80&w=500', subtitle: 'Sanitization & wellness' }
         ];
         setStoredData(STORAGE_KEYS.CATEGORIES, initialCategories);
 
         const initialProducts = [
-            { id: '101', name: 'Hydraulic OT Table', category: 'OT Tables', price: '1,50,000', stock: 'In Stock', status: 'Active' },
-            { id: '102', name: 'LED OT Light Double Dome', category: 'OT Lights', price: '85,000', stock: 'Low Stock', status: 'Active' }
+            {
+                id: '101', name: 'Nitrile Blue Surgical Hand Gloves', category: 'Healthcare',
+                tag: 'Nitrile', features: ['Powder-Free', 'Disposable', 'Medical Grade'],
+                img: 'https://images.unsplash.com/photo-1584036561566-b452ae589666?auto=format&fit=crop&q=80&w=400',
+                status: 'Active'
+            },
+            {
+                id: '102', name: 'Hydraulic OT Table', category: 'Medical Equipment',
+                tag: 'Stainless Steel', features: ['Hydraulic', 'Adjustable', 'Heavy Duty'],
+                img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400',
+                status: 'Active'
+            },
+            {
+                id: '103', name: 'N95 Medical Face Mask', category: 'Respiratory Care',
+                tag: 'Non-Woven', features: ['5-Ply Protection', 'Disposable', 'ISO Certified'],
+                img: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&q=80&w=400',
+                status: 'Active'
+            },
+            {
+                id: '104', name: 'Industrial Safety Helmet', category: 'Industrial Safety',
+                tag: 'ABS Plastic', features: ['Impact Resistant', 'Adjustable Strap', 'ANSI Rated'],
+                img: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=400',
+                status: 'Active'
+            },
+            {
+                id: '105', name: 'Wheelchair Standard', category: 'Orthopedic & Support',
+                tag: 'Steel Frame', features: ['Foldable', 'Durable Tyres', 'Comfort Seat'],
+                img: 'https://images.unsplash.com/photo-1583912267550-d41398b11151?auto=format&fit=crop&q=80&w=400',
+                status: 'Active'
+            },
+            {
+                id: '106', name: 'Hand Sanitizer 5L', category: 'Personal Care & Hygiene',
+                tag: 'Alcohol Based', features: ['70% Alcohol', 'Kills 99.9% Germs', 'Hospital Grade'],
+                img: 'https://images.unsplash.com/photo-1584634731339-252c581abfc5?auto=format&fit=crop&q=80&w=400',
+                status: 'Active'
+            },
+            {
+                id: '107', name: 'LED OT Light Double Dome', category: 'Medical Equipment',
+                tag: 'LED', features: ['Shadowless', 'High Intensity', 'Long Life'],
+                img: 'https://images.unsplash.com/photo-1516549655169-df83a0833860?auto=format&fit=crop&q=80&w=400',
+                status: 'Active'
+            },
+            {
+                id: '108', name: 'Latex Examination Gloves', category: 'Healthcare',
+                tag: 'Latex', features: ['Lightly Powdered', 'High Sensitivity', 'Elastic'],
+                img: 'https://images.unsplash.com/photo-1591084728795-1149f32d9866?auto=format&fit=crop&q=80&w=400',
+                status: 'Active'
+            }
         ];
         setStoredData(STORAGE_KEYS.PRODUCTS, initialProducts);
     }

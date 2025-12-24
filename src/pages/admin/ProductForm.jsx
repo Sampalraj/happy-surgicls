@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
     Save, ArrowLeft, Upload, Plus, Trash2, ChevronRight,
-    Image as ImageIcon, FileText, CheckCircle, Circle
+    Image as ImageIcon, FileText, CheckCircle, Circle, Link as LinkIcon
 } from 'lucide-react';
 import { mockBackend } from '../../utils/mockBackend';
+import ImageUploader from './components/ImageUploader';
 
 const ProductForm = () => {
     const navigate = useNavigate();
@@ -15,25 +16,36 @@ const ProductForm = () => {
     const [formData, setFormData] = useState({
         name: '',
         code: '', // SKU
-        category: '',
+        segment_id: '',
+        category_id: '',
         price: '',
         status: 'Active',
         description: '',
         shortDescription: '',
-        img: '/placeholder-bed.png' // Default placeholder
+        img: '/placeholder-bed.png',
+        inherit_certificates: true,
+        certificate_ids: []
     });
 
     // Dynamic Specs
     const [specs, setSpecs] = useState([{ id: 1, key: 'Material', value: 'Stainless Steel' }]);
 
-    // Compliance Data
-    const [allCertificates, setAllCertificates] = useState([]);
-    const [allCategories, setAllCategories] = useState([]);
+    // Variants
+    const [variants, setVariants] = useState([]);
 
-    // Load data if edit mode
+    // Image Input Type
+    const [imageInputType, setImageInputType] = useState('url');
+
+    // Data Sources
+    const [allSegments, setAllSegments] = useState([]);
+    const [allCategories, setAllCategories] = useState([]);
+    const [allCertificates, setAllCertificates] = useState([]);
+
+    // Load data
     useEffect(() => {
-        setAllCertificates(mockBackend.getCertificates());
+        setAllSegments(mockBackend.getSegments());
         setAllCategories(mockBackend.getCategories());
+        setAllCertificates(mockBackend.getCertificates());
 
         if (isEditMode) {
             const product = mockBackend.getProduct(id);
@@ -41,22 +53,29 @@ const ProductForm = () => {
                 setFormData({
                     name: product.name || '',
                     code: product.code || '',
-                    category: product.category || '',
+                    segment_id: product.segment_id || '',
+                    category_id: product.category_id || '',
                     price: product.price || '',
-                    status: product.stock !== 'Out of Stock' ? 'Active' : 'Hidden',
+                    status: product.status || 'Active',
                     description: product.description || '',
-                    shortDescription: product.description ? product.description.substring(0, 100) : '',
+                    shortDescription: product.short_description || '',
                     img: product.img || '/placeholder-bed.png',
-                    inherit_certificates: product.inherit_certificates !== false, // default true
+                    inherit_certificates: product.inherit_certificates !== false,
                     certificate_ids: product.certificate_ids || []
                 });
+
+                // Set Image Input Type based on content
+                if (product.img && product.img.startsWith('data:')) {
+                    setImageInputType('upload');
+                } else {
+                    setImageInputType('url');
+                }
+
                 if (product.features) {
                     setSpecs(product.features.map((f, i) => ({ id: i, key: 'Feature', value: f })));
                 }
+                setVariants(mockBackend.getVariants(product.id));
             }
-        } else {
-            // New Product defaults
-            setFormData(prev => ({ ...prev, inherit_certificates: true, certificate_ids: [] }));
         }
     }, [id, isEditMode]);
 
@@ -64,48 +83,55 @@ const ProductForm = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    // Filter Categories based on selected Segment
+    const availableCategories = allCategories.filter(c => c.segment_id === formData.segment_id);
+
+    // Variants Management
+    const addVariant = () => {
+        setVariants([...variants, { id: Date.now(), size: '', color: '', material: '', is_active: true }]);
+    };
+    const removeVariant = (id) => {
+        setVariants(variants.filter(v => v.id !== id));
+    };
+    const updateVariant = (id, field, value) => {
+        setVariants(variants.map(v => v.id === id ? { ...v, [field]: value } : v));
+    };
+
     const handleSave = () => {
-        if (!formData.name || !formData.category) {
-            alert('Please fill in Name and Category');
+        if (!formData.name || !formData.segment_id || !formData.category_id) {
+            alert('Please fill in Name, Segment, and Category');
             return;
         }
 
         const productData = {
             id: isEditMode ? id : undefined,
             ...formData,
-            stock: formData.status === 'Active' ? 'In Stock' : 'Out of Stock', // Mapping back
-            features: specs.map(s => s.value).filter(v => v) // Flatten specs to features array
+            features: specs.map(s => s.value).filter(v => v),
+            // Legacy mapping fallback for UI components not yet updated
+            category: allSegments.find(s => s.id === formData.segment_id)?.name || 'Uncategorized',
+            subCategory: allCategories.find(c => c.id === formData.category_id)?.name || ''
         };
 
-        mockBackend.saveProduct(productData);
+        const savedProduct = mockBackend.saveProduct(productData);
+
+        // Save Variants
+        variants.forEach(v => {
+            mockBackend.saveVariant({ ...v, product_id: savedProduct.id });
+        });
 
         // Audit Logging
         const action = isEditMode ? 'Updated Product' : 'Created Product';
-        let details = `Product: ${formData.name}`;
-
-        if (!formData.inherit_certificates) {
-            details += ` | Compliance Override: ENABLED (${formData.certificate_ids?.length || 0} certs selected)`;
-        } else {
-            details += ` | Compliance: Inherited`;
-        }
-
+        let details = `Product: ${formData.name} | Variants: ${variants.length}`;
         mockBackend.logActivity('Admin', action, formData.name, details);
 
         alert('Product Saved Successfully!');
         navigate('/admin/products');
     };
 
-    const addSpec = () => {
-        setSpecs([...specs, { id: Date.now(), key: '', value: '' }]);
-    };
-
-    const removeSpec = (id) => {
-        setSpecs(specs.filter(s => s.id !== id));
-    };
-
-    const updateSpec = (id, field, val) => {
-        setSpecs(specs.map(s => s.id === id ? { ...s, [field]: val } : s));
-    };
+    // ... specs handlers ...
+    const addSpec = () => setSpecs([...specs, { id: Date.now(), key: 'Feature', value: '' }]);
+    const removeSpec = (id) => setSpecs(specs.filter(s => s.id !== id));
+    const updateSpec = (id, field, val) => setSpecs(specs.map(s => s.id === id ? { ...s, [field]: val } : s));
 
     return (
         <div className="product-form-page" style={{ position: 'relative' }}>
@@ -133,34 +159,138 @@ const ProductForm = () => {
                 {/* LEFT COLUMN (Main Info) */}
                 <div className="form-main">
 
-                    {/* B. BASIC INFORMATION */}
+                    {/* B. CLASSIFICATION */}
+                    <div className="form-card">
+                        <h3>Classification</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                            <div className="form-group">
+                                <label className="form-label" style={{ fontWeight: '500', marginBottom: '8px', display: 'block' }}>Market Segment <span style={{ color: 'red' }}>*</span></label>
+                                <select name="segment_id" value={formData.segment_id} onChange={handleChange} className="form-control">
+                                    <option value="">Select Segment...</option>
+                                    {allSegments.map(seg => (
+                                        <option key={seg.id} value={seg.id}>{seg.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label" style={{ fontWeight: '500', marginBottom: '8px', display: 'block' }}>Category <span style={{ color: 'red' }}>*</span></label>
+                                <select name="category_id" value={formData.category_id} onChange={handleChange} className="form-control" disabled={!formData.segment_id}>
+                                    <option value="">Select Category...</option>
+                                    {availableCategories.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* C. BASIC INFO */}
                     <div className="form-card">
                         <h3>Basic Information</h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
                             <div className="form-group">
                                 <label className="form-label" style={{ fontWeight: '500', marginBottom: '8px', display: 'block' }}>Product Name <span style={{ color: 'red' }}>*</span></label>
                                 <input name="name" value={formData.name} onChange={handleChange} type="text" className="form-control" placeholder="e.g. Iris Scissors Straight" />
                             </div>
                             <div className="form-group">
-                                <label className="form-label" style={{ fontWeight: '500', marginBottom: '8px', display: 'block' }}>SKU / Product Code</label>
+                                <label className="form-label" style={{ fontWeight: '500', marginBottom: '8px', display: 'block' }}>SKU / Code</label>
                                 <input name="code" value={formData.code} onChange={handleChange} type="text" className="form-control" placeholder="e.g. SUR-001" />
                             </div>
-                            <div className="form-group">
-                                <label className="form-label" style={{ fontWeight: '500', marginBottom: '8px', display: 'block' }}>Price (₹)</label>
-                                <input name="price" value={formData.price} onChange={handleChange} type="number" className="form-control" placeholder="e.g. 1200" />
-                            </div>
                         </div>
-                        <div className="form-group" style={{ marginTop: '24px' }}>
-                            <label className="form-label" style={{ fontWeight: '500', marginBottom: '8px', display: 'block' }}>Category <span style={{ color: 'red' }}>*</span></label>
-                            <select name="category" value={formData.category} onChange={handleChange} className="form-control">
-                                <option value="">Select Category...</option>
-                                <option value="Surgical Instruments">Surgical Instruments</option>
-                                <option value="Dental Instruments">Dental Instruments</option>
-                                <option value="Tables">Tables</option>
-                                <option value="Lights">Lights</option>
-                                <option value="Accessories">Accessories</option>
-                                <option value="Anesthesia">Anesthesia</option>
-                            </select>
+                    </div>
+
+                    {/* D. PRODUCT MEDIA */}
+                    <div className="form-card">
+                        <h3>Product Media</h3>
+                        <div className="form-group" style={{ marginBottom: '1rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Main Product Image</label>
+
+                            <div style={{ display: 'flex', marginBottom: '0.75rem', gap: '0.5rem' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => setImageInputType('url')}
+                                    style={{
+                                        flex: 1, padding: '0.4rem', border: '1px solid #e2e8f0', borderRadius: '4px',
+                                        background: imageInputType === 'url' ? '#eff6ff' : 'white',
+                                        color: imageInputType === 'url' ? '#1d4ed8' : '#64748b',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <LinkIcon size={14} /> Image URL
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setImageInputType('upload')}
+                                    style={{
+                                        flex: 1, padding: '0.4rem', border: '1px solid #e2e8f0', borderRadius: '4px',
+                                        background: imageInputType === 'upload' ? '#f0fdf4' : 'white',
+                                        color: imageInputType === 'upload' ? '#15803d' : '#64748b',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <Upload size={14} /> Upload Image
+                                </button>
+                            </div>
+
+                            {imageInputType === 'url' ? (
+                                <input
+                                    name="img"
+                                    type="text"
+                                    className="form-control"
+                                    value={formData.img}
+                                    onChange={handleChange}
+                                    placeholder="https://example.com/product.jpg"
+                                />
+                            ) : (
+                                <ImageUploader
+                                    label=""
+                                    value={formData.img}
+                                    onChange={(val) => setFormData({ ...formData, img: val })}
+                                    helpText="Recommended: 800x800px or larger. PNG or JPG."
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    {/* VARIANTS AND SPECS */}
+                    <div className="form-card">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                            <h3 style={{ margin: 0 }}>Product Variants</h3>
+                            <button onClick={addVariant} className="btn-sm btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Plus size={14} /> Add Variant</button>
+                        </div>
+                        <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '1rem' }}>Define SKUs for different sizes, colors, or materials.</p>
+
+                        <div style={{ overflowX: 'auto' }}>
+                            <table className="admin-table" style={{ fontSize: '0.9rem' }}>
+                                <thead>
+                                    <tr>
+                                        <th>Size</th>
+                                        <th>Color</th>
+                                        <th>Material</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {variants.map(v => (
+                                        <tr key={v.id}>
+                                            <td><input type="text" className="form-control" style={{ padding: '4px 8px' }} value={v.size} onChange={e => updateVariant(v.id, 'size', e.target.value)} placeholder="e.g. Medium" /></td>
+                                            <td><input type="text" className="form-control" style={{ padding: '4px 8px' }} value={v.color} onChange={e => updateVariant(v.id, 'color', e.target.value)} placeholder="e.g. Blue" /></td>
+                                            <td><input type="text" className="form-control" style={{ padding: '4px 8px' }} value={v.material} onChange={e => updateVariant(v.id, 'material', e.target.value)} placeholder="e.g. Nitrile" /></td>
+                                            <td>
+                                                <select className="form-control" style={{ padding: '4px 8px' }} value={v.is_active} onChange={e => updateVariant(v.id, 'is_active', e.target.value === 'true')}>
+                                                    <option value="true">Active</option>
+                                                    <option value="false">Inactive</option>
+                                                </select>
+                                            </td>
+                                            <td><button onClick={() => removeVariant(v.id)} className="btn-icon" style={{ color: '#c53030' }}><Trash2 size={16} /></button></td>
+                                        </tr>
+                                    ))}
+                                    {variants.length === 0 && <tr><td colSpan="5" style={{ textAlign: 'center', color: '#999', padding: '2rem' }}>No variants added yet.</td></tr>}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -177,10 +307,10 @@ const ProductForm = () => {
                         </div>
                     </div>
 
-                    {/* E. TECHNICAL SPECIFICATIONS */}
+                    {/* E. FEATURES */}
                     <div className="form-card">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #f0f0f0', paddingBottom: '0.75rem' }}>
-                            <h3 style={{ margin: 0, border: 'none', padding: 0 }}>Features / Specifications</h3>
+                            <h3 style={{ margin: 0, border: 'none', padding: 0 }}>Key Features</h3>
                             <button onClick={addSpec} className="btn-sm btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <Plus size={14} /> Add Row
                             </button>
@@ -190,22 +320,10 @@ const ProductForm = () => {
                                 {specs.map((spec) => (
                                     <tr key={spec.id}>
                                         <td style={{ width: '40%' }}>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Key (Optional)"
-                                                value={spec.key}
-                                                onChange={(e) => updateSpec(spec.id, 'key', e.target.value)}
-                                            />
+                                            <input type="text" className="form-control" placeholder="Key (e.g. Feature)" value={spec.key} onChange={(e) => updateSpec(spec.id, 'key', e.target.value)} />
                                         </td>
                                         <td>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Value (e.g. 15cm or Feature)"
-                                                value={spec.value}
-                                                onChange={(e) => updateSpec(spec.id, 'value', e.target.value)}
-                                            />
+                                            <input type="text" className="form-control" placeholder="Value (e.g. Powder Free)" value={spec.value} onChange={(e) => updateSpec(spec.id, 'value', e.target.value)} />
                                         </td>
                                         <td style={{ width: '40px', paddingTop: '8px' }}>
                                             <button onClick={() => removeSpec(spec.id)} className="btn-icon" style={{ color: '#c53030' }}><Trash2 size={16} /></button>
@@ -226,7 +344,7 @@ const ProductForm = () => {
                                 <div>
                                     <h4 style={{ margin: 0, fontSize: '0.95rem' }}>Inherit certificates from category</h4>
                                     <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748b' }}>
-                                        When ON, this product automatically displays certificates assigned to <strong>{formData.category || 'its category'}</strong>.
+                                        When ON, this product automatically displays certificates assigned to its category.
                                     </p>
                                 </div>
                                 <label className="toggle-switch" style={{ position: 'relative', display: 'inline-block', width: '48px', height: '24px' }}>
@@ -256,7 +374,7 @@ const ProductForm = () => {
                                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
                                         {/* Helper logic to find inherited */}
                                         {(() => {
-                                            const cat = allCategories.find(c => c.name === formData.category);
+                                            const cat = allCategories.find(c => c.id === formData.category_id);
                                             // Get ID if found
                                             const inherited = cat ? mockBackend.getCertificatesForCategory(cat.id) : [];
 

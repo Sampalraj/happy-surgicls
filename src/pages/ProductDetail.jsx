@@ -7,6 +7,8 @@ import '../styles/product_detail.css';
 const ProductDetail = () => {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
+    const [segment, setSegment] = useState(null);
+    const [category, setCategory] = useState(null);
 
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -15,7 +17,19 @@ const ProductDetail = () => {
 
     useEffect(() => {
         const found = mockBackend.getProduct(id);
-        setProduct(found);
+        if (found) {
+            setProduct(found);
+
+            // Resolve Relations
+            if (found.segment_id) {
+                const segs = mockBackend.getSegments();
+                setSegment(segs.find(s => s.id === found.segment_id));
+            }
+            if (found.category_id) {
+                const cats = mockBackend.getCategories();
+                setCategory(cats.find(c => c.id === found.category_id));
+            }
+        }
         setLoading(false);
     }, [id]);
 
@@ -96,6 +110,20 @@ const ProductDetail = () => {
                     <Link to="/products" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'white', textDecoration: 'none', fontWeight: '500', fontSize: '0.9rem' }}>
                         <ChevronLeft size={16} /> Back to Products
                     </Link>
+                    {segment && (
+                        <>
+                            <span style={{ margin: '0 0.5rem', opacity: 0.5 }}>/</span>
+                            <Link to={`/products?segment=${segment.name}`} style={{ color: 'white', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>
+                                {segment.name}
+                            </Link>
+                        </>
+                    )}
+                    {category && (
+                        <>
+                            <span style={{ margin: '0 0.5rem', opacity: 0.5 }}>/</span>
+                            <span style={{ opacity: 0.9, fontSize: '0.9rem' }}>{category.name}</span>
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -120,7 +148,15 @@ const ProductDetail = () => {
                     <div className="product-info-right">
                         <h1>{product.name}</h1>
                         <div className="brand-text">BRAND: {product.brand || 'Happy Surgicals'}</div>
-                        <div className="brand-text">CATEGORY: {product.category}</div>
+
+                        {/* Dynamic Hierarchy Display */}
+                        <div className="brand-text" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            CATEGORY:
+                            <span style={{ color: '#333', fontWeight: 600 }}>
+                                {category ? category.name : (product.subCategory || product.category)}
+                            </span>
+                        </div>
+
                         <div className="brand-text">ID: {product.code || product.id}</div>
 
                         <div className="stock-status">Status: {product.stock || 'Available for Bulk Order'}</div>

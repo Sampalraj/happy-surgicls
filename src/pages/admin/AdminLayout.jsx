@@ -57,8 +57,18 @@ const AdminLayout = () => {
                             </Link>
                         </li>
                         <li>
+                            <Link to="/admin/segments" className={isActive('/admin/segments')}>
+                                <List size={20} /> Market Segments
+                            </Link>
+                        </li>
+                        <li>
                             <Link to="/admin/categories" className={isActive('/admin/categories')}>
                                 <List size={20} /> Categories
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/admin/enquiries" className={isActive('/admin/enquiries')}>
+                                <MessageSquare size={20} /> Orders / Enquiries
                             </Link>
                         </li>
                         <li>
@@ -70,7 +80,7 @@ const AdminLayout = () => {
                         {isSuperAdmin && (
                             <li>
                                 <Link to="/admin/users" className={isActive('/admin/users')}>
-                                    <User size={20} /> Users
+                                    <User size={20} /> Users & Roles
                                 </Link>
                             </li>
                         )}

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../../styles/admin.css';
+import { useNavigate, Link } from 'react-router-dom';
 import { mockBackend } from '../../utils/mockBackend';
+import '../../styles/admin-auth.css';
+import { AlertCircle } from 'lucide-react';
 
 const AdminLogin = () => {
     const navigate = useNavigate();
@@ -17,77 +18,78 @@ const AdminLogin = () => {
 
         // Simulate network delay
         setTimeout(() => {
-            const user = mockBackend.login(email, password);
+            const user = mockBackend.validateUser(email, password);
             if (user) {
                 localStorage.setItem('surgical_user', JSON.stringify(user));
                 navigate('/admin');
             } else {
-                setError('Invalid email or password');
+                setError('Invalid email or password provided.');
             }
             setLoading(false);
         }, 800);
     };
 
     return (
-        <div className="admin-login-page">
-            {/* Left Side - Illustration */}
-            <div className="login-left">
-                {/* Using the new Happy Surgicals logo */}
-                <img src="/logo.png" alt="Happy Surgicals Logo" style={{ maxWidth: '60%', maxHeight: '50vh' }} />
-            </div>
+        <div className="admin-auth-container">
+            <div className="auth-card">
+                <img src="/logo.png" alt="Happy Surgicals" className="auth-logo" />
 
-            {/* Right Side - Form */}
-            <div className="login-right">
-                <div className="login-header-right">
-                    <h2>Login</h2>
-                    <p>Welcome back! Please enter your details.</p>
+                <div className="auth-header">
+                    <h2 className="auth-title">Admin Login</h2>
+                    <p className="auth-subtitle">Sign in to access the admin panel.</p>
                 </div>
 
                 {error && (
-                    <div className="alert alert-error" style={{ marginBottom: '1rem', padding: '0.75rem', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '0.5rem', fontSize: '0.9rem' }}>
-                        {error}
+                    <div className="auth-alert error">
+                        <AlertCircle size={18} />
+                        <span>{error}</span>
                     </div>
                 )}
 
-                <form className="login-form" onSubmit={handleLogin}>
+                <form className="auth-form" onSubmit={handleLogin}>
                     <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label className="form-label" htmlFor="email">Email Address</label>
                         <input
-                            type="text"
+                            type="email"
                             id="email"
+                            className="form-input"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="mail@website.com"
+                            placeholder="name@company.com"
                             required
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="password">Password</label>
+                        <label className="form-label" htmlFor="password">Password</label>
                         <input
                             type="password"
                             id="password"
+                            className="form-input"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Min. 8 characters"
+                            placeholder="Enter your password"
                             required
                         />
                     </div>
 
-                    <div className="login-options">
-                        <label>
-                            <input type="checkbox" style={{ width: 'auto', marginRight: '0.5rem' }} /> Remember me
+                    <div className="auth-options">
+                        <label className="remember-me">
+                            <input type="checkbox" /> Remember me
                         </label>
-                        <a href="#">Forgot Password?</a>
+                        <Link to="/admin/forgot-password" className="auth-link">Forgot password?</Link>
                     </div>
 
-                    <button type="submit" className="btn-login" disabled={loading}>
-                        {loading ? 'Signing in...' : 'Login'}
+                    <button type="submit" className="btn-auth-primary" disabled={loading}>
+                        {loading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
 
-                <div className="login-footer-right">
-                    Not yet registered? <a href="#">Create Account</a>
+                <div className="auth-divider"></div>
+
+                <div className="auth-footer">
+                    <span>Don’t have access?</span>
+                    <Link to="/admin/request-access" className="auth-link">Request admin account</Link>
                 </div>
             </div>
         </div>

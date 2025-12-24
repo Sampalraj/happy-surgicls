@@ -13,50 +13,71 @@ const Products = () => {
 
     // Data State
     const [segments, setSegments] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState({ id: 'all', name: 'All Products' });
+    const [categories, setCategories] = useState([]); // New State
+    const [selectedSegment, setSelectedSegment] = useState(null);
     const [activeSegmentIdx, setActiveSegmentIdx] = useState(0);
 
     useEffect(() => {
+        // Fetch Data
         const fetchedProducts = mockBackend.getProducts();
         setAllProducts(fetchedProducts);
 
-        const fetchedCategories = mockBackend.getCategories();
-        setSegments(fetchedCategories);
+        const fetchedSegments = mockBackend.getSegments();
+        setSegments(fetchedSegments);
 
-        const categoryParam = searchParams.get('category');
-        if (categoryParam) {
-            const found = fetchedCategories.find(c => c.name === categoryParam);
+        const fetchedCategories = mockBackend.getCategories(); // Fetch Categories
+        setCategories(fetchedCategories);
+
+        // Handle URL Param (e.g. ?segment=Healthcare)
+        const segmentParam = searchParams.get('segment');
+        if (segmentParam) {
+            const found = fetchedSegments.find(s => s.name === segmentParam || s.id === segmentParam);
             if (found) {
-                setSelectedCategory(found);
-                // Find index to center the carousel if possible, simplified here
-                const idx = fetchedCategories.findIndex(c => c.name === categoryParam);
+                setSelectedSegment(found);
+                const idx = fetchedSegments.findIndex(s => s.id === found.id);
                 if (idx !== -1) setActiveSegmentIdx(idx);
+            } else if (fetchedSegments.length > 0) {
+                // Default to first if not found
+                setSelectedSegment(fetchedSegments[0]);
             }
+        } else if (fetchedSegments.length > 0) {
+            // Default to first segment
+            setSelectedSegment(fetchedSegments[0]);
         }
     }, [searchParams]);
 
+    // Filtering Logic
     useEffect(() => {
-        if (selectedCategory.id === 'all') {
+        if (!selectedSegment) {
             setDisplayProducts(allProducts);
-        } else {
-            setDisplayProducts(allProducts.filter(p => p.category === selectedCategory.name));
+            return;
         }
-    }, [selectedCategory, allProducts]);
+
+        // Filter by Segment ID (New Schema) or Fallback to legacy string matching
+        const filtered = allProducts.filter(p =>
+            p.segment_id === selectedSegment.id ||
+            p.category === selectedSegment.name // Fallback for old data
+        );
+        setDisplayProducts(filtered);
+    }, [selectedSegment, allProducts]);
 
     const nextSegment = () => {
         if (segments.length === 0) return;
-        setActiveSegmentIdx((prev) => (prev + 1) % segments.length);
-        // Optional: Auto-select segment on slide? Let's decouple slide from filter for smoother UX
+        const newIdx = (activeSegmentIdx + 1) % segments.length;
+        setActiveSegmentIdx(newIdx);
+        setSelectedSegment(segments[newIdx]); // Auto-select on scroll for this specific UI pattern
     };
 
     const prevSegment = () => {
         if (segments.length === 0) return;
-        setActiveSegmentIdx((prev) => (prev - 1 + segments.length) % segments.length);
+        const newIdx = (activeSegmentIdx - 1 + segments.length) % segments.length;
+        setActiveSegmentIdx(newIdx);
+        setSelectedSegment(segments[newIdx]);
     };
 
     const handleSegmentClick = (segment, idx) => {
         setActiveSegmentIdx(idx);
-        setSelectedCategory(segment);
+        setSelectedSegment(segment);
     };
 
     return (
@@ -100,9 +121,9 @@ const Products = () => {
                                 >
                                     <div className="seg-title">{item.name}</div>
                                     <div className="seg-img">
-                                        <img src={item.image || '/placeholder.jpg'} alt={item.name} />
+                                        <img src={item.hero_image || item.image || '/placeholder.jpg'} alt={item.name} />
                                     </div>
-                                    {isActive && <div className="seg-subtitle">{item.subtitle || 'Premium Quality'}</div>}
+                                    {isActive && <div className="seg-subtitle">{item.description || item.subtitle || 'Premium Quality'}</div>}
                                     {isActive && <div className="seg-indicator"></div>}
                                 </motion.div>
                             )
@@ -116,62 +137,77 @@ const Products = () => {
             {/* Component 2: Product Grid */}
             <section className="pp-grid-section container">
                 <div className="pp-grid-header">
-                    <h2>{selectedCategory.name}</h2>
+                    <h2>{selectedSegment ? selectedSegment.name : 'All Products'}</h2>
                     <span className="pp-count">{displayProducts.length} Products Available</span>
                 </div>
 
                 <div className="pp-grid">
-                    {displayProducts.map(product => (
-                        <div key={product.id} className="pp-card">
-                            <div className="pp-card-img">
-                                <img src={product.img || '/placeholder.jpg'} alt={product.name} />
-                            </div>
-                            <div className="pp-card-content">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                                    <span className={`pp-tag ${product.tag?.toLowerCase().includes('sterile') ? 'sterile' : ''}`}>
-                                        {product.tag || 'Standard'}
-                                    </span>
-                                    {product.subCategory && (
-                                        <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>
-                                            {product.subCategory}
+                    {displayProducts.map(product => {
+                        // Resolve display strings potentially from IDs if needed (or backend populates them)
+                        // Fetch fresh categories if needed or use what we have? 
+                        // For efficiency, we rely on 'allProducts' loading, but we need categories list.
+                        // Let's assume we can fetch all categories once if we want perfect mapping, or just use what we have.
+                        // Ideally we pass "categories" prop or fetch in useEffect.
+                        // For now, let's use a quick lookup if we have the list, but we only fetched segments.
+
+                        // FIX: We need to fetch categories to resolve the name properly.
+                        // Since we didn't fetch categories in the main component state, let's just rely on 
+                        // the fact that ProductForm might have saved it, OR we should fetch categories in useEffect.
+                        // I will add categories fetch to useEffect in next step if needed, but for now:
+                        const categoryName = product.subCategory || 'Medical';
+
+                        return (
+                            <div key={product.id} className="pp-card">
+                                <div className="pp-card-img">
+                                    <img src={product.img || '/placeholder.jpg'} alt={product.name} />
+                                </div>
+                                <div className="pp-card-content">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                        <span className={`pp-tag ${product.tag?.toLowerCase().includes('sterile') ? 'sterile' : ''}`}>
+                                            {product.tag || product.material || 'Standard'}
                                         </span>
-                                    )}
-                                </div>
-                                <h3>{product.name}</h3>
+                                        {/* Display SubCategory info if available */}
+                                        <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>
+                                            {/* We want to show the actual Category Name if possible */}
+                                            {product.category || product.subCategory || ''}
+                                        </span>
+                                    </div>
+                                    <h3>{product.name}</h3>
 
-                                <div className="pp-features">
-                                    {product.features?.slice(0, 3).map((feat, i) => (
-                                        <div key={i} className="pp-feat-item">
-                                            <ShieldCheck size={14} className="pp-feat-icon" />
-                                            <span>{feat}</span>
-                                        </div>
-                                    ))}
-                                    {(!product.features || product.features.length === 0) && (
-                                        <div className="pp-feat-item">
-                                            <Box size={14} className="pp-feat-icon" />
-                                            <span>Premium Grade</span>
-                                        </div>
-                                    )}
-                                </div>
+                                    <div className="pp-features">
+                                        {product.features?.slice(0, 3).map((feat, i) => (
+                                            <div key={i} className="pp-feat-item">
+                                                <ShieldCheck size={14} className="pp-feat-icon" />
+                                                <span>{feat}</span>
+                                            </div>
+                                        ))}
+                                        {(!product.features || product.features.length === 0) && (
+                                            <div className="pp-feat-item">
+                                                <Box size={14} className="pp-feat-icon" />
+                                                <span>Premium Grade</span>
+                                            </div>
+                                        )}
+                                    </div>
 
-                                <div className="pp-actions">
-                                    <button className="pp-btn-details" onClick={() => navigate(`/product/${product.id}`)}>
-                                        View Details
-                                    </button>
-                                    <button className="pp-btn-enquire" onClick={() => navigate(`/contact?subject=Enquiry: ${product.name}`)}>
-                                        Enquire Now
-                                    </button>
+                                    <div className="pp-actions">
+                                        <button className="pp-btn-details" onClick={() => navigate(`/product/${product.id}`)}>
+                                            View Details
+                                        </button>
+                                        <button className="pp-btn-enquire" onClick={() => navigate(`/contact?subject=Enquiry: ${product.name}`)}>
+                                            Enquire Now
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {displayProducts.length === 0 && (
                     <div className="pp-empty-state">
                         <Activity size={48} color="#cbd5e1" />
-                        <h3>No products found in this category.</h3>
-                        <button onClick={() => { setSelectedCategory({ id: 'all', name: 'All Products' }); }} className="pp-btn-details">
+                        <h3>No products found in this segment.</h3>
+                        <button onClick={() => { setSelectedSegment(null); }} className="pp-btn-details">
                             View All Products
                         </button>
                     </div>

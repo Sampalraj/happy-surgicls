@@ -17,6 +17,7 @@ import Dashboard from './pages/admin/Dashboard';
 import ProductManager from './pages/admin/ProductManager';
 import ProductForm from './pages/admin/ProductForm';
 import CategoryManager from './pages/admin/CategoryManager';
+import SegmentManager from './pages/admin/SegmentManager';
 import Branding from './pages/admin/Branding';
 import AdminLogin from './pages/admin/AdminLogin';
 import Enquiries from './pages/admin/Enquiries';
@@ -28,6 +29,9 @@ import AuditLog from './pages/admin/AuditLog';
 import ReportGenerator from './pages/admin/ReportGenerator';
 import AuditReportPrint from './pages/admin/AuditReportPrint';
 import GeneralSettings from './pages/admin/GeneralSettings';
+import UserManager from './pages/admin/UserManager';
+import AdminRegister from './pages/admin/AdminRegister';
+import AdminForgotPassword from './pages/admin/AdminForgotPassword';
 
 import './styles/index.css';
 
@@ -49,12 +53,15 @@ function App() {
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/request-access" element={<AdminRegister />} />
+        <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<ProductManager />} />
           <Route path="products/new" element={<ProductForm />} />
           <Route path="products/edit/:id" element={<ProductForm />} />
           <Route path="categories" element={<CategoryManager />} />
+          <Route path="segments" element={<SegmentManager />} />
           <Route path="branding" element={<Branding />} />
           <Route path="enquiries" element={<Enquiries />} />
           <Route path="certificates" element={<CertificatesList />} />
@@ -64,6 +71,8 @@ function App() {
           <Route path="media" element={<MediaLibrary />} />
           <Route path="pages" element={<PageManager />} />
           <Route path="settings" element={<GeneralSettings />} />
+          <Route path="settings" element={<GeneralSettings />} />
+          <Route path="users" element={<UserManager />} />
           <Route path="audit-reports" element={<ReportGenerator />} />
         </Route>
         <Route path="/admin/reports/print" element={<AuditReportPrint />} />

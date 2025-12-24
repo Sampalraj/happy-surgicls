@@ -7,6 +7,8 @@ const STORAGE_KEYS = {
     ENQUIRIES: 'surgical_enquiries',
     PRODUCTS: 'surgical_products',
     CATEGORIES: 'surgical_categories',
+    SEGMENTS: 'surgical_segments', // New
+    VARIANTS: 'surgical_product_variants', // New
     CERTIFICATES: 'surgical_certificates',
     ACTIVITY_LOG: 'surgical_activity_log',
     SETTINGS: 'surgical_settings',
@@ -38,69 +40,85 @@ const seedData = () => {
     const currentPages = getStoredData(STORAGE_KEYS.PAGES);
     const currentUsers = getStoredData(STORAGE_KEYS.USERS);
 
-    // Seed Categories & Products if empty
+    const currentSegments = getStoredData(STORAGE_KEYS.SEGMENTS);
+    const currentVariants = getStoredData(STORAGE_KEYS.VARIANTS);
+
+    // Seed Segments (New Top Level)
+    if (!currentSegments.length) {
+        const initialSegments = [
+            { id: 'seg_hc_01', name: 'Healthcare', description: 'Hospitals, clinics & nursing homes', display_order: 1, is_active: true, hero_image: 'https://images.unsplash.com/photo-1584036561566-b452ae589666?auto=format&fit=crop&q=80&w=500' },
+            { id: 'seg_ind_02', name: 'Industrial Safety', description: 'Factories, laboratories & manufacturing', display_order: 2, is_active: true, hero_image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=500' },
+            { id: 'seg_resp_03', name: 'Respiratory Care', description: 'ICU, respiratory therapy & oxygen', display_order: 3, is_active: true, hero_image: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&q=80&w=500' },
+            { id: 'seg_hyg_04', name: 'Personal Care & Hygiene', description: 'Home care, elder care & wellness', display_order: 4, is_active: true, hero_image: 'https://images.unsplash.com/photo-1584634731339-252c581abfc5?auto=format&fit=crop&q=80&w=500' },
+            { id: 'seg_orth_05', name: 'Orthopedic & Support', description: 'Rehabilitation & injury support', display_order: 5, is_active: true, hero_image: 'https://images.unsplash.com/photo-1583912267550-d41398b11151?auto=format&fit=crop&q=80&w=500' },
+            { id: 'seg_med_06', name: 'Medical Equipment', description: 'General hospital & clinical use', display_order: 6, is_active: true, hero_image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500' },
+            { id: 'seg_serv_07', name: 'Services', description: 'B2B & institutional services', display_order: 7, is_active: true, hero_image: 'https://images.unsplash.com/photo-1556740758-90de29227195?auto=format&fit=crop&q=80&w=500' }
+        ];
+        setStoredData(STORAGE_KEYS.SEGMENTS, initialSegments);
+    }
+
+    // Seed Categories (Linked to Segments)
     if (!currentCats.length || hasOldData) {
+        // We'll clear old data structure to enforce new schema if strictly needed, 
+        // but for safety in this "Task Plan", let's overwrite if empty or old format.
         const initialCategories = [
-            { id: 'cat_healthcare', name: 'Healthcare', count: 120, image: 'https://images.unsplash.com/photo-1584036561566-b452ae589666?auto=format&fit=crop&q=80&w=500', subtitle: 'Medical-grade consumables' },
-            { id: 'cat_equipment', name: 'Medical Equipment', count: 45, image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500', subtitle: 'Heavy duty hospital machinery' },
-            { id: 'cat_industrial', name: 'Industrial Safety', count: 30, image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=500', subtitle: 'Workplace protection gear' },
-            { id: 'cat_respiratory', name: 'Respiratory Care', count: 25, image: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&q=80&w=500', subtitle: 'Oxygen & breathing support' },
-            { id: 'cat_ortho', name: 'Orthopedic & Support', count: 15, image: 'https://images.unsplash.com/photo-1583912267550-d41398b11151?auto=format&fit=crop&q=80&w=500', subtitle: 'Mobility & rehabilitation' },
-            { id: 'cat_hygiene', name: 'Personal Care & Hygiene', count: 50, image: 'https://images.unsplash.com/photo-1584634731339-252c581abfc5?auto=format&fit=crop&q=80&w=500', subtitle: 'Sanitization & wellness' }
+            // Healthcare
+            { id: 'cat_sgm_01', segment_id: 'seg_hc_01', name: 'Surgical Gloves & Masks', display_order: 1, is_active: true, count: 0 },
+            { id: 'cat_heqw_02', segment_id: 'seg_hc_01', name: 'Hospital Equipment', display_order: 2, is_active: true, count: 0 },
+            { id: 'cat_mon_03', segment_id: 'seg_hc_01', name: 'Monitoring & Devices', display_order: 3, is_active: true, count: 0 },
+            // Industrial
+            { id: 'cat_igl_04', segment_id: 'seg_ind_02', name: 'Industrial Gloves', display_order: 1, is_active: true, count: 0 },
+            { id: 'cat_prot_05', segment_id: 'seg_ind_02', name: 'Protective Wear', display_order: 2, is_active: true, count: 0 },
+            // Respiratory
+            { id: 'cat_oxy_06', segment_id: 'seg_resp_03', name: 'Oxygen & Nebulization', display_order: 1, is_active: true, count: 0 },
+            // Personal Care
+            { id: 'cat_ad_07', segment_id: 'seg_hyg_04', name: 'Diapers & Hygiene', display_order: 1, is_active: true, count: 0 },
+            { id: 'cat_sani_08', segment_id: 'seg_hyg_04', name: 'Sanitation', display_order: 2, is_active: true, count: 0 },
+            // Ortho
+            { id: 'cat_sup_09', segment_id: 'seg_orth_05', name: 'Supports & Braces', display_order: 1, is_active: true, count: 0 },
+            // Medical Eq
+            { id: 'cat_cons_10', segment_id: 'seg_med_06', name: 'Consumables', display_order: 1, is_active: true, count: 0 },
+            // Services
+            { id: 'cat_rent_11', segment_id: 'seg_serv_07', name: 'Rental & Supply Services', display_order: 1, is_active: true, count: 0 }
         ];
         setStoredData(STORAGE_KEYS.CATEGORIES, initialCategories);
 
+        // Seed Products (Linked to Segment & Category)
         const initialProducts = [
             {
-                id: '101', name: 'Nitrile Blue Surgical Hand Gloves', category: 'Healthcare',
-                tag: 'Nitrile', features: ['Powder-Free', 'Disposable', 'Medical Grade'],
-                img: 'https://images.unsplash.com/photo-1584036561566-b452ae589666?auto=format&fit=crop&q=80&w=400',
-                status: 'Active'
+                id: 'prod_101', segment_id: 'seg_hc_01', category_id: 'cat_sgm_01',
+                name: 'Nitrile Blue Surgical Hand Gloves',
+                short_description: 'High sensitivity blue nitrile gloves.',
+                material: 'Nitrile', usage_type: 'Medical',
+                is_active: true, img: 'https://images.unsplash.com/photo-1584036561566-b452ae589666?auto=format&fit=crop&q=80&w=400',
+                features: ['Powder-Free', 'Disposable']
             },
             {
-                id: '102', name: 'Hydraulic OT Table', category: 'Medical Equipment',
-                tag: 'Stainless Steel', features: ['Hydraulic', 'Adjustable', 'Heavy Duty'],
-                img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400',
-                status: 'Active'
+                id: 'prod_102', segment_id: 'seg_med_06', category_id: 'cat_heqw_02',
+                name: 'Hydraulic OT Table',
+                short_description: 'Heavy duty hydraulic operation table.',
+                material: 'Steel', usage_type: 'Medical',
+                is_active: true, img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400',
+                features: ['Adjustable', 'Hydraulic']
             },
             {
-                id: '103', name: 'N95 Medical Face Mask', category: 'Respiratory Care',
-                tag: 'Non-Woven', features: ['5-Ply Protection', 'Disposable', 'ISO Certified'],
-                img: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&q=80&w=400',
-                status: 'Active'
-            },
-            {
-                id: '104', name: 'Industrial Safety Helmet', category: 'Industrial Safety',
-                tag: 'ABS Plastic', features: ['Impact Resistant', 'Adjustable Strap', 'ANSI Rated'],
-                img: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=400',
-                status: 'Active'
-            },
-            {
-                id: '105', name: 'Wheelchair Standard', category: 'Orthopedic & Support',
-                tag: 'Steel Frame', features: ['Foldable', 'Durable Tyres', 'Comfort Seat'],
-                img: 'https://images.unsplash.com/photo-1583912267550-d41398b11151?auto=format&fit=crop&q=80&w=400',
-                status: 'Active'
-            },
-            {
-                id: '106', name: 'Hand Sanitizer 5L', category: 'Personal Care & Hygiene',
-                tag: 'Alcohol Based', features: ['70% Alcohol', 'Kills 99.9% Germs', 'Hospital Grade'],
-                img: 'https://images.unsplash.com/photo-1584634731339-252c581abfc5?auto=format&fit=crop&q=80&w=400',
-                status: 'Active'
-            },
-            {
-                id: '107', name: 'LED OT Light Double Dome', category: 'Medical Equipment',
-                tag: 'LED', features: ['Shadowless', 'High Intensity', 'Long Life'],
-                img: 'https://images.unsplash.com/photo-1516549655169-df83a0833860?auto=format&fit=crop&q=80&w=400',
-                status: 'Active'
-            },
-            {
-                id: '108', name: 'Latex Examination Gloves', category: 'Healthcare',
-                tag: 'Latex', features: ['Lightly Powdered', 'High Sensitivity', 'Elastic'],
-                img: 'https://images.unsplash.com/photo-1591084728795-1149f32d9866?auto=format&fit=crop&q=80&w=400',
-                status: 'Active'
+                id: 'prod_103', segment_id: 'seg_resp_03', category_id: 'cat_oxy_06',
+                name: 'Nebulizer Machine',
+                short_description: 'Portable electric nebulizer.',
+                material: 'Plastic', usage_type: 'Medical',
+                is_active: true, img: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&q=80&w=400',
+                features: ['Low Noise', 'Portable']
             }
         ];
         setStoredData(STORAGE_KEYS.PRODUCTS, initialProducts);
+
+        // Seed Variants (New)
+        const initialVariants = [
+            { id: 'var_1', product_id: 'prod_101', size: 'S', color: 'Blue', material: 'Nitrile', is_active: true },
+            { id: 'var_2', product_id: 'prod_101', size: 'M', color: 'Blue', material: 'Nitrile', is_active: true },
+            { id: 'var_3', product_id: 'prod_101', size: 'L', color: 'Blue', material: 'Nitrile', is_active: true },
+        ];
+        setStoredData(STORAGE_KEYS.VARIANTS, initialVariants);
     }
 
     // Seed Certificates if empty
@@ -308,21 +326,154 @@ export const mockBackend = {
 
     saveCategory: (data) => {
         const categories = getStoredData(STORAGE_KEYS.CATEGORIES);
-        // Simple add only for now
-        const newCat = { ...data, id: Date.now().toString() };
-        categories.push(newCat);
-        setStoredData(STORAGE_KEYS.CATEGORIES, categories);
-        mockBackend.logActivity('Admin', 'Created', `Category: ${data.name}`, 'Category created');
-        return newCat;
+        if (data.id) {
+            // Update
+            const updated = categories.map(c => c.id === data.id ? { ...c, ...data } : c);
+            setStoredData(STORAGE_KEYS.CATEGORIES, updated);
+            mockBackend.logActivity('Admin', 'Updated', `Category: ${data.name}`, 'Category updated');
+            return data;
+        } else {
+            // Create
+            const newCat = { ...data, id: 'cat_' + Date.now().toString() };
+            categories.push(newCat);
+            setStoredData(STORAGE_KEYS.CATEGORIES, categories);
+            mockBackend.logActivity('Admin', 'Created', `Category: ${data.name}`, 'Category created');
+            return newCat;
+        }
     },
 
     deleteCategory: (id) => {
         const categories = getStoredData(STORAGE_KEYS.CATEGORIES);
-        const category = categories.find(c => c.id === id);
         const filtered = categories.filter(c => c.id !== id);
         setStoredData(STORAGE_KEYS.CATEGORIES, filtered);
-        mockBackend.logActivity('Admin', 'Deleted', `Category: ${category ? category.name : id}`, 'Category deleted');
         return filtered;
+    },
+
+    // --- SEGMENTS (New) ---
+    getSegments: () => getStoredData(STORAGE_KEYS.SEGMENTS),
+
+    saveSegment: (data) => {
+        const segments = getStoredData(STORAGE_KEYS.SEGMENTS);
+        if (data.id) {
+            const updated = segments.map(s => s.id === data.id ? { ...s, ...data } : s);
+            setStoredData(STORAGE_KEYS.SEGMENTS, updated);
+            return data;
+        } else {
+            const newSeg = { ...data, id: 'seg_' + Date.now().toString() };
+            segments.push(newSeg);
+            setStoredData(STORAGE_KEYS.SEGMENTS, segments);
+            return newSeg;
+        }
+    },
+
+    deleteSegment: (id) => {
+        const segments = getStoredData(STORAGE_KEYS.SEGMENTS);
+        const filtered = segments.filter(s => s.id !== id);
+        setStoredData(STORAGE_KEYS.SEGMENTS, filtered);
+        return filtered;
+    },
+
+    // --- VARIANTS (New) ---
+    getVariants: (productId) => {
+        const variants = getStoredData(STORAGE_KEYS.VARIANTS);
+        return productId ? variants.filter(v => v.product_id === productId) : variants;
+    },
+
+    saveVariant: (data) => {
+        // Seed Roles & Users
+        const currentRoles = getStoredData(STORAGE_KEYS.ROLES || 'surgical_roles');
+        if (!currentRoles || !currentRoles.length) {
+            const roles = [
+                { id: 'role_admin', name: 'Super Admin', permissions: ['all'] },
+                { id: 'role_manager', name: 'Product Manager', permissions: ['products', 'categories', 'segments'] },
+                { id: 'role_viewer', name: 'Viewer', permissions: ['read_only'] }
+            ];
+            setStoredData('surgical_roles', roles);
+        }
+
+        const dataUsers = getStoredData(STORAGE_KEYS.USERS);
+        if (!dataUsers || !dataUsers.length) {
+            const users = [
+                {
+                    id: 'user_001',
+                    name: 'Admin User',
+                    email: 'admin@happysurgicals.com',
+                    password: 'admin',
+                    role_id: 'role_admin',
+                    status: 'Active',
+                    last_login: new Date().toISOString()
+                }
+            ];
+            setStoredData(STORAGE_KEYS.USERS, users);
+        }
+        const variants = getStoredData(STORAGE_KEYS.VARIANTS);
+        if (data.id) {
+            const updated = variants.map(v => v.id === data.id ? { ...v, ...data } : v);
+            setStoredData(STORAGE_KEYS.VARIANTS, updated);
+            return data;
+        } else {
+            const newVar = { ...data, id: 'var_' + Date.now().toString() };
+            variants.push(newVar);
+            setStoredData(STORAGE_KEYS.VARIANTS, variants);
+            return newVar;
+        }
+    },
+
+    deleteVariant: (id) => {
+        const variants = getStoredData(STORAGE_KEYS.VARIANTS);
+        const filtered = variants.filter(v => v.id !== id);
+        setStoredData(STORAGE_KEYS.VARIANTS, filtered);
+        return filtered;
+    },
+
+    // --- USERS CRUD ---
+    getUsers: () => getStoredData(STORAGE_KEYS.USERS),
+
+    saveUser: (data) => {
+        const users = getStoredData(STORAGE_KEYS.USERS);
+        if (data.id) {
+            const updated = users.map(u => u.id === data.id ? { ...u, ...data } : u);
+            setStoredData(STORAGE_KEYS.USERS, updated);
+            return data;
+        } else {
+            const newUser = { ...data, id: 'user_' + Date.now(), last_login: null };
+            users.push(newUser);
+            setStoredData(STORAGE_KEYS.USERS, users);
+            return newUser;
+        }
+    },
+
+    deleteUser: (id) => {
+        const users = getStoredData(STORAGE_KEYS.USERS);
+        const filtered = users.filter(u => u.id !== id);
+        setStoredData(STORAGE_KEYS.USERS, filtered);
+    },
+
+    getRoles: () => getStoredData('surgical_roles') || [],
+
+    validateUser: (email, password) => {
+        const users = getStoredData(STORAGE_KEYS.USERS);
+        const user = users.find(u => u.email === email && u.password === password);
+        if (user && user.status === 'Active') {
+            // Update last login
+            const updated = users.map(u => u.id === user.id ? { ...u, last_login: new Date().toISOString() } : u);
+            setStoredData(STORAGE_KEYS.USERS, updated);
+            return user;
+        }
+        return null;
+    },
+
+    // --- SETTINGS & PAGES ---
+    getPages: () => getStoredData(STORAGE_KEYS.PAGES),
+    savePage: (data) => {
+        const pages = getStoredData(STORAGE_KEYS.PAGES);
+        const existingIndex = pages.findIndex(p => p.id === data.id);
+        if (existingIndex >= 0) {
+            pages[existingIndex] = { ...pages[existingIndex], ...data };
+        } else {
+            pages.push(data);
+        }
+        setStoredData(STORAGE_KEYS.PAGES, pages);
     },
 
     // --- DASHBOARD ---
@@ -337,6 +488,41 @@ export const mockBackend = {
             products: products.length,
             categories: categories.length,
             certificates: certificates.length
+        };
+    },
+
+    saveAccessRequest: (data) => {
+        // In a real app, this would save to a pending approvals table
+        console.log("Access Request Received:", data);
+
+        // Log to activity for demo
+        const logs = getStoredData(STORAGE_KEYS.ACTIVITY_LOG);
+        logs.push({
+            id: Date.now(),
+            user: "System",
+            action: "Access Request",
+            target: "User Registration",
+            details: `Request from ${data.name} (${data.email}) - ${data.role}`,
+            timestamp: new Date().toISOString()
+        });
+        setStoredData(STORAGE_KEYS.ACTIVITY_LOG, logs);
+
+        return { success: true, message: "Request queued for approval" };
+    },
+
+    // --- DASHBOARD STATS ---
+    getDashboardStats: () => {
+        const products = getStoredData(STORAGE_KEYS.PRODUCTS);
+        const enquiries = getStoredData(STORAGE_KEYS.ENQUIRIES);
+        const pendingEnquiries = enquiries.filter(e => e.status === 'New').length;
+
+        return {
+            totalProducts: products.length,
+            activeProducts: products.filter(p => p.is_active !== false).length,
+            totalEnquiries: enquiries.length,
+            pendingEnquiries,
+            todayVisits: 142, // Mock hardcoded for now
+            conversionRate: '3.2%'
         };
     },
 

@@ -32,6 +32,7 @@ import GeneralSettings from './pages/admin/GeneralSettings';
 import UserManager from './pages/admin/UserManager';
 import AdminRegister from './pages/admin/AdminRegister';
 import AdminForgotPassword from './pages/admin/AdminForgotPassword';
+import SupabaseMigration from './pages/admin/SupabaseMigration';
 
 import './styles/index.css';
 
@@ -55,6 +56,7 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/request-access" element={<AdminRegister />} />
         <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
+        <Route path="/admin/migrate" element={<SupabaseMigration />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<ProductManager />} />

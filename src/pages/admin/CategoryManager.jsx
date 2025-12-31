@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus, X, Search } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 
 const CategoryManager = () => {
     const [showModal, setShowModal] = useState(false);
     const [categories, setCategories] = useState([]);
     const [segments, setSegments] = useState([]);
-    const [formData, setFormData] = useState({ id: null, segment_id: '', name: '', description: '', status: 'Active' });
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({ id: null, segment_id: '', name: '', description: '', is_active: true });
 
     useEffect(() => {
         loadData();
     }, []);
 
-    const loadData = () => {
-        setCategories(mockBackend.getCategories());
-        setSegments(mockBackend.getSegments());
+    const loadData = async () => {
+        setLoading(true);
+        const [cats, segs] = await Promise.all([
+            supabaseService.getCategories(),
+            supabaseService.getSegments()
+        ]);
+        setCategories(cats);
+        setSegments(segs);
+        setLoading(false);
     };
 
     const handleEdit = (cat) => {
@@ -22,33 +29,38 @@ const CategoryManager = () => {
             id: cat.id,
             segment_id: cat.segment_id || '',
             name: cat.name,
-            description: cat.description || '', // mapped from subtitle/description keys
-            status: 'Active'
+            description: cat.description || '',
+            is_active: cat.is_active ?? true
         });
         setShowModal(true);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this category?')) {
-            mockBackend.deleteCategory(id);
-            loadData();
+            try {
+                await supabaseService.deleteCategory(id);
+                loadData();
+            } catch (error) {
+                alert('Error deleting category: ' + error.message);
+            }
         }
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!formData.name || !formData.segment_id) return alert('Name and Segment are required');
 
-        mockBackend.saveCategory({
-            id: formData.id,
-            segment_id: formData.segment_id,
-            name: formData.name,
-            description: formData.description,
-            count: 0
-        });
-
-        loadData();
-        setShowModal(false);
-        setFormData({ id: null, segment_id: '', name: '', description: '', status: 'Active' });
+        try {
+            if (formData.id) {
+                await supabaseService.updateCategory(formData.id, formData);
+            } else {
+                await supabaseService.createCategory(formData);
+            }
+            loadData();
+            setShowModal(false);
+            setFormData({ id: null, segment_id: '', name: '', description: '', is_active: true });
+        } catch (error) {
+            alert('Error saving category: ' + error.message);
+        }
     };
 
     return (

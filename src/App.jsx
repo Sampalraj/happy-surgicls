@@ -36,50 +36,59 @@ import SupabaseMigration from './pages/admin/SupabaseMigration';
 
 import './styles/index.css';
 
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="products" element={<Products />} />
-          <Route path="product/:id" element={<ProductDetail />} />
-          <Route path="services" element={<Services />} />
-          <Route path="manufacturing" element={<Manufacturing />} />
-          <Route path="about" element={<About />} />
-          <Route path="career" element={<Career />} />
-          <Route path="contact" element={<Contact />} />
-        </Route>
+      <AuthProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="products" element={<Products />} />
+            <Route path="product/:id" element={<ProductDetail />} />
+            <Route path="services" element={<Services />} />
+            <Route path="manufacturing" element={<Manufacturing />} />
+            <Route path="about" element={<About />} />
+            <Route path="career" element={<Career />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
 
-        {/* Admin Routes */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/request-access" element={<AdminRegister />} />
-        <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
-        <Route path="/admin/migrate" element={<SupabaseMigration />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="products" element={<ProductManager />} />
-          <Route path="products/new" element={<ProductForm />} />
-          <Route path="products/edit/:id" element={<ProductForm />} />
-          <Route path="categories" element={<CategoryManager />} />
-          <Route path="segments" element={<SegmentManager />} />
-          <Route path="branding" element={<Branding />} />
-          <Route path="enquiries" element={<Enquiries />} />
-          <Route path="certificates" element={<CertificatesList />} />
-          <Route path="certificates/new" element={<CertificateForm />} />
-          <Route path="certificates/edit/:id" element={<CertificateForm />} />
-          <Route path="audit" element={<AuditLog />} />
-          <Route path="media" element={<MediaLibrary />} />
-          <Route path="pages" element={<PageManager />} />
-          <Route path="settings" element={<GeneralSettings />} />
-          <Route path="settings" element={<GeneralSettings />} />
-          <Route path="users" element={<UserManager />} />
-          <Route path="audit-reports" element={<ReportGenerator />} />
-        </Route>
-        <Route path="/admin/reports/print" element={<AuditReportPrint />} />
-        <Route path="/virtual-tour" element={<VirtualTour />} />
-      </Routes>
+          {/* Admin Auth Routes (Public/Semipublic) */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/request-access" element={<AdminRegister />} />
+          <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
+          <Route path="/admin/migrate" element={<SupabaseMigration />} />
+
+          {/* Protected Admin Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="products" element={<ProductManager />} />
+              <Route path="products/new" element={<ProductForm />} />
+              <Route path="products/edit/:id" element={<ProductForm />} />
+              <Route path="categories" element={<CategoryManager />} />
+              <Route path="segments" element={<SegmentManager />} />
+              <Route path="branding" element={<Branding />} />
+              <Route path="enquiries" element={<Enquiries />} />
+              <Route path="certificates" element={<CertificatesList />} />
+              <Route path="certificates/new" element={<CertificateForm />} />
+              <Route path="certificates/edit/:id" element={<CertificateForm />} />
+              <Route path="audit" element={<AuditLog />} />
+              <Route path="media" element={<MediaLibrary />} />
+              <Route path="pages" element={<PageManager />} />
+              <Route path="settings" element={<GeneralSettings />} />
+              <Route path="users" element={<UserManager />} />
+              <Route path="audit-reports" element={<ReportGenerator />} />
+            </Route>
+            <Route path="/admin/reports/print" element={<AuditReportPrint />} />
+          </Route>
+
+          <Route path="/virtual-tour" element={<VirtualTour />} />
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 }

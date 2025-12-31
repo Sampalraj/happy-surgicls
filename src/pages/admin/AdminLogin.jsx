@@ -1,97 +1,119 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { mockBackend } from '../../utils/mockBackend';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Shield, Lock, Mail, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 import '../../styles/admin-auth.css';
-import { AlertCircle } from 'lucide-react';
 
 const AdminLogin = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const { login, user } = useAuth();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const handleLogin = (e) => {
+    // Redirect if already logged in
+    useEffect(() => {
+        if (user) {
+            const from = location.state?.from?.pathname || '/admin';
+            navigate(from, { replace: true });
+        }
+    }, [user, navigate, location]);
+
+    const handleLogin = async (e) => {
         e.preventDefault();
-        setLoading(true);
         setError(null);
+        setLoading(true);
 
-        // Simulate network delay
-        setTimeout(() => {
-            const user = mockBackend.validateUser(email, password);
-            if (user) {
-                localStorage.setItem('surgical_user', JSON.stringify(user));
-                navigate('/admin');
-            } else {
-                setError('Invalid email or password provided.');
-            }
+        try {
+            await login(email, password);
+            // Navigation will happen via useEffect above
+        } catch (err) {
+            console.error('Login error:', err);
+            setError(err.message || 'Invalid credentials');
+        } finally {
             setLoading(false);
-        }, 800);
+        }
     };
 
     return (
-        <div className="admin-auth-container">
+        <div className="auth-container">
             <div className="auth-card">
-                <img src="/logo.png" alt="Happy Surgicals" className="auth-logo" />
-
+                {/* Header Section */}
                 <div className="auth-header">
-                    <h2 className="auth-title">Admin Login</h2>
-                    <p className="auth-subtitle">Sign in to access the admin panel.</p>
+                    <div className="auth-logo-wrapper">
+                        <div className="auth-logo-icon">
+                            <Shield size={32} color="white" strokeWidth={2} />
+                        </div>
+                    </div>
+                    <h2 className="auth-title">Welcome Back</h2>
+                    <p className="auth-subtitle">Secure Access for Happy Surgicals Admin</p>
                 </div>
 
-                {error && (
-                    <div className="auth-alert error">
-                        <AlertCircle size={18} />
-                        <span>{error}</span>
-                    </div>
-                )}
+                {/* Form Section */}
+                <form onSubmit={handleLogin} className="auth-form">
 
-                <form className="auth-form" onSubmit={handleLogin}>
-                    <div className="form-group">
-                        <label className="form-label" htmlFor="email">Email Address</label>
-                        <input
-                            type="email"
-                            id="email"
-                            className="form-input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="name@company.com"
-                            required
-                        />
-                    </div>
+                    {error && (
+                        <div className="auth-alert error">
+                            <AlertCircle size={18} />
+                            <span>{error}</span>
+                        </div>
+                    )}
 
                     <div className="form-group">
-                        <label className="form-label" htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            className="form-input"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
-                            required
-                        />
+                        <label className="input-label">Email Address</label>
+                        <div className="input-wrapper">
+                            <Mail className="input-icon" size={20} />
+                            <input
+                                type="email"
+                                className="auth-input"
+                                placeholder="name@company.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
                     </div>
 
-                    <div className="auth-options">
-                        <label className="remember-me">
-                            <input type="checkbox" /> Remember me
-                        </label>
-                        <Link to="/admin/forgot-password" className="auth-link">Forgot password?</Link>
+                    <div className="form-group">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                            <label className="input-label" style={{ marginBottom: 0 }}>Password</label>
+                            <a href="/admin/forgot-password" style={{ fontSize: '0.85rem', color: 'var(--primary)', textDecoration: 'none', fontWeight: 500 }}>
+                                Forgot Password?
+                            </a>
+                        </div>
+                        <div className="input-wrapper">
+                            <Lock className="input-icon" size={20} />
+                            <input
+                                type="password"
+                                className="auth-input"
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
                     </div>
 
-                    <button type="submit" className="btn-auth-primary" disabled={loading}>
-                        {loading ? 'Signing in...' : 'Sign In'}
+                    <button
+                        type="submit"
+                        className="auth-button"
+                        disabled={loading}
+                    >
+                        {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
+                        {!loading && <ArrowRight size={20} />}
                     </button>
+
+                    <div className="auth-footer">
+                        <p>Need access? <a href="/admin/request-access">Request Administrator Account</a></p>
+                    </div>
+
                 </form>
-
-                <div className="auth-divider"></div>
-
-                <div className="auth-footer">
-                    <span>Don’t have access?</span>
-                    <Link to="/admin/request-access" className="auth-link">Request admin account</Link>
-                </div>
             </div>
+
+            <div className="auth-background-pattern"></div>
         </div>
     );
 };

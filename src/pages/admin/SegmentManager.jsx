@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus, X, Image as ImageIcon, Link as LinkIcon, Upload } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 import ImageUploader from './components/ImageUploader';
 
 const SegmentManager = () => {
     const [segments, setSegments] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({ id: null, name: '', description: '', hero_image: '', is_active: true });
 
@@ -15,8 +16,11 @@ const SegmentManager = () => {
         loadData();
     }, []);
 
-    const loadData = () => {
-        setSegments(mockBackend.getSegments());
+    const loadData = async () => {
+        setLoading(true);
+        const data = await supabaseService.getSegments();
+        setSegments(data);
+        setLoading(false);
     };
 
     const handleEdit = (seg) => {
@@ -27,21 +31,33 @@ const SegmentManager = () => {
         setShowModal(true);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (confirm('Delete this segment? This will affect all categories linked to it.')) {
-            mockBackend.deleteSegment(id);
-            loadData();
+            try {
+                await supabaseService.deleteSegment(id);
+                loadData();
+            } catch (error) {
+                alert('Error deleting segment: ' + error.message);
+            }
         }
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!formData.name) return alert('Name is required');
 
-        mockBackend.saveSegment(formData);
-        loadData();
-        setShowModal(false);
-        setFormData({ id: null, name: '', description: '', hero_image: '', is_active: true });
-        setImageInputType('url'); // Reset default
+        try {
+            if (formData.id) {
+                await supabaseService.updateSegment(formData.id, formData);
+            } else {
+                await supabaseService.createSegment(formData);
+            }
+            loadData();
+            setShowModal(false);
+            setFormData({ id: null, name: '', description: '', hero_image: '', is_active: true });
+            setImageInputType('url'); // Reset default
+        } catch (error) {
+            alert('Error saving segment: ' + error.message);
+        }
     };
 
     return (

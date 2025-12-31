@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, ShieldCheck, Box, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { mockBackend } from '../utils/mockBackend';
+import { supabaseService } from '../utils/supabaseService';
 import '../styles/products.css';
 
 const Products = () => {
@@ -13,37 +13,40 @@ const Products = () => {
 
     // Data State
     const [segments, setSegments] = useState([]);
-    const [categories, setCategories] = useState([]); // New State
+    const [categories, setCategories] = useState([]);
     const [selectedSegment, setSelectedSegment] = useState(null);
     const [activeSegmentIdx, setActiveSegmentIdx] = useState(0);
 
     useEffect(() => {
-        // Fetch Data
-        const fetchedProducts = mockBackend.getProducts();
-        setAllProducts(fetchedProducts);
+        const loadData = async () => {
+            // Fetch Data in parallel
+            const [products, segs, cats] = await Promise.all([
+                supabaseService.getProducts(),
+                supabaseService.getSegments(),
+                supabaseService.getCategories()
+            ]);
 
-        const fetchedSegments = mockBackend.getSegments();
-        setSegments(fetchedSegments);
+            setAllProducts(products);
+            setSegments(segs);
+            setCategories(cats);
 
-        const fetchedCategories = mockBackend.getCategories(); // Fetch Categories
-        setCategories(fetchedCategories);
-
-        // Handle URL Param (e.g. ?segment=Healthcare)
-        const segmentParam = searchParams.get('segment');
-        if (segmentParam) {
-            const found = fetchedSegments.find(s => s.name === segmentParam || s.id === segmentParam);
-            if (found) {
-                setSelectedSegment(found);
-                const idx = fetchedSegments.findIndex(s => s.id === found.id);
-                if (idx !== -1) setActiveSegmentIdx(idx);
-            } else if (fetchedSegments.length > 0) {
-                // Default to first if not found
-                setSelectedSegment(fetchedSegments[0]);
+            // Handle URL Param (e.g. ?segment=Healthcare)
+            const segmentParam = searchParams.get('segment');
+            if (segmentParam) {
+                const found = segs.find(s => s.name === segmentParam || s.id === segmentParam);
+                if (found) {
+                    setSelectedSegment(found);
+                    const idx = segs.findIndex(s => s.id === found.id);
+                    if (idx !== -1) setActiveSegmentIdx(idx);
+                } else if (segs.length > 0) {
+                    setSelectedSegment(segs[0]);
+                }
+            } else if (segs.length > 0) {
+                // Default to first segment if no param
+                setSelectedSegment(segs[0]);
             }
-        } else if (fetchedSegments.length > 0) {
-            // Default to first segment
-            setSelectedSegment(fetchedSegments[0]);
-        }
+        };
+        loadData();
     }, [searchParams]);
 
     // Filtering Logic

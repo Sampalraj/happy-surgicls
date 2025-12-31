@@ -19,7 +19,7 @@ const SupabaseMigration = () => {
                 description: seg.description,
                 display_order: seg.display_order,
                 is_active: seg.is_active,
-                hero_image: seg.hero_image
+                // hero_image: seg.hero_image -- Column missing in DB currently
             };
 
             if (existing) {
@@ -86,10 +86,11 @@ const SupabaseMigration = () => {
                 short_description: prod.short_description,
                 description: prod.description,
                 brand: prod.brand,
-                code: prod.code || prod.id,
+                // code: prod.code || prod.id, -- Column missing in DB currently
                 stock: prod.stock,
-                img: prod.img,
-                features: prod.features,
+                stock: prod.stock,
+                // img: prod.img, -- Column missing in DB
+                // features: prod.features, -- Column missing/mismatched in DB
                 is_active: prod.is_active
             };
 

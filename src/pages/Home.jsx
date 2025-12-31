@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { mockBackend } from '../utils/mockBackend';
+import { supabaseService } from '../utils/supabaseService';
 import { ArrowRight, Star, ShieldCheck, Activity, Building, Users, Award, Clock, Settings, ClipboardCheck, Truck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import '../styles/home.css';
@@ -14,16 +14,19 @@ const Home = () => {
     });
 
     useEffect(() => {
-        // Fetch Certificates
-        const allCerts = mockBackend.getCertificates();
-        const homepageCerts = allCerts.filter(c => c.status === 'Active' && c.show_on_homepage);
-        setCertificates(homepageCerts);
+        const loadData = async () => {
+            // Fetch Certificates
+            const certs = await supabaseService.getCertificates();
+            const homepageCerts = certs.filter(c => c.show_on_homepage);
+            setCertificates(homepageCerts);
 
-        // Fetch Page Content
-        const pageContent = mockBackend.getPageContent('home');
-        if (pageContent && Object.keys(pageContent).length > 0) {
-            setContent(prev => ({ ...prev, ...pageContent }));
-        }
+            // Fetch Page Content
+            const pageContent = await supabaseService.getPageContent('home');
+            if (pageContent) {
+                setContent(prev => ({ ...prev, ...pageContent }));
+            }
+        };
+        loadData();
     }, []);
 
     const scrollToProducts = () => {

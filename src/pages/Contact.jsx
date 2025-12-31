@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { mockBackend } from '../utils/mockBackend';
+import { supabaseService } from '../utils/supabaseService';
 import '../styles/home.css';
 
 const Contact = () => {
     const [searchParams] = useSearchParams();
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        phone: '',
         subject: '',
         message: ''
     });
@@ -21,7 +23,8 @@ const Contact = () => {
         contactInfo: {
             address: 'Loading...',
             email: 'Loading...',
-            phone: 'Loading...'
+            phone: 'Loading...',
+            hours: 'Loading...'
         }
     });
 
@@ -31,24 +34,42 @@ const Contact = () => {
             setFormData(prev => ({ ...prev, subject: subjectParam }));
         }
 
-        const pageContent = mockBackend.getPageContent('contact');
-        if (pageContent) {
-            setContent(prev => ({ ...prev, ...pageContent }));
-        }
+        const fetchContent = async () => {
+            const pageContent = await supabaseService.getPageContent('contact');
+            if (pageContent) {
+                setContent(prev => ({ ...prev, ...pageContent }));
+            }
+        };
+
+        fetchContent();
     }, [searchParams]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        mockBackend.saveEnquiry({
-            ...formData,
-            source: 'Contact Page'
-        });
-        setSubmitted(true);
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setLoading(true);
+
+        try {
+            await supabaseService.submitEnquiry({
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                subject: formData.subject,
+                message: formData.message,
+                source: 'Contact Page'
+            });
+
+            setSubmitted(true);
+            setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+        } catch (error) {
+            console.error(error);
+            alert('Failed to send message. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (submitted) {
@@ -56,7 +77,7 @@ const Contact = () => {
             <div className="contact-page" style={{ padding: '8rem 0', textAlign: 'center' }}>
                 <div className="container">
                     <div style={{ background: '#e6fffa', display: 'inline-block', padding: '2rem', borderRadius: '50%' }}>
-                        <Send size={48} color="#38a169" />
+                        <CheckCircle size={48} color="#38a169" />
                     </div>
                     <h2 style={{ fontSize: '2.5rem', margin: '2rem 0 1rem' }}>Thank You!</h2>
                     <p style={{ fontSize: '1.2rem', color: '#666', maxWidth: '600px', margin: '0 auto' }}>

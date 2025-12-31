@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from 'react';
+```javascript
+import React, { useEffect, useState } from 'react';
 import '../styles/about.css';
-import { ShieldCheck, Award, TrendingUp, Users } from 'lucide-react';
-import { mockBackend } from '../utils/mockBackend';
+import { Target, Eye, Award, Users, CheckCircle, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { supabaseService } from '../utils/supabaseService';
 
 const About = () => {
-    const [content, setContent] = useState({
-        title: 'About Us',
-        subtitle: 'Loading...',
-        content: '',
-        mission: '',
-        vision: '',
-        coreValues: [],
-        diagram: {
-            title: '',
-            philosophy: '',
-            whatWeDo: ''
         }
     });
 

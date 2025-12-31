@@ -1,24 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, CheckCircle, Search, Trash2 } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 
 const Enquiries = () => {
     const [enquiries, setEnquiries] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // Load enquiries from backend
-        setEnquiries(mockBackend.getEnquiries());
-    }, []);
-
-    const handleMarkResolved = (id) => {
-        mockBackend.updateEnquiryStatus(id, 'Resolved');
-        setEnquiries(mockBackend.getEnquiries()); // Refresh
+    const loadEnquiries = async () => {
+        setLoading(true);
+        const data = await supabaseService.getEnquiries();
+        setEnquiries(data || []);
+        setLoading(false);
     };
 
-    const handleDelete = (id) => {
+    useEffect(() => {
+        loadEnquiries();
+    }, []);
+
+    const handleMarkResolved = async (id) => {
+        try {
+            await supabaseService.updateEnquiryStatus(id, 'Resolved');
+            loadEnquiries();
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update status');
+        }
+    };
+
+    const handleDelete = async (id) => {
         if (window.confirm('Delete this enquiry?')) {
-            mockBackend.deleteEnquiry(id);
-            setEnquiries(mockBackend.getEnquiries());
+            try {
+                await supabaseService.deleteEnquiry(id);
+                loadEnquiries();
+            } catch (error) {
+                console.error(error);
+                alert('Failed to delete enquiry');
+            }
         }
     };
 
@@ -50,7 +67,7 @@ const Enquiries = () => {
                         ) : (
                             enquiries.map((enq) => (
                                 <tr key={enq.id}>
-                                    <td style={{ fontSize: '0.85rem', color: '#666' }}>{new Date(enq.date).toLocaleDateString()}</td>
+                                    <td style={{ fontSize: '0.85rem', color: '#666' }}>{new Date(enq.created_at || Date.now()).toLocaleDateString()}</td>
                                     <td>
                                         <div style={{ fontWeight: '500' }}>{enq.name}</div>
                                         <div style={{ fontSize: '0.8rem', color: '#888' }}>{enq.email}</div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Save, Upload } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 
 const CertificateForm = () => {
     const { id } = useParams();
@@ -10,13 +10,11 @@ const CertificateForm = () => {
 
     const [formData, setFormData] = useState({
         name: '',
-        type: 'Quality', // Quality, Compliance, Safety, Award
+        issuer: '',
+        expiry: '',
         image: '',
-        description: '',
         status: 'Active',
-        show_on_homepage: false,
-        show_on_manufacturing: false,
-        show_on_products: false,
+        show_on_products: true,
         category_ids: [] // Array of mapped category IDs
     });
 
@@ -24,23 +22,29 @@ const CertificateForm = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Load categories for mapping
-        const cats = mockBackend.getCategories();
-        setAllCategories(cats);
+        const loadData = async () => {
+            const cats = await supabaseService.getCategories();
+            setAllCategories(cats || []);
 
-        if (isEditMode) {
-            const data = mockBackend.getCertificate(id);
-            if (data) {
-                setFormData(prev => ({
-                    ...prev,
-                    ...data,
-                    category_ids: data.category_ids || [] // Ensure array
-                }));
-            } else {
-                alert('Certificate not found');
-                navigate('/admin/certificates');
+            if (isEditMode) {
+                const data = await supabaseService.getCertificate(id);
+                if (data) {
+                    setFormData({
+                        name: data.name || '',
+                        issuer: data.issuer || '',
+                        expiry: data.expiry || '',
+                        image: data.image || '',
+                        status: data.status || 'Active',
+                        show_on_products: data.show_on_products !== false,
+                        category_ids: data.category_ids || []
+                    });
+                } else {
+                    alert('Certificate not found');
+                    navigate('/admin/certificates');
+                }
             }
-        }
+        };
+        loadData();
     }, [id, isEditMode, navigate]);
 
     const handleChange = (e) => {
@@ -62,7 +66,7 @@ const CertificateForm = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
@@ -73,11 +77,24 @@ const CertificateForm = () => {
             return;
         }
 
-        setTimeout(() => {
-            mockBackend.saveCertificate(formData);
-            setLoading(false);
+        try {
+            const payload = { ...formData };
+            // Ensure expiry is null if empty string to avoid Date parse errors? 
+            // Postgres date field might complain about empty string.
+            if (payload.expiry === '') payload.expiry = null;
+
+            if (isEditMode) {
+                await supabaseService.updateCertificate(id, payload);
+            } else {
+                await supabaseService.createCertificate(payload);
+            }
             navigate('/admin/certificates');
-        }, 500);
+        } catch (error) {
+            console.error('Error saving certificate:', error);
+            alert('Failed to save certificate');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -110,25 +127,27 @@ const CertificateForm = () => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Type</label>
-                                <select name="type" value={formData.type} onChange={handleChange}>
-                                    <option value="Quality">Quality</option>
-                                    <option value="Compliance">Compliance</option>
-                                    <option value="Safety">Safety</option>
-                                    <option value="Award">Award</option>
-                                </select>
+                                <label>Issuer / Authority</label>
+                                <input
+                                    type="text"
+                                    name="issuer"
+                                    value={formData.issuer}
+                                    onChange={handleChange}
+                                    placeholder="e.g. SGS, FDA"
+                                    className="form-control"
+                                />
                             </div>
                         </div>
 
                         <div className="form-group">
-                            <label>Description (Optional)</label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
+                            <label>Expiry Date (Optional)</label>
+                            <input
+                                type="date"
+                                name="expiry"
+                                value={formData.expiry}
                                 onChange={handleChange}
-                                rows="3"
-                                placeholder="Short description for internal reference or tooltips."
-                            ></textarea>
+                                className="form-control"
+                            />
                         </div>
                     </div>
 
@@ -228,33 +247,7 @@ const CertificateForm = () => {
                         </div>
 
                         <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: 6, transition: 'all 0.2s', background: formData.show_on_homepage ? '#f0fdf4' : 'white', borderColor: formData.show_on_homepage ? '#86efac' : '#e2e8f0' }}>
-                                <input
-                                    type="checkbox"
-                                    name="show_on_homepage"
-                                    checked={formData.show_on_homepage}
-                                    onChange={handleChange}
-                                />
-                                <div>
-                                    <strong style={{ display: 'block' }}>Show on Homepage</strong>
-                                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Display in the "Trust & Quality" section on the main landing page.</span>
-                                </div>
-                            </label>
-
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: 6, transition: 'all 0.2s', background: formData.show_on_manufacturing ? '#feffc' : 'white', borderColor: formData.show_on_manufacturing ? '#fde047' : '#e2e8f0' }}>
-                                <input
-                                    type="checkbox"
-                                    name="show_on_manufacturing"
-                                    checked={formData.show_on_manufacturing}
-                                    onChange={handleChange}
-                                />
-                                <div>
-                                    <strong style={{ display: 'block' }}>Show on Manufacturing Page</strong>
-                                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Display in the factory details section.</span>
-                                </div>
-                            </label>
-
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: 6, transition: 'all 0.2s' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: 6, transition: 'all 0.2s', background: formData.show_on_products ? '#f0fdf4' : 'white', borderColor: formData.show_on_products ? '#86efac' : '#e2e8f0' }}>
                                 <input
                                     type="checkbox"
                                     name="show_on_products"

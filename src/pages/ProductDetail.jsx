@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { MessageCircle, Truck, ShieldCheck, CreditCard, ChevronRight, ChevronLeft, X, CheckCircle } from 'lucide-react';
-import { mockBackend } from '../utils/mockBackend';
+import { supabaseService } from '../utils/supabaseService';
 import '../styles/product_detail.css';
 
 const ProductDetail = () => {
@@ -16,21 +16,18 @@ const ProductDetail = () => {
     const [formData, setFormData] = useState({ name: '', phone: '', message: '' });
 
     useEffect(() => {
-        const found = mockBackend.getProduct(id);
-        if (found) {
-            setProduct(found);
-
-            // Resolve Relations
-            if (found.segment_id) {
-                const segs = mockBackend.getSegments();
-                setSegment(segs.find(s => s.id === found.segment_id));
+        const loadProduct = async () => {
+            setLoading(true);
+            const found = await supabaseService.getProduct(id);
+            if (found) {
+                setProduct(found);
+                // Set flattened segment/category for UI
+                if (found.segment) setSegment({ name: found.segment });
+                if (found.category) setCategory({ name: found.category });
             }
-            if (found.category_id) {
-                const cats = mockBackend.getCategories();
-                setCategory(cats.find(c => c.id === found.category_id));
-            }
-        }
-        setLoading(false);
+            setLoading(false);
+        };
+        loadProduct();
     }, [id]);
 
     const handleInquiry = () => {
@@ -40,9 +37,10 @@ const ProductDetail = () => {
 
     const handleModalSubmit = (e) => {
         e.preventDefault();
-        mockBackend.saveEnquiry({
+        supabaseService.submitEnquiry({
             name: formData.name,
-            email: formData.phone, // Using phone field for now as contact
+            phone: formData.phone, // Using phone field for now as contact
+            email: formData.phone.includes('@') ? formData.phone : null, // Fallback if user enters email in phone
             subject: `Product Inquiry: ${product.name} `,
             message: formData.message,
             source: 'Product Detail'
@@ -240,15 +238,10 @@ const ProductDetail = () => {
                     <h3 style={{ textTransform: 'uppercase', marginBottom: '2rem', color: '#333' }}>You May Also Interested In</h3>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
-                        {mockBackend.getProducts().slice(0, 4).map(p => (
-                            <div key={p.id} style={{ border: '1px solid #eee', padding: '1rem', borderRadius: '4px', textAlign: 'center', background: 'white' }}>
-                                <div style={{ height: '120px', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <img src={p.img} alt={p.name} style={{ maxWidth: '100%', maxHeight: '100%' }} onError={(e) => e.target.style.display = 'none'} />
-                                </div>
-                                <h4 style={{ fontSize: '0.9rem', marginBottom: '0.5rem', height: '2.4em', overflow: 'hidden' }}>{p.name}</h4>
-                                <Link to={`/product/${p.id}`} style={{ border: '1px solid #004daa', color: '#004daa', background: 'white', padding: '5px 15px', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-block' }}>View Details</Link>
-                            </div>
-                        ))}
+                        {/* TODO: Implement real related products fetch */}
+                        <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#999', padding: '2rem' }}>
+                            View our full catalog for more options.
+                        </div>
                     </div>
                 </div>
 
@@ -278,16 +271,19 @@ const ProductCertificates = ({ product }) => {
     const [certs, setCerts] = useState([]);
 
     useEffect(() => {
-        if (product) {
-            const applicableCerts = mockBackend.getEffectiveCertificates(product);
-            // Also filter by 'show_on_products' logic if we want to enforce it strict? user guide said 'show_on_products' checkbox.
-            // Usually overrides might bypass this if explicitly selected, but sticking to global visibility rules is safer. 
-            // Let's assume specific selection implies visibility, but category inheritance respects the flag.
-            // For simplicity, effective certs checks "Active", we can filter show_on_products too if it comes from category.
-            // Since getEffectiveCertificates returns the final list, lets just filter by show_on_products for consistency with frontend rules.
-            const displayCerts = applicableCerts.filter(c => c.show_on_products);
-            setCerts(displayCerts);
-        }
+        const loadCerts = async () => {
+            if (product) {
+                const allCerts = await supabaseService.getCertificates();
+                // Filter certs where category_ids contains product.category_id
+                const applicableCerts = allCerts.filter(c =>
+                    c.category_ids && c.category_ids.includes(product.category_id)
+                );
+                // Filter by show_on_products
+                const displayCerts = applicableCerts.filter(c => c.show_on_products);
+                setCerts(displayCerts);
+            }
+        };
+        loadCerts();
     }, [product]);
 
     if (certs.length === 0) return null;

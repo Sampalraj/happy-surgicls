@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Globe, Phone, Mail, MapPin, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 import ImageUploader from './components/ImageUploader';
 
 const GeneralSettings = () => {
@@ -21,8 +21,22 @@ const GeneralSettings = () => {
     const [message, setMessage] = useState(null);
 
     useEffect(() => {
-        const data = mockBackend.getSettings();
-        if (data) setSettings(prev => ({ ...prev, ...data }));
+        const loadSettings = async () => {
+            try {
+                const data = await supabaseService.getSettings();
+                if (data && Object.keys(data).length > 0) {
+                    // Ensure nested objects exist to prevent collision with default state
+                    setSettings(prev => ({
+                        ...prev,
+                        ...data,
+                        socials: { ...prev.socials, ...(data.socials || {}) }
+                    }));
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        };
+        loadSettings();
     }, []);
 
     const handleChange = (e) => {
@@ -42,16 +56,19 @@ const GeneralSettings = () => {
         setSettings(prev => ({ ...prev, logo: base64Image }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            mockBackend.saveSettings(settings);
-            setLoading(false);
+        try {
+            await supabaseService.saveSettings(settings);
             setMessage({ type: 'success', text: 'Settings updated successfully!' });
             setTimeout(() => setMessage(null), 3000);
-        }, 800);
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            setMessage({ type: 'error', text: 'Failed to save settings' });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

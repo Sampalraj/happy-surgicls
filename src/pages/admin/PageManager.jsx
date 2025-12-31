@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Edit, Eye, Save, Plus, Trash2 } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 import ImageUploader from './components/ImageUploader';
 
 const PageManager = () => {
@@ -17,21 +17,33 @@ const PageManager = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState(null);
 
-    const handleEdit = (pageId) => {
+    const handleEdit = async (pageId) => {
         setLoading(true);
-        const data = mockBackend.getPageContent(pageId);
-        setContent(data || {});
-        setEditingPage(pageId);
-        setLoading(false);
-        setMessage(null);
+        try {
+            const data = await supabaseService.getPageContent(pageId);
+            setContent(data || {});
+            setEditingPage(pageId);
+            setMessage(null);
+        } catch (error) {
+            console.error(error);
+            alert('Failed to load page content');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setLoading(true);
-        mockBackend.savePageContent(editingPage, content);
-        setLoading(false);
-        setMessage({ type: 'success', text: 'Page content saved successfully!' });
-        setTimeout(() => setMessage(null), 3000);
+        try {
+            await supabaseService.savePageContent(editingPage, content);
+            setMessage({ type: 'success', text: 'Page content saved successfully!' });
+            setTimeout(() => setMessage(null), 3000);
+        } catch (error) {
+            console.error(error);
+            setMessage({ type: 'error', text: 'Failed to save content.' });
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleTextChange = (e, section = null) => {

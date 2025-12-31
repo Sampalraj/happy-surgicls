@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Package, List, File, Plus, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -13,7 +13,20 @@ const Dashboard = () => {
     });
 
     useEffect(() => {
-        setStats(mockBackend.getStats());
+        const loadStats = async () => {
+            try {
+                const data = await supabaseService.getStats();
+                setStats({
+                    totalEnquiries: data.enquiries || 0,
+                    newEnquiries: 0, // Pending implementation of "New" statuses count
+                    products: data.products || 0,
+                    categories: data.categories || 0
+                });
+            } catch (error) {
+                console.error("Failed to load stats", error);
+            }
+        };
+        loadStats();
     }, []);
 
     return (

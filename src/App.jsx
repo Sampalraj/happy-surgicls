@@ -60,7 +60,7 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/request-access" element={<AdminRegister />} />
           <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
-          <Route path="/admin/migrate" element={<SupabaseMigration />} />
+
 
           {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute />}>
@@ -82,6 +82,7 @@ function App() {
               <Route path="settings" element={<GeneralSettings />} />
               <Route path="users" element={<UserManager />} />
               <Route path="audit-reports" element={<ReportGenerator />} />
+              <Route path="migrate" element={<SupabaseMigration />} />
             </Route>
             <Route path="/admin/reports/print" element={<AuditReportPrint />} />
           </Route>

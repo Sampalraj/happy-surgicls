@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Edit, Trash2, ShieldCheck, Home, Factory, Box } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 
 const CertificatesList = () => {
     const [certificates, setCertificates] = useState([]);
@@ -11,44 +11,26 @@ const CertificatesList = () => {
         loadCertificates();
     }, []);
 
-    const loadCertificates = () => {
+    const loadCertificates = async () => {
         setLoading(true);
-        // Simulate network delay
-        setTimeout(() => {
-            const data = mockBackend.getCertificates();
+        try {
+            const data = await supabaseService.getCertificates();
             setCertificates(data);
-            setLoading(false);
-        }, 500);
+        } catch (error) {
+            console.error(error);
+        }
+        setLoading(false);
     };
 
-    const handleDelete = (id, certName) => {
-        // Check if certificate is in use
-        const usage = mockBackend.checkCertificateUsage(id);
-
-        if (usage.inUse) {
-            const categoriesList = usage.categories.join(', ');
-            const productsList = usage.products.join(', ');
-
-            let warningMessage = `⚠️ Cannot delete "${certName}" - it is currently in use:\n\n`;
-
-            if (usage.categories.length > 0) {
-                warningMessage += `📁 Categories (${usage.categories.length}): ${categoriesList}\n`;
-            }
-
-            if (usage.products.length > 0) {
-                warningMessage += `📦 Products (${usage.products.length}): ${productsList}\n`;
-            }
-
-            warningMessage += `\n💡 Please remove this certificate from the above items before deleting.`;
-
-            alert(warningMessage);
-            return;
-        }
-
-        // No dependencies - safe to delete with confirmation
+    const handleDelete = async (id, certName) => {
         if (window.confirm(`Are you sure you want to delete "${certName}"?\n\nThis action cannot be undone.`)) {
-            mockBackend.deleteCertificate(id);
-            loadCertificates();
+            try {
+                await supabaseService.deleteCertificate(id);
+                loadCertificates();
+            } catch (error) {
+                console.error(error);
+                alert('Failed to delete certificate');
+            }
         }
     };
 
@@ -101,28 +83,21 @@ const CertificatesList = () => {
                                         </td>
                                         <td>
                                             <div style={{ fontWeight: '600', color: '#1e293b' }}>{cert.name}</div>
-                                            <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Updated: {new Date(cert.updated_at).toLocaleDateString()}</div>
+                                            <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Added: {new Date(cert.created_at).toLocaleDateString()}</div>
                                         </td>
                                         <td>
                                             <span style={{
                                                 background: '#eff6ff', color: '#1d4ed8',
                                                 padding: '0.25rem 0.5rem', borderRadius: 4, fontSize: '0.75rem', fontWeight: '500'
                                             }}>
-                                                {cert.type}
+                                                Standard
                                             </span>
                                         </td>
                                         <td>
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                {cert.show_on_homepage && (
-                                                    <span title="Homepage" style={{ background: '#f0fdf4', color: '#15803d', padding: 4, borderRadius: 4 }}><Home size={14} /></span>
-                                                )}
-                                                {cert.show_on_manufacturing && (
-                                                    <span title="Manufacturing" style={{ background: '#fefce8', color: '#a16207', padding: 4, borderRadius: 4 }}><Factory size={14} /></span>
-                                                )}
-                                                {cert.show_on_products && (
-                                                    <span title="Products" style={{ background: '#f1f5f9', color: '#475569', padding: 4, borderRadius: 4 }}><Box size={14} /></span>
-                                                )}
-                                                {!cert.show_on_homepage && !cert.show_on_manufacturing && !cert.show_on_products && (
+                                                {cert.show_on_products ? (
+                                                    <span title="Products" style={{ background: '#f1f5f9', color: '#475569', padding: 4, borderRadius: 4 }}><Box size={14} /> Product Pages</span>
+                                                ) : (
                                                     <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>-</span>
                                                 )}
                                             </div>

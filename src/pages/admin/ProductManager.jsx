@@ -1,21 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 
 const ProductManager = () => {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    const loadProducts = async () => {
+        setLoading(true);
+        const data = await supabaseService.getProducts();
+        setProducts(data);
+        setLoading(false);
+    };
 
     useEffect(() => {
-        setProducts(mockBackend.getProducts());
+        loadProducts();
     }, []);
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
-            mockBackend.deleteProduct(id);
-            setProducts(mockBackend.getProducts()); // Refresh list
+            try {
+                await supabaseService.deleteProduct(id);
+                // Log activity?
+                await supabaseService.logActivity('Admin', 'Deleted', `Product ID: ${id}`, 'Deleted from Product Manager');
+                loadProducts(); // Refresh list
+            } catch (error) {
+                alert('Error deleting product');
+                console.error(error);
+            }
         }
     };
 

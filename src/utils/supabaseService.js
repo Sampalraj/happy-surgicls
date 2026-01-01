@@ -279,4 +279,18 @@ export const supabaseService = {
         if (error) throw error;
         return true;
     },
+
+    // --- Logs ---
+    getLogs: async () => {
+        const { data, error } = await supabase.from('audit_logs').select('*').order('created_at', { ascending: false });
+        if (error) {
+            console.error('Error fetching logs:', error);
+            return [];
+        }
+        return data.map(log => ({
+            ...log,
+            timestamp: log.created_at, // Map for UI consistency
+            user: log.user_email || 'System'
+        }));
+    },
 };

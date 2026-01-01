@@ -22,7 +22,8 @@ const AdminRegister = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Simulate API call
-        mockBackend.saveAccessRequest(formData);
+        // mockBackend.saveAccessRequest(formData);
+        console.log("Access Request", formData);
 
         // Show success state
         setTimeout(() => {

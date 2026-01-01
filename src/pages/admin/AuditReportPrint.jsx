@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { mockBackend } from '../../utils/mockBackend'; // Remove or comment out
+import { supabaseService } from '../../utils/supabaseService';
 
 const AuditReportPrint = () => {
     const [searchParams] = useSearchParams();
@@ -15,42 +15,39 @@ const AuditReportPrint = () => {
 
     useEffect(() => {
         // Gather data based on scope
-        const gatherData = () => {
-            const allCerts = mockBackend.getCertificates();
-            const allProducts = mockBackend.getProducts();
-            const allCats = mockBackend.getCategories();
-            const allLogs = mockBackend.getLogs();
+        const gatherData = async () => {
+            const allCerts = await supabaseService.getCertificates();
+            const allProducts = await supabaseService.getProducts();
+            const allCats = await supabaseService.getCategories();
+            const allLogs = await supabaseService.getLogs();
 
             let reportData = {
                 scope,
                 targetName: scope === 'Company' ? 'Happy Surgicals' : '',
                 certificates: [],
                 products: [],
-                logs: allLogs.slice(0, 50) // Last 50 relevant logs?
+                logs: allLogs.slice(0, 50)
             };
 
             if (scope === 'Company') {
                 reportData.certificates = allCerts;
                 reportData.products = allProducts;
             } else if (scope === 'Category') {
-                const cat = allCats.find(c => c.id === targetId);
+                const cat = allCats.find(c => c.id === parseInt(targetId) || c.id === targetId);
                 reportData.targetName = cat?.name || 'Unknown Category';
-                reportData.certificates = mockBackend.getCertificatesForCategory(targetId);
-                reportData.products = allProducts.filter(p => p.category === cat?.name);
+                // Filter certs by category
+                reportData.certificates = allCerts.filter(c => c.category_ids && c.category_ids.includes(cat?.id));
+                reportData.products = allProducts.filter(p => p.category_id === cat?.id);
             } else if (scope === 'Product') {
-                const prod = allProducts.find(p => p.id === targetId);
+                const prod = allProducts.find(p => p.id === parseInt(targetId) || p.id === targetId);
                 reportData.targetName = prod?.name || 'Unknown Product';
                 reportData.products = prod ? [prod] : [];
-                reportData.certificates = mockBackend.getEffectiveCertificates(prod);
+                // Effective certs logic: product's category certs
+                reportData.certificates = allCerts.filter(c => c.category_ids && prod && c.category_ids.includes(prod.category_id));
             }
 
             setData(reportData);
             setLoading(false);
-
-            // Auto-print removed for dev; can be re-enabled if needed
-            // setTimeout(() => {
-            //     window.print();
-            // }, 1000);
         };
 
         gatherData();
@@ -213,7 +210,7 @@ const AuditReportPrint = () => {
                             </thead>
                             <tbody>
                                 {data.products.length > 0 ? data.products.map(prod => {
-                                    const certs = mockBackend.getEffectiveCertificates(prod);
+                                    const certs = data.certificates.filter(c => c.category_ids && c.category_ids.includes(prod.category_id));
                                     const isInherited = prod.inherit_certificates !== false;
                                     return (
                                         <tr key={prod.id}>
@@ -261,7 +258,7 @@ const AuditReportPrint = () => {
                                 <div style={{ fontSize: '12px' }}>
                                     <strong>Configured Certificates:</strong>
                                     <div style={{ marginTop: '5px' }}>
-                                        {mockBackend.getEffectiveCertificates(prod).map(c => (
+                                        {data.certificates.filter(c => c.category_ids && c.category_ids.includes(prod.category_id)).map(c => (
                                             <span key={c.id} className="badge" style={{ marginRight: '8px', background: 'white' }}>{c.name}</span>
                                         ))}
                                     </div>

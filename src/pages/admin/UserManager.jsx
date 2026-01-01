@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus, X, User as UserIcon, Shield, Check, Mail } from 'lucide-react';
-// import { mockBackend } from '../../utils/mockBackend';
+// import { supabaseService } from '../../utils/supabaseService';
 
 const UserManager = () => {
     const [users, setUsers] = useState([]);
@@ -11,15 +11,17 @@ const UserManager = () => {
 
     useEffect(() => {
         // mockBackend.getUsers(); // Commented out as per instruction
-        setUsers([]); // Set users to empty array
-        setLoading(false); // Set loading to false
-        setRoles(mockBackend.getRoles()); // Keep roles loading
+        // fetchUsers();
+        // Stubbed for now
+        setLoading(false);
+        // setUsers([]); // Set users to empty array
+        // setRoles(mockBackend.getRoles()); // Keep roles loading
     }, []);
 
     const loadData = () => {
         // This function is now partially redundant for users due to the above useEffect
         // setUsers(mockBackend.getUsers()); // This line would also be affected by "fetchUsers usage"
-        setRoles(mockBackend.getRoles());
+        // setRoles(mockBackend.getRoles());
     };
 
     const handleEdit = (user) => {

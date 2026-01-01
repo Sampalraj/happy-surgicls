@@ -108,19 +108,7 @@ export const supabaseService = {
         return data.content;
     },
 
-    getCertificates: async () => {
-        const { data, error } = await supabase
-            .from('certificates')
-            .select('*')
-            .eq('is_active', true)
-            .order('display_order', { ascending: true });
-
-        if (error) {
-            console.error('Error fetching certificates:', error);
-            return [];
-        }
-        return data;
-    },
+    // getCertificates moved to Certificates section to avoid duplicate key
     submitEnquiry: async (enquiryData) => {
         const payload = { ...enquiryData, status: 'New' };
         if (!payload.created_at) delete payload.created_at;

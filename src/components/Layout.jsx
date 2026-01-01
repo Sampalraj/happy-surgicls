@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Menu, X, Phone, Mail, MapPin, ChevronDown, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { supabaseService } from '../utils/supabaseService';
 import MegaMenu from './MegaMenu';
 import '../styles/megamenu.css';
+import SurgicalVectors from './SurgicalVectors';
 
 const Layout = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,6 +18,7 @@ const Layout = () => {
         address: '123, Medical Park, New Delhi',
         socials: {}
     });
+    const location = useLocation();
     let timeoutId;
 
     useEffect(() => {
@@ -42,9 +45,12 @@ const Layout = () => {
     };
 
     return (
-        <div className="layout">
+        <div className="layout" style={{ position: 'relative' }}>
+            {/* Global Animated Vectors */}
+            <SurgicalVectors variant="public" />
+
             {/* Top Bar */}
-            <div className="top-bar" style={{ background: '#1e293b', color: 'white', padding: '0.5rem 0', fontSize: '0.85rem' }}>
+            <div className="top-bar" style={{ background: '#1e293b', color: 'white', padding: '0.5rem 0', fontSize: '0.85rem', position: 'relative', zIndex: 10 }}>
                 <div className="container top-bar-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div className="contact-info" style={{ display: 'flex', gap: '1.5rem' }}>
                         <a href={`tel:${settings.phone}`} style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
@@ -113,7 +119,7 @@ const Layout = () => {
                 </div>
             </header>
 
-            {/* Mobile Nav Overlay (Simplified for now) */}
+            {/* Mobile Nav Overlay */}
             {isMenuOpen && (
                 <div className="mobile-nav" style={{ position: 'fixed', top: 60, left: 0, right: 0, background: 'white', padding: '1rem', borderBottom: '1px solid #eee', zIndex: 999, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <Link to="/" onClick={toggleMenu}>Home</Link>
@@ -125,13 +131,23 @@ const Layout = () => {
                 </div>
             )}
 
-            {/* Main Content */}
-            <main onClick={() => setIsMegaMenuOpen(false)} style={{ minHeight: '60vh' }}>
-                <Outlet />
+            {/* Main Content with Transition */}
+            <main onClick={() => setIsMegaMenuOpen(false)} style={{ minHeight: '60vh', position: 'relative', zIndex: 5 }}>
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={location.pathname}
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -15 }}
+                        transition={{ duration: 0.3, ease: 'easeOut' }}
+                    >
+                        <Outlet />
+                    </motion.div>
+                </AnimatePresence>
             </main>
 
             {/* Footer */}
-            <footer className="footer" style={{ background: '#1e293b', color: '#e2e8f0', padding: '4rem 0 2rem' }}>
+            <footer className="footer" style={{ background: '#1e293b', color: '#e2e8f0', padding: '4rem 0 2rem', position: 'relative', zIndex: 10 }}>
                 <div className="container footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
                     <div className="footer-col">
                         <h3 style={{ color: 'white', fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>{settings.siteName}</h3>

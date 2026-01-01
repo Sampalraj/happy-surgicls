@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Shield, Lock, Mail, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Shield, Lock, Mail, ArrowRight, Activity, Plus, HeartPulse, AlertCircle, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import '../../styles/admin-auth.css';
 
@@ -29,7 +30,6 @@ const AdminLogin = () => {
 
         try {
             await login(email, password);
-            // Navigation will happen via useEffect above
         } catch (err) {
             console.error('Login error:', err);
             setError(err.message || 'Invalid credentials');
@@ -38,82 +38,161 @@ const AdminLogin = () => {
         }
     };
 
+    // Vector Animation Variants
+    const floatingVariant = {
+        animate: {
+            y: [0, -20, 0],
+            rotate: [0, 5, -5, 0],
+            transition: {
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut"
+            }
+        }
+    };
+
     return (
-        <div className="auth-container">
-            <div className="auth-card">
-                {/* Header Section */}
-                <div className="auth-header">
-                    <div className="auth-logo-wrapper">
-                        <div className="auth-logo-icon">
-                            <Shield size={32} color="white" strokeWidth={2} />
-                        </div>
-                    </div>
-                    <h2 className="auth-title">Welcome Back</h2>
-                    <p className="auth-subtitle">Secure Access for Happy Surgicals Admin</p>
+        <div className="login-page-container">
+            {/* LEFT SIDE: Hero & Vectors */}
+            <div className="login-hero-section">
+                {/* Background Animation (EKG) defined in CSS */}
+                <div className="ekg-line"></div>
+
+                {/* Floating Vectors */}
+                <div className="hero-vectors-container">
+                    <motion.div
+                        style={{ position: 'absolute', top: '15%', left: '15%', opacity: 0.2 }}
+                        variants={floatingVariant}
+                        animate="animate"
+                    >
+                        <HeartPulse size={64} color="white" />
+                    </motion.div>
+
+                    <motion.div
+                        style={{ position: 'absolute', bottom: '20%', right: '15%', opacity: 0.15 }}
+                        animate={{ y: [0, 30, 0], opacity: [0.1, 0.3, 0.1] }}
+                        transition={{ duration: 8, repeat: Infinity }}
+                    >
+                        <Plus size={120} color="white" strokeWidth={4} />
+                    </motion.div>
+
+                    <motion.div
+                        style={{ position: 'absolute', top: '40%', right: '10%', opacity: 0.1 }}
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                    >
+                        <Activity size={180} color="white" />
+                    </motion.div>
                 </div>
 
-                {/* Form Section */}
-                <form onSubmit={handleLogin} className="auth-form">
+                <motion.div
+                    className="hero-content"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                >
+                    <motion.div
+                        className="hero-logo"
+                        whileHover={{ scale: 1.1, rotate: 10 }}
+                    >
+                        <Shield size={64} color="white" strokeWidth={1.5} />
+                    </motion.div>
+                    <h1 className="hero-title">Happy Surgicals</h1>
+                    <p className="hero-subtitle">Secure Admin Portal • Inventory Control • Compliance Management</p>
+                </motion.div>
+            </div>
 
-                    {error && (
-                        <div className="auth-alert error">
-                            <AlertCircle size={18} />
-                            <span>{error}</span>
-                        </div>
-                    )}
+            {/* RIGHT SIDE: Form */}
+            <div className="login-form-section">
+                <motion.div
+                    className="auth-card-modern"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                    <div className="form-header">
+                        <motion.h2
+                            className="form-title"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            Welcome Back
+                        </motion.h2>
+                        <p className="form-subtitle">Please sign in to access your dashboard.</p>
+                    </div>
 
-                    <div className="form-group">
-                        <label className="input-label">Email Address</label>
-                        <div className="input-wrapper">
-                            <Mail className="input-icon" size={20} />
+                    <form onSubmit={handleLogin}>
+                        {error && (
+                            <motion.div
+                                className="auth-alert error"
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                            >
+                                <AlertCircle size={18} />
+                                <span>{error}</span>
+                            </motion.div>
+                        )}
+
+                        <div className="input-group-modern">
                             <input
                                 type="email"
-                                className="auth-input"
-                                placeholder="name@company.com"
+                                className="input-modern"
+                                placeholder="Email Address"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
+                            <Mail className="input-icon-modern" size={20} />
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                            <label className="input-label" style={{ marginBottom: 0 }}>Password</label>
-                            <a href="/admin/forgot-password" style={{ fontSize: '0.85rem', color: 'var(--primary)', textDecoration: 'none', fontWeight: 500 }}>
-                                Forgot Password?
-                            </a>
-                        </div>
-                        <div className="input-wrapper">
-                            <Lock className="input-icon" size={20} />
+                        <div className="input-group-modern">
                             <input
                                 type="password"
-                                className="auth-input"
-                                placeholder="Enter your password"
+                                className="input-modern"
+                                placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
+                            <Lock className="input-icon-modern" size={20} />
                         </div>
-                    </div>
 
-                    <button
-                        type="submit"
-                        className="auth-button"
-                        disabled={loading}
-                    >
-                        {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
-                        {!loading && <ArrowRight size={20} />}
-                    </button>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '2rem' }}>
+                            <Link to="/admin/forgot-password" style={{ color: '#0f766e', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>
+                                Forgot Password?
+                            </Link>
+                        </div>
 
-                    <div className="auth-footer">
-                        <p>Need access? <a href="/admin/request-access">Request Administrator Account</a></p>
-                    </div>
+                        <motion.button
+                            type="submit"
+                            className="btn-modern"
+                            disabled={loading}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            {loading ? (
+                                <>
+                                    <span style={{ width: 16, height: 16, border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }}></span>
+                                    Verifying...
+                                </>
+                            ) : (
+                                <>
+                                    Sign In <ArrowRight size={20} />
+                                </>
+                            )}
+                        </motion.button>
 
-                </form>
+                        <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem', color: '#94a3b8' }}>
+                            Restricted Area. Authorized Personnel Only.
+                        </div>
+                    </form>
+                </motion.div>
             </div>
 
-            <div className="auth-background-pattern"></div>
+            <style>{`
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            `}</style>
         </div>
     );
 };

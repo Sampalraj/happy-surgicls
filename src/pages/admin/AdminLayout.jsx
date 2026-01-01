@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
     LayoutDashboard, Package, Palette, FileText, Settings, User, LogOut,
     Image, MessageSquare, List, ShieldCheck, ClipboardList
 } from 'lucide-react';
 import '../../styles/admin.css';
-// import { mockBackend } from '../../utils/mockBackend';
+import SurgicalVectors from '../../components/SurgicalVectors';
 
 const AdminLayout = () => {
     const location = useLocation();
@@ -33,10 +34,13 @@ const AdminLayout = () => {
 
     const isSuperAdmin = user.role === 'Super Admin';
 
+    // ... existing code ...
+
     return (
-        <div className="admin-layout">
+        <div className="admin-layout" style={{ position: 'relative', overflow: 'hidden' }}>
+            <SurgicalVectors variant="admin" />
             {/* Left Sidebar */}
-            <aside className="admin-sidebar" style={{ backgroundColor: 'white' }}>
+            <aside className="admin-sidebar" style={{ backgroundColor: 'white', position: 'relative', zIndex: 10 }}>
                 <div className="sidebar-header">
                     <img src="/logo.png" alt="Happy Surgicals" style={{ height: 32 }} />
                     <span style={{ color: '#1e293b' }}>Happy Surgicals</span>
@@ -132,7 +136,7 @@ const AdminLayout = () => {
             </aside>
 
             {/* Main Content Area */}
-            <div className="admin-main">
+            <div className="admin-main" style={{ position: 'relative', zIndex: 5 }}>
                 {/* Top Bar with Search */}
                 <header className="admin-topbar">
                     <h2 className="page-title" style={{ fontSize: '1.5rem' }}>Admin Panel</h2>
@@ -212,7 +216,17 @@ const AdminLayout = () => {
 
                 {/* Page Content */}
                 <main className="admin-content" style={{ background: '#f1f5f9' }}>
-                    <Outlet />
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={location.pathname}
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -10 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <Outlet />
+                        </motion.div>
+                    </AnimatePresence>
                 </main>
             </div>
         </div>

@@ -18,7 +18,13 @@ export const AuthProvider = ({ children }) => {
         checkSession();
 
         // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                // Determine if we are on the reset page, if not redirect?
+                // Actually Supabase handles the link click -> URL hash
+                // We just need to ensure we don't kick them out.
+                // Reset password page handles its own session check.
+            }
             setUser(session?.user ?? null);
             setLoading(false);
         });

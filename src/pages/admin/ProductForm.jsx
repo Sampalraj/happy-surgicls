@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
     Save, ArrowLeft, Upload, Plus, Trash2, ChevronRight,
     Image as ImageIcon, FileText, CheckCircle, Circle, Link as LinkIcon
-    Image as ImageIcon, FileText, CheckCircle, Circle, Link as LinkIcon
 } from 'lucide-react';
 import { supabaseService } from '../../utils/supabaseService';
 import ImageUploader from './components/ImageUploader';

@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus, X, User as UserIcon, Shield, Check, Mail } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+// import { mockBackend } from '../../utils/mockBackend';
 
 const UserManager = () => {
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({ id: null, name: '', email: '', role_id: '', password: '', status: 'Active' });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadData();
+        // mockBackend.getUsers(); // Commented out as per instruction
+        setUsers([]); // Set users to empty array
+        setLoading(false); // Set loading to false
+        setRoles(mockBackend.getRoles()); // Keep roles loading
     }, []);
 
     const loadData = () => {
-        setUsers(mockBackend.getUsers());
+        // This function is now partially redundant for users due to the above useEffect
+        // setUsers(mockBackend.getUsers()); // This line would also be affected by "fetchUsers usage"
         setRoles(mockBackend.getRoles());
     };
 

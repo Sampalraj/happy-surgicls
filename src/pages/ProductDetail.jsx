@@ -237,12 +237,7 @@ const ProductDetail = () => {
                     </div>
                     <h3 style={{ textTransform: 'uppercase', marginBottom: '2rem', color: '#333' }}>You May Also Interested In</h3>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
-                        {/* TODO: Implement real related products fetch */}
-                        <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#999', padding: '2rem' }}>
-                            View our full catalog for more options.
-                        </div>
-                    </div>
+                    <RelatedProducts currentProductId={id} categoryId={product.category_id} segmentId={product.segment_id} />
                 </div>
 
                 {/* Brand Banner */}
@@ -295,6 +290,52 @@ const ProductCertificates = ({ product }) => {
                     <img src={cert.image} alt={cert.name} style={{ width: 24, height: 24, objectFit: 'contain' }} />
                     <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155' }}>{cert.name}</span>
                 </div>
+            ))}
+        </div>
+    );
+};
+
+const RelatedProducts = ({ currentProductId, categoryId, segmentId }) => {
+    const [related, setRelated] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchRelated = async () => {
+            // Basic implementation: fetch all active products and filter (optimization: db text search or related query)
+            // For now, fetching first 20 and picking 4 random or same category
+            setLoading(true);
+            const products = await supabaseService.getProducts();
+            let filtered = products.filter(p => p.id !== currentProductId && p.is_active);
+
+            // Prioritize same category
+            const sameCategory = filtered.filter(p => p.category_id === categoryId);
+            if (sameCategory.length >= 4) {
+                setRelated(sameCategory.slice(0, 4));
+            } else {
+                setRelated(filtered.slice(0, 4));
+            }
+            setLoading(false);
+        };
+        if (currentProductId) fetchRelated();
+    }, [currentProductId, categoryId]);
+
+    if (loading) return <div style={{ textAlign: 'center', padding: '2rem', color: '#999' }}>Loading suggestions...</div>;
+    if (related.length === 0) return <div style={{ textAlign: 'center', padding: '2rem', color: '#999' }}>View our catalog for more.</div>;
+
+    return (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+            {related.map(prod => (
+                <Link to={`/product/${prod.id}`} key={prod.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div style={{ background: 'white', borderRadius: 8, padding: '1rem', border: '1px solid #eee', height: '100%' }}>
+                        <div style={{ height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', background: '#f9fafb', borderRadius: 4 }}>
+                            <img src={prod.img} alt={prod.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                                onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerText = prod.name[0]; }}
+                            />
+                        </div>
+                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.5rem', color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{prod.name}</h4>
+                        <div style={{ fontSize: '0.8rem', color: '#004daa', fontWeight: 'bold' }}>Request Quote</div>
+                    </div>
+                </Link>
             ))}
         </div>
     );

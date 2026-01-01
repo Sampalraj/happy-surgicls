@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileText } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+// import { mockBackend } from '../../utils/mockBackend';
 
 const ReportGenerator = () => {
     const [config, setConfig] = useState({
@@ -21,9 +21,9 @@ const ReportGenerator = () => {
     const [certificates, setCertificates] = useState([]);
 
     useEffect(() => {
-        setCategories(mockBackend.getCategories());
-        setProducts(mockBackend.getProducts());
-        setCertificates(mockBackend.getCertificates());
+        // const stats = mockBackend.getStats();
+        const stats = { products: 0, categories: 0 };
+        // setReportData(stats);
     }, []);
 
     const handleSectionToggle = (key) => {

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ArrowLeft } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
 import '../../styles/admin-auth.css';
 
 const AdminRegister = () => {

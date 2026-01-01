@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, User, Activity, FileText } from 'lucide-react';
-import { mockBackend } from '../../utils/mockBackend';
+import { supabaseService } from '../../utils/supabaseService';
 
 const AuditLog = () => {
     const [logs, setLogs] = useState([]);
 
     useEffect(() => {
-        setLogs(mockBackend.getLogs());
+        const fetchLogs = async () => {
+            const data = await supabaseService.getLogs();
+            setLogs(data || []);
+        };
+        fetchLogs();
     }, []);
 
     const formatDate = (isoString) => {
+        if (!isoString) return '-';
         return new Date(isoString).toLocaleString('en-US', {
             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
         });
     };
 
     const getActionColor = (action) => {
+        if (!action) return '#475569';
         if (action.includes('Created')) return '#16a34a';
         if (action.includes('Deleted')) return '#dc2626';
         if (action.includes('Updated')) return '#2563eb';
@@ -54,7 +60,7 @@ const AuditLog = () => {
                                         <td style={{ color: '#64748b', fontSize: '0.85rem' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                 <Clock size={14} />
-                                                {formatDate(log.timestamp)}
+                                                {formatDate(log.created_at)}
                                             </div>
                                         </td>
                                         <td>
@@ -62,7 +68,7 @@ const AuditLog = () => {
                                                 <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                     <User size={14} color="#64748b" />
                                                 </div>
-                                                <span style={{ fontWeight: 500 }}>{log.user}</span>
+                                                <span style={{ fontWeight: 500 }}>{log.user_email || 'System'}</span>
                                             </div>
                                         </td>
                                         <td>

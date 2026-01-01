@@ -5,7 +5,7 @@ import {
     Image, MessageSquare, List, ShieldCheck, ClipboardList
 } from 'lucide-react';
 import '../../styles/admin.css';
-import { mockBackend } from '../../utils/mockBackend';
+// import { mockBackend } from '../../utils/mockBackend';
 
 const AdminLayout = () => {
     const location = useLocation();
@@ -145,11 +145,8 @@ const AdminLayout = () => {
                             value={searchQuery}
                             onChange={(e) => {
                                 setSearchQuery(e.target.value);
-                                if (e.target.value.length > 1) {
-                                    setSearchResults(mockBackend.searchAdmin(e.target.value));
-                                } else {
-                                    setSearchResults([]);
-                                }
+                                // Stubbed search
+                                setSearchResults([]);
                             }}
                             style={{
                                 width: '100%', padding: '0.6rem 1rem 0.6rem 2.5rem',

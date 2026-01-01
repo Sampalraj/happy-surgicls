@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { Menu, X, Phone, Mail, MapPin, ChevronDown, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
-import { mockBackend } from '../utils/mockBackend';
+import { supabaseService } from '../utils/supabaseService';
 import MegaMenu from './MegaMenu';
 import '../styles/megamenu.css';
 
@@ -19,10 +19,13 @@ const Layout = () => {
     let timeoutId;
 
     useEffect(() => {
-        const data = mockBackend.getSettings();
-        if (data && Object.keys(data).length > 0) {
-            setSettings(prev => ({ ...prev, ...data }));
-        }
+        const fetchSettings = async () => {
+            const data = await supabaseService.getSettings();
+            if (data && Object.keys(data).length > 0) {
+                setSettings(prev => ({ ...prev, ...data }));
+            }
+        };
+        fetchSettings();
     }, []);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);

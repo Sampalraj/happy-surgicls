@@ -6,7 +6,7 @@ import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import VirtualTour from './pages/VirtualTour';
 import About from './pages/About';
-import Career from './pages/Career';
+// import Career from './pages/Career';
 import Contact from './pages/Contact';
 import Services from './pages/Services';
 import Manufacturing from './pages/Manufacturing';
@@ -32,7 +32,7 @@ import GeneralSettings from './pages/admin/GeneralSettings';
 import UserManager from './pages/admin/UserManager';
 import AdminRegister from './pages/admin/AdminRegister';
 import AdminForgotPassword from './pages/admin/AdminForgotPassword';
-import SupabaseMigration from './pages/admin/SupabaseMigration';
+// import SupabaseMigration from './pages/admin/SupabaseMigration';
 
 import './styles/index.css';
 
@@ -52,7 +52,7 @@ function App() {
             <Route path="services" element={<Services />} />
             <Route path="manufacturing" element={<Manufacturing />} />
             <Route path="about" element={<About />} />
-            <Route path="career" element={<Career />} />
+            {/* <Route path="career" element={<Career />} /> */}
             <Route path="contact" element={<Contact />} />
           </Route>
 
@@ -82,7 +82,7 @@ function App() {
               <Route path="settings" element={<GeneralSettings />} />
               <Route path="users" element={<UserManager />} />
               <Route path="audit-reports" element={<ReportGenerator />} />
-              <Route path="migrate" element={<SupabaseMigration />} />
+              {/* <Route path="migrate" element={<SupabaseMigration />} /> */}
             </Route>
             <Route path="/admin/reports/print" element={<AuditReportPrint />} />
           </Route>

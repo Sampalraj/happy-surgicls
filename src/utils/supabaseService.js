@@ -279,22 +279,4 @@ export const supabaseService = {
         if (error) throw error;
         return true;
     },
-
-    // --- Activity Log ---
-    logActivity: async (user, action, target, details) => {
-        /*
-          Params:
-          user: string (email or name)
-          action: string (Created, Updated, Deleted)
-          target: string (Product: XYZ)
-          details: string (More info)
-        */
-        const { error } = await supabase.from('activity_logs').insert([{
-            user_email: user,
-            action,
-            target,
-            details
-        }]);
-        if (error) console.error('Error logging activity:', error);
-    }
 };

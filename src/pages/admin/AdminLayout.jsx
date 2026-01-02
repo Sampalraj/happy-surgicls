@@ -8,31 +8,30 @@ import {
 import '../../styles/admin.css';
 import SurgicalVectors from '../../components/SurgicalVectors';
 
+import { useAuth } from '../../contexts/AuthContext';
+
 const AdminLayout = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
+    const { user, loading, logout } = useAuth(); // Use centralized auth
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const isActive = (path) => location.pathname === path ? 'active' : '';
 
+    // Redirect logic is already handled by ProtectedRoute, but double check
     useEffect(() => {
-        const storedUser = localStorage.getItem('surgical_user');
-        if (!storedUser) {
+        if (!loading && !user) {
             navigate('/admin/login');
-        } else {
-            setUser(JSON.parse(storedUser));
         }
-    }, [navigate]);
+    }, [user, loading, navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('surgical_user');
-        navigate('/admin/login');
-    };
-
+    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#0f766e' }}>Loading Admin Panel...</div>;
     if (!user) return null;
 
-    const isSuperAdmin = user.role === 'Super Admin';
+    // Use Supabase user metadata or fallback
+    const userName = user.user_metadata?.name || user.email?.split('@')[0] || 'Admin';
+    const userRole = user.user_metadata?.role || 'Administrator';
+    const isSuperAdmin = userRole === 'Super Admin';
 
     // ... existing code ...
 
@@ -126,7 +125,7 @@ const AdminLayout = () => {
                         )}
 
                         <li>
-                            <button onClick={handleLogout} className="btn-logout-sidebar" style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', color: '#ef4444', padding: '0.75rem 1rem', display: 'flex', gap: '0.75rem', alignItems: 'center', cursor: 'pointer', marginTop: '1rem' }}>
+                            <button onClick={logout} className="btn-logout-sidebar" style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', color: '#ef4444', padding: '0.75rem 1rem', display: 'flex', gap: '0.75rem', alignItems: 'center', cursor: 'pointer', marginTop: '1rem' }}>
                                 <LogOut size={20} /> Logout
                             </button>
                         </li>
@@ -205,10 +204,10 @@ const AdminLayout = () => {
                             🔔 <span style={{ position: 'absolute', top: 5, right: 5, width: 8, height: 8, background: 'red', borderRadius: '50%' }}></span>
                         </button>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <img src={`https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=3b82f6&color=fff`} alt={user.name} style={{ width: 36, height: 36, borderRadius: '50%' }} />
+                            <img src={`https://ui-avatars.com/api/?name=${userName.replace(' ', '+')}&background=3b82f6&color=fff`} alt={userName} style={{ width: 36, height: 36, borderRadius: '50%' }} />
                             <div>
-                                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{user.name}</div>
-                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{user.role}</div>
+                                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{userName}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{userRole}</div>
                             </div>
                         </div>
                     </div>

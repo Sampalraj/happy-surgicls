@@ -84,15 +84,29 @@ export const supabaseService = {
     getProduct: async (id) => {
         const { data, error } = await supabase
             .from('products')
-            .select('*, categories:category_id(name), segments:segment_id(name)')
+            .select(`
+                *,
+                categories:category_id(name),
+                segments:segment_id(name),
+                product_certificates(certificate_id)
+            `)
             .eq('id', id)
             .single();
 
-        if (error) return null;
+        if (error) {
+            console.error('Error inside getProduct:', error);
+            return null;
+        }
+
+        console.log('Fetched Product Schema:', data);
+
+        // Transform for UI
         return {
             ...data,
             category: data.categories?.name || '',
-            segment: data.segments?.name || ''
+            segment: data.segments?.name || '',
+            // Flatten [{certificate_id: '...'}] to ['...', '...']
+            certificate_ids: data.product_certificates?.map(pc => pc.certificate_id) || []
         };
     },
 
@@ -209,22 +223,73 @@ export const supabaseService = {
     // --- Admin Product CRUD ---
     saveProduct: async (productData) => {
         const payload = { ...productData };
-        // Remove UI-only fields or derived fields
+
+        // Extract certificates to handle separately
+        const certificateIds = payload.certificate_ids || [];
+
+        // Remove UI-only fields, derived fields, and relational arrays
         delete payload.category;
         delete payload.segment;
         delete payload.subCategory; // Legacy
+        delete payload.certificate_ids; // Do NOT save to products table
+        delete payload.variants; // Handled separately if passed
 
         // Clean ID
         if (!payload.id) delete payload.id;
 
-        const { data, error } = await supabase
-            .from('products')
-            .upsert(payload)
-            .select()
-            .single();
+        let savedProduct;
 
-        if (error) throw error;
-        return data;
+        // 1. Save Product Details
+        if (payload.id) {
+            // UPDATE
+            const { data, error } = await supabase
+                .from('products')
+                .update(payload)
+                .eq('id', payload.id)
+                .select()
+                .single();
+
+            if (error) throw error;
+            savedProduct = data;
+        } else {
+            // INSERT
+            const { data, error } = await supabase
+                .from('products')
+                .insert([payload])
+                .select()
+                .single();
+
+            if (error) throw error;
+            savedProduct = data;
+        }
+
+        // 2. Handle Certificates (Junction Table)
+        // We only update certificates if the product save was successful
+        if (savedProduct) {
+            // A. Remove existing mappings for this product
+            const { error: deleteError } = await supabase
+                .from('product_certificates')
+                .delete()
+                .eq('product_id', savedProduct.id);
+
+            if (deleteError) console.error("Error clearing old certificates:", deleteError);
+
+            // B. Insert new mappings if any selected
+            if (certificateIds.length > 0) {
+                const certRows = certificateIds.map(certId => ({
+                    product_id: savedProduct.id,
+                    certificate_id: certId
+                }));
+
+                const { error: insertError } = await supabase
+                    .from('product_certificates')
+                    .insert(certRows);
+
+                if (insertError) throw insertError;
+            }
+        }
+
+        return savedProduct;
     },
 
     deleteProduct: async (id) => {
@@ -241,9 +306,10 @@ export const supabaseService = {
             .eq('product_id', product_id);
 
         if (error) {
-            console.error('Error fetching variants:', error);
-            return [];
+            console.error('Error fetching product:', error);
+            return null; // Return null on error
         }
+        console.log('Fetched Product Schema:', data);
         return data;
     },
 

@@ -314,6 +314,7 @@ export const supabaseService = {
         delete payload.code; // SKU
         delete payload.inherit_certificates;
         delete payload.is_active;
+        delete payload.img; // Added to fix latest PGRST204 error
         // ----------------------------------------------------------------
 
         // Clean ID

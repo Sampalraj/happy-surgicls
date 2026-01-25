@@ -305,9 +305,16 @@ export const supabaseService = {
         delete payload.certificate_ids; // Do NOT save to products table
         delete payload.variants; // Handled separately if passed
 
-        // --- COMPATIBILITY BLOCK REMOVED: Restore full functionality ---
-        // Expecting DB to be updated via SQL script.
-        // -------------------------------------------------------------
+        // --- COMPATIBILITY FIX: Remove fields missing in Production DB ---
+        // The database schema update (SQL) has not been applied yet.
+        // We MUST strip these fields to prevent the app from crashing (PGRST204).
+        delete payload.description;
+        delete payload.short_description;
+        delete payload.specifications;
+        delete payload.code; // SKU
+        delete payload.inherit_certificates;
+        delete payload.is_active;
+        // ----------------------------------------------------------------
 
         // Clean ID
         if (!payload.id) delete payload.id;

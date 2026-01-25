@@ -1,63 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import { Edit, Trash2, Plus, X, User as UserIcon, Shield, Check, Mail } from 'lucide-react';
-// import { supabaseService } from '../../utils/supabaseService';
+import { Edit, Trash2, Plus, X, User as UserIcon, Shield, Check, Mail, AlertTriangle } from 'lucide-react';
+import { supabaseService } from '../../utils/supabaseService';
 
 const UserManager = () => {
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState({ id: null, name: '', email: '', role_id: '', password: '', status: 'Active' });
+    // Removed password from formData
+    const [formData, setFormData] = useState({ id: null, name: '', email: '', role_id: '', status: 'Active' });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // mockBackend.getUsers(); // Commented out as per instruction
-        // fetchUsers();
-        // Stubbed for now
-        setLoading(false);
-        // setUsers([]); // Set users to empty array
-        // setRoles(mockBackend.getRoles()); // Keep roles loading
+        loadData();
     }, []);
 
-    const loadData = () => {
-        // This function is now partially redundant for users due to the above useEffect
-        // setUsers(mockBackend.getUsers()); // This line would also be affected by "fetchUsers usage"
-        // setRoles(mockBackend.getRoles());
+    const loadData = async () => {
+        setLoading(true);
+        try {
+            const [fetchedUsers, fetchedRoles] = await Promise.all([
+                supabaseService.getUsers(),
+                supabaseService.getRoles()
+            ]);
+            setUsers(fetchedUsers);
+            setRoles(fetchedRoles);
+        } catch (error) {
+            console.error("Error loading users:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleEdit = (user) => {
-        setFormData(user);
+        setFormData({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role_id: user.role_id,
+            status: user.status
+        });
         setShowModal(true);
     };
 
-    const handleDelete = (id) => {
-        // Prevent deleting the main admin for safety in this demo
+    const handleDelete = async (id) => {
         const user = users.find(u => u.id === id);
-        if (user && user.email === 'admin@happysurgicals.com') {
+        // Basic check, though backend RLS is safest
+        if (user && user.email === 'admin@happysurgicals.com') { // Hardcoded safety
             alert("Cannot delete the Super Admin.");
             return;
         }
 
-        if (confirm('Delete this user?')) {
-            mockBackend.deleteUser(id);
-            loadData();
+        if (confirm('Are you sure you want to deactivate this user?')) {
+            try {
+                await supabaseService.deleteUser(id);
+                loadData();
+            } catch (error) {
+                alert("Failed to deactivate user: " + error.message);
+            }
         }
     };
 
-    const handleSave = () => {
-        if (!formData.name || !formData.email || !formData.role_id || !formData.password) {
-            alert('All fields including Password are required.');
+    const handleSave = async () => {
+        // If it's a new user (no ID), we can't really "create" key, 
+        // we can only pre-approve or just fail. 
+        // For this impl, "Add User" is "Edit Role".
+        // But if we want to support "Pre-Approve":
+        // We would need to insert into profiles. ID is missing though.
+        // So effectively, we only support EDITING existing profiles here.
+
+        if (!formData.id) {
+            alert("To add a new user, ask them to Sign Up on the login page first. Then you can assign their role here.");
             return;
         }
 
-        mockBackend.saveUser(formData);
-        loadData();
-        setShowModal(false);
-        setFormData({ id: null, name: '', email: '', role_id: '', password: '', status: 'Active' });
+        try {
+            await supabaseService.updateUser(formData.id, formData);
+            loadData();
+            setShowModal(false);
+        } catch (error) {
+            alert("Error saving user: " + error.message);
+        }
     };
 
     const getRoleName = (roleId) => {
         const r = roles.find(rl => rl.id === roleId);
-        return r ? r.name : 'Unknown';
+        return r ? r.name : roleId || 'Unknown';
+    };
+
+    // Helper for badge color
+    const getRoleColor = (roleId) => {
+        if (roleId === 'admin') return '#4f46e5'; // Indigo
+        if (roleId === 'editor') return '#004daa'; // Blue
+        return '#64748b'; // Gray
     };
 
     return (
@@ -67,13 +100,13 @@ const UserManager = () => {
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Users & Roles</h2>
                     <p style={{ color: '#666', fontSize: '0.9rem' }}>Manage admin access and permissions</p>
                 </div>
-                <button
-                    onClick={() => { setFormData({ id: null, name: '', email: '', role_id: roles[0]?.id || '', password: '', status: 'Active' }); setShowModal(true); }}
-                    className="btn btn-primary"
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                >
-                    <Plus size={18} /> Add User
-                </button>
+                {/* 
+                   "Add User" is tricky without Admin API. 
+                   We will rename it to "Invite info" or just show a tip.
+                */}
+                <div style={{ fontSize: '0.85rem', color: '#666', background: '#f8fafc', padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                    <span style={{ fontWeight: 'bold' }}>Tip:</span> Users must sign up to appear here.
+                </div>
             </div>
 
             <div className="card" style={{ background: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
@@ -83,7 +116,7 @@ const UserManager = () => {
                             <th>User</th>
                             <th>Role</th>
                             <th>Status</th>
-                            <th>Last Login</th>
+                            <th>Last Active</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
@@ -94,12 +127,12 @@ const UserManager = () => {
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                         <div style={{
                                             width: 36, height: 36, borderRadius: '50%', background: '#e0e7ff', color: '#4f46e5',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', textTransform: 'uppercase'
                                         }}>
-                                            {user.name.charAt(0)}
+                                            {user.name ? user.name.charAt(0) : '?'}
                                         </div>
                                         <div>
-                                            <div style={{ fontWeight: '500' }}>{user.name}</div>
+                                            <div style={{ fontWeight: '500' }}>{user.name || 'Unnamed'}</div>
                                             <div style={{ fontSize: '0.85rem', color: '#666' }}>{user.email}</div>
                                         </div>
                                     </div>
@@ -107,8 +140,8 @@ const UserManager = () => {
                                 <td>
                                     <span style={{
                                         display: 'inline-flex', alignItems: 'center', gap: '4px',
-                                        padding: '4px 8px', borderRadius: '4px', background: '#f8fafc',
-                                        border: '1px solid #e2e8f0', color: '#64748b', fontSize: '0.85rem'
+                                        padding: '4px 8px', borderRadius: '4px', background: `${getRoleColor(user.role_id)}15`,
+                                        border: `1px solid ${getRoleColor(user.role_id)}30`, color: getRoleColor(user.role_id), fontSize: '0.85rem', fontWeight: '500'
                                     }}>
                                         <Shield size={12} /> {getRoleName(user.role_id)}
                                     </span>
@@ -121,7 +154,7 @@ const UserManager = () => {
                                             color: user.status === 'Active' ? '#15803d' : '#64748b'
                                         }}
                                     >
-                                        {user.status}
+                                        {user.status || 'Active'}
                                     </span>
                                 </td>
                                 <td style={{ color: '#666', fontSize: '0.9rem' }}>
@@ -129,12 +162,19 @@ const UserManager = () => {
                                 </td>
                                 <td style={{ textAlign: 'right' }}>
                                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                        <button onClick={() => handleEdit(user)} className="btn-icon"><Edit size={16} /></button>
-                                        <button onClick={() => handleDelete(user.id)} className="btn-icon" style={{ color: '#c53030' }}><Trash2 size={16} /></button>
+                                        <button onClick={() => handleEdit(user)} className="btn-icon" title="Edit Role"><Edit size={16} /></button>
+                                        <button onClick={() => handleDelete(user.id)} className="btn-icon" style={{ color: '#c53030' }} title="Deactivate"><Trash2 size={16} /></button>
                                     </div>
                                 </td>
                             </tr>
                         ))}
+                        {users.length === 0 && !loading && (
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+                                    No users found. (Are you running against live Supabase?)
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -144,7 +184,7 @@ const UserManager = () => {
                 <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
                     <div className="modal-content" style={{ background: 'white', padding: '2rem', borderRadius: '8px', width: '500px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{formData.id ? 'Edit User' : 'New User'}</h3>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Edit User Role</h3>
                             <button onClick={() => setShowModal(false)}><X size={20} /></button>
                         </div>
 
@@ -155,7 +195,7 @@ const UserManager = () => {
 
                         <div className="form-group" style={{ marginBottom: '1rem' }}>
                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Email Address</label>
-                            <input type="email" className="form-control" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} placeholder="john@example.com" />
+                            <input type="email" className="form-control" value={formData.email} disabled style={{ background: '#f1f5f9', cursor: 'not-allowed' }} />
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
@@ -177,15 +217,9 @@ const UserManager = () => {
                             </div>
                         </div>
 
-                        <div className="form-group" style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Password</label>
-                            <input type="password" className="form-control" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} placeholder="*******" />
-                            <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>Simple text for demo purposes.</p>
-                        </div>
-
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>
                             <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
-                            <button onClick={handleSave} className="btn btn-primary">Save User</button>
+                            <button onClick={handleSave} className="btn btn-primary">Save Changes</button>
                         </div>
                     </div>
                 </div>

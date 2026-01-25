@@ -4,7 +4,64 @@ import { supabase } from '../lib/supabase';
 // but we tried to keep schema aligned.
 
 export const supabaseService = {
-    // --- Segments ---
+    // --- Users (Profiles) ---
+    getUsers: async () => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (error) {
+            console.error('Error fetching users:', error);
+            return [];
+        }
+        // Map to UI format
+        return data.map(u => ({
+            id: u.id,
+            name: u.full_name || u.email,
+            email: u.email,
+            role_id: u.role,
+            status: u.status,
+            last_login: u.updated_at
+        }));
+    },
+
+    updateUser: async (id, updates) => {
+        const payload = {
+            role: updates.role_id,
+            status: updates.status,
+            full_name: updates.name
+        };
+        Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
+
+        const { data, error } = await supabase
+            .from('profiles')
+            .update(payload)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    },
+
+    deleteUser: async (id) => {
+        const { error } = await supabase
+            .from('profiles')
+            .update({ status: 'Inactive' })
+            .eq('id', id);
+
+        if (error) throw error;
+        return true;
+    },
+
+    getRoles: async () => {
+        return [
+            { id: 'admin', name: 'Super Admin' },
+            { id: 'editor', name: 'Editor' },
+            { id: 'viewer', name: 'Viewer' }
+        ];
+    },
+
     // --- Segments ---
     getSegments: async () => {
         const { data, error } = await supabase.from('segments').select('*').order('display_order', { ascending: true });

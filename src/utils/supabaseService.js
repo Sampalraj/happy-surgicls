@@ -104,9 +104,12 @@ export const supabaseService = {
         return {
             ...data,
             category: data.categories?.name || '',
+            category: data.categories?.name || '',
             segment: data.segments?.name || '',
+            shortDescription: data.short_description || '', // Map DB snake_case to UI camelCase
             // Flatten [{certificate_id: '...'}] to ['...', '...']
-            certificate_ids: data.product_certificates?.map(pc => pc.certificate_id) || []
+            certificate_ids: data.product_certificates?.map(pc => pc.certificate_id) || [],
+            features: data.specifications || [] // Map DB 'specifications' to UI 'features'
         };
     },
 
@@ -226,6 +229,17 @@ export const supabaseService = {
 
         // Extract certificates to handle separately
         const certificateIds = payload.certificate_ids || [];
+
+        // Map UI 'features' back to DB 'specifications'
+        if (payload.features) {
+            payload.specifications = payload.features;
+            delete payload.features;
+        }
+
+        if (payload.shortDescription) {
+            payload.short_description = payload.shortDescription;
+            delete payload.shortDescription;
+        }
 
         // Remove UI-only fields, derived fields, and relational arrays
         delete payload.category;

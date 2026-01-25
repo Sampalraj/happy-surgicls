@@ -13,9 +13,11 @@ import { useAuth } from '../../contexts/AuthContext';
 const AdminLayout = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { user, loading, logout } = useAuth(); // Use centralized auth
+    const { user, loading, logout } = useAuth();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+
     const isActive = (path) => location.pathname === path ? 'active' : '';
 
     // Redirect logic is already handled by ProtectedRoute, but double check

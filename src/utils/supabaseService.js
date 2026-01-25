@@ -301,7 +301,7 @@ export const supabaseService = {
     // --- Variants ---
     getVariants: async (product_id) => {
         const { data, error } = await supabase
-            .from('variants')
+            .from('product_variants')
             .select('*')
             .eq('product_id', product_id);
 
@@ -319,7 +319,7 @@ export const supabaseService = {
         if (typeof payload.id === 'number' || !payload.id) delete payload.id;
 
         const { data, error } = await supabase
-            .from('variants')
+            .from('product_variants')
             .upsert(payload)
             .select()
             .single();
@@ -329,7 +329,7 @@ export const supabaseService = {
     },
 
     deleteVariant: async (id) => {
-        const { error } = await supabase.from('variants').delete().eq('id', id);
+        const { error } = await supabase.from('product_variants').delete().eq('id', id);
         if (error) throw error;
         return true;
     },

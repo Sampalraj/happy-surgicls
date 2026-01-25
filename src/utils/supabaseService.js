@@ -305,16 +305,9 @@ export const supabaseService = {
         delete payload.certificate_ids; // Do NOT save to products table
         delete payload.variants; // Handled separately if passed
 
-        // --- COMPATIBILITY FIX: Remove fields missing in Production DB ---
-        // The user has not run the SQL migration script, so these columns don't exist.
-        // We strip them to prevent PGRST204 errors and allow basic product creation.
-        delete payload.description;
-        delete payload.short_description;
-        delete payload.specifications;
-        delete payload.code; // SKU
-        delete payload.inherit_certificates;
-        delete payload.is_active;
-        // ----------------------------------------------------------------
+        // --- COMPATIBILITY BLOCK REMOVED: Restore full functionality ---
+        // Expecting DB to be updated via SQL script.
+        // -------------------------------------------------------------
 
         // Clean ID
         if (!payload.id) delete payload.id;

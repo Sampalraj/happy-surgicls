@@ -293,7 +293,9 @@ export const supabaseService = {
             delete payload.features;
         }
 
-        if (payload.shortDescription) {
+        // Map UI camelCase to DB snake_case
+        // Handle shortDescription (even if empty string)
+        if (payload.shortDescription !== undefined) {
             payload.short_description = payload.shortDescription;
             delete payload.shortDescription;
         }

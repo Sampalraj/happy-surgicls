@@ -337,13 +337,17 @@ export const supabaseService = {
             savedProduct = data;
         } else {
             // INSERT
+            console.log('Inserting product with payload:', payload);
             const { data, error } = await supabase
                 .from('products')
                 .insert([payload])
                 .select()
                 .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase INSERT Error Details:', error);
+                throw error;
+            }
             savedProduct = data;
         }
 

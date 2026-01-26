@@ -419,6 +419,17 @@ export const supabaseService = {
     },
 
     // --- Logs ---
+    logActivity: async (user, action, target, details) => {
+        const payload = {
+            user_email: user,
+            action,
+            target,
+            details
+        };
+        const { error } = await supabase.from('audit_logs').insert([payload]);
+        if (error) console.error('Error logging activity:', error);
+    },
+
     getLogs: async () => {
         const { data, error } = await supabase.from('audit_logs').select('*').order('created_at', { ascending: false });
         if (error) {

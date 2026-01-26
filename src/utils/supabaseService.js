@@ -70,18 +70,29 @@ export const supabaseService = {
     },
 
     createSegment: async (segmentData) => {
-        // If ID is empty string or null, remove it to let DB generate UUID
         const payload = { ...segmentData };
         if (!payload.id) delete payload.id;
 
+        console.log('Creating segment with payload:', payload);
         const { data, error } = await supabase.from('segments').insert([payload]).select().single();
-        if (error) throw error;
+        if (error) {
+            console.error('Supabase Create Segment Error:', error);
+            throw error;
+        }
         return data;
     },
 
     updateSegment: async (id, updates) => {
-        const { data, error } = await supabase.from('segments').update(updates).eq('id', id).select().single();
-        if (error) throw error;
+        const payload = { ...updates };
+        delete payload.id; // Remove ID from payload to avoid PK update errors
+        delete payload.created_at; // Remove timestamp if present
+
+        console.log('Updating segment payload:', payload);
+        const { data, error } = await supabase.from('segments').update(payload).eq('id', id).select().single();
+        if (error) {
+            console.error('Supabase Update Segment Error:', error);
+            throw error;
+        }
         return data;
     },
 

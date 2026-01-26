@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabaseService } from '../utils/supabaseService';
 import { ArrowRight, Star, ShieldCheck, Activity, Building, Users, Award, Clock, Settings, ClipboardCheck, Truck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import MarketSegments from '../components/MarketSegments';
 import '../styles/home.css';
 
 const Home = () => {
@@ -122,33 +123,8 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* PRODUCT CATEGORIES (4x2 Grid) */}
-            <motion.section
-                className="section"
-                id="featured-products"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
-                variants={staggerContainer}
-            >
-                <div className="container">
-                    <motion.div variants={fadeInUp} className="section-header">
-                        <h2 className="section-title">Product Categories</h2>
-                        <p className="section-subtitle">Comprehensive range of medical and surgical supplies manufactured to global standards.</p>
-                    </motion.div>
-
-                    <div className="category-grid">
-                        <CategoryCard icon={<Activity size={32} />} title="Medical Consumables" desc="Gloves, Masks, Syringes, & Disposables" link="/products?category=consumables" variants={fadeInUp} />
-                        <CategoryCard icon={<Activity size={32} />} title="Medical Equipment" desc="Monitors, ECG, & Diagnostic Devices" link="/products?category=equipment" variants={fadeInUp} />
-                        <CategoryCard icon={<Activity size={32} />} title="Respiratory Care" desc="Nebulizers, Oxygen Concentrators, BiPAP" link="/products?category=respiratory" variants={fadeInUp} />
-                        <CategoryCard icon={<Settings size={32} />} title="Hospital Furniture" desc="Hospital Beds, Wheelchairs, & Trolleys" link="/products?category=furniture" variants={fadeInUp} />
-                        <CategoryCard icon={<Activity size={32} />} title="Orthopedic Support" desc="Braces, Supports, & Rehabilitation Aids" link="/products?category=ortho" variants={fadeInUp} />
-                        <CategoryCard icon={<ShieldCheck size={32} />} title="Personal Care" desc="Adult Diapers, Wipes, & Hygiene" link="/products?category=hygiene" variants={fadeInUp} />
-                        <CategoryCard icon={<ShieldCheck size={32} />} title="Industrial Safety" desc="Safety Shoes, Helmets, & Workwear" link="/products?category=safety" variants={fadeInUp} />
-                        <CategoryCard icon={<Settings size={32} />} title="Instruments" desc="Surgical Instruments & Accessories" link="/products?category=instruments" variants={fadeInUp} />
-                    </div>
-                </div>
-            </motion.section>
+            {/* NEW: Living Grid Market Segments */}
+            <MarketSegments />
 
             {/* KEY PRODUCT HIGHLIGHTS */}
             <motion.section

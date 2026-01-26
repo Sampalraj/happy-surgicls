@@ -1,0 +1,182 @@
+/* MarketSegments.module.css */
+
+.section {
+    padding: 4rem 0;
+    position: relative;
+    /* Dotted pattern background matching the theme, fading out */
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* --- GRID LAYOUT --- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2rem;
+}
+
+/* Tablet: 2 cols */
+@media (min-width: 640px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop: 3 cols */
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* --- GLASS CARD --- */
+.card {
+    position: relative;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    cursor: pointer;
+
+    /* Medical Glass Effect */
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 10px 15px -3px rgba(0, 0, 0, 0.05),
+        inset 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.card:hover {
+    /* Teal Border on Hover */
+    border-color: #0d9488;
+    box-shadow:
+        0 20px 25px -5px rgba(13, 148, 136, 0.1),
+        0 10px 10px -5px rgba(13, 148, 136, 0.04);
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* Featured Card (Healthcare) Highlight */
+.featured {
+    background: linear-gradient(145deg, rgba(240, 253, 250, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%);
+    border-color: rgba(20, 184, 166, 0.3);
+}
+
+/* Pulse Ring Animation element for Featured card */
+.pulseRing {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #0d9488;
+    box-shadow: 0 0 0 rgba(13, 148, 136, 0.4);
+}
+
+.pulseRing::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid #0d9488;
+    opacity: 0.5;
+    animation: pulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(2.2);
+        opacity: 0;
+    }
+}
+
+/* --- CONTENT --- */
+.iconWrapper {
+    margin-bottom: 2rem;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #f0f9ff;
+    color: #0d9488;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e0f2fe;
+}
+
+.cardName {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+    width: 100%;
+}
+
+.cardDesc {
+    font-size: 1rem;
+    color: #64748b;
+    line-height: 1.6;
+    width: 100%;
+}
+
+/* Arrow indicator that appears on hover */
+.arrow {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    color: #0d9488;
+    font-weight: 700;
+    font-size: 0.95rem;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.card:hover .arrow {
+    opacity: 1;
+    transform: translateX(0);
+}

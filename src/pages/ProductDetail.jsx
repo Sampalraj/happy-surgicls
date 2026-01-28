@@ -73,7 +73,7 @@ const ProductDetail = () => {
 
                         {!modalSubmitted ? (
                             <>
-                                <h2 style={{ marginBottom: '1rem', color: '#004daa' }}>Request Quote</h2>
+                                <h2 style={{ marginBottom: '1rem', color: '#1E293B' }}>Request Quote</h2>
                                 <p style={{ marginBottom: '1.5rem', fontSize: '0.9rem', color: '#666' }}>Fill out the form below for <strong>{product.name}</strong></p>
                                 <form onSubmit={handleModalSubmit}>
                                     <div style={{ marginBottom: '1rem' }}>
@@ -88,12 +88,12 @@ const ProductDetail = () => {
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Message</label>
                                         <textarea required value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} rows="3" style={{ width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}></textarea>
                                     </div>
-                                    <button type="submit" className="btn-inquiry" style={{ width: '100%', justifyContent: 'center', background: '#e53935', color: 'white' }}>SUBMIT INQUIRY</button>
+                                    <button type="submit" className="btn-inquiry" style={{ width: '100%', justifyContent: 'center', background: '#2EBF68', color: 'white' }}>SUBMIT INQUIRY</button>
                                 </form>
                             </>
                         ) : (
                             <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-                                <div style={{ color: 'green', marginBottom: '1rem' }}><CheckCircle size={48} /></div>
+                                <div style={{ color: '#2EBF68', marginBottom: '1rem' }}><CheckCircle size={48} /></div>
                                 <h3>Inquiry Sent!</h3>
                                 <p>We will contact you shortly.</p>
                             </div>
@@ -103,7 +103,7 @@ const ProductDetail = () => {
             )}
 
             {/* Top Blue Bar */}
-            <div style={{ background: '#2b5c9e', color: 'white', padding: '1rem 0' }}>
+            <div style={{ background: '#1E293B', color: 'white', padding: '1rem 0' }}>
                 <div className="container" style={{ display: 'flex', alignItems: 'center' }}>
                     <Link to="/products" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'white', textDecoration: 'none', fontWeight: '500', fontSize: '0.9rem' }}>
                         <ChevronLeft size={16} /> Back to Products
@@ -173,7 +173,7 @@ const ProductDetail = () => {
                 <div className="features-section">
                     <div className="features-grid">
                         <div>
-                            <h2 style={{ color: '#004daa', marginBottom: '2rem', textTransform: 'uppercase' }}>Technical Specifications</h2>
+                            <h2 style={{ color: '#1E293B', marginBottom: '2rem', textTransform: 'uppercase' }}>Technical Specifications</h2>
                             <ul className="feature-list">
                                 {product.features ? product.features.map((feat, i) => (
                                     <li key={i}>{feat}</li>
@@ -232,8 +232,8 @@ const ProductDetail = () => {
                 {/* Related Products */}
                 <div className="related-products">
                     <div className="section-header-row">
-                        <div style={{ fontSize: '0.8rem', color: '#004daa', fontWeight: 'bold' }}>SIMILAR PRODUCTS</div>
-                        <Link to="/products" style={{ color: '#d32f2f', fontSize: '0.9rem', fontWeight: 'bold', textDecoration: 'none' }}>View All ▶</Link>
+                        <div style={{ fontSize: '0.8rem', color: '#2EBF68', fontWeight: 'bold' }}>SIMILAR PRODUCTS</div>
+                        <Link to="/products" style={{ color: '#2EBF68', fontSize: '0.9rem', fontWeight: 'bold', textDecoration: 'none' }}>View All ▶</Link>
                     </div>
                     <h3 style={{ textTransform: 'uppercase', marginBottom: '2rem', color: '#333' }}>You May Also Interested In</h3>
 
@@ -333,7 +333,7 @@ const RelatedProducts = ({ currentProductId, categoryId, segmentId }) => {
                             />
                         </div>
                         <h4 style={{ fontSize: '0.95rem', marginBottom: '0.5rem', color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{prod.name}</h4>
-                        <div style={{ fontSize: '0.8rem', color: '#004daa', fontWeight: 'bold' }}>Request Quote</div>
+                        <div style={{ fontSize: '0.8rem', color: '#2EBF68', fontWeight: 'bold' }}>Request Quote</div>
                     </div>
                 </Link>
             ))}

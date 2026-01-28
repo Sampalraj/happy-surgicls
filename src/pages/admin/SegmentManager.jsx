@@ -72,48 +72,61 @@ const SegmentManager = () => {
                 </button>
             </div>
 
-            <div className="card" style={{ background: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Hero</th>
-                            <th>Segment Name</th>
-                            <th>Description</th>
-                            <th>Order</th>
-                            <th>Status</th>
-                            <th style={{ textAlign: 'right' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {segments.map(seg => (
-                            <tr key={seg.id}>
-                                <td>
-                                    {seg.hero_image ? (
-                                        <img src={seg.hero_image} alt="" style={{ width: 40, height: 40, borderRadius: 4, objectFit: 'cover' }} />
-                                    ) : (
-                                        <div style={{ width: 40, height: 40, background: '#eee', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <ImageIcon size={16} color="#999" />
-                                        </div>
-                                    )}
-                                </td>
-                                <td style={{ fontWeight: '500' }}>{seg.name}</td>
-                                <td style={{ color: '#666' }}>{seg.description || '-'}</td>
-                                <td>{seg.display_order || 0}</td>
-                                <td>
-                                    <span className={`badge ${seg.is_active ? 'badge-success' : 'badge-gray'}`} style={{ padding: '4px 8px', borderRadius: '4px', background: seg.is_active ? '#e6fffa' : '#edf2f7', color: seg.is_active ? '#047857' : '#718096', fontSize: '12px' }}>
-                                        {seg.is_active ? 'Active' : 'Hidden'}
-                                    </span>
-                                </td>
-                                <td style={{ textAlign: 'right' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                        <button onClick={() => handleEdit(seg)} className="btn-icon"><Edit size={16} /></button>
-                                        <button onClick={() => handleDelete(seg.id)} className="btn-icon" style={{ color: '#c53030' }}><Trash2 size={16} /></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            {/* Card List View (Soft UI) */}
+            <div className="card-list">
+                {segments.map(seg => (
+                    <div key={seg.id} className="card-list-item" style={{ background: 'white', borderRadius: '24px', padding: '1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'var(--shadow-soft)' }}>
+
+                        {/* Left: Image & Info */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                            <div style={{ width: '60px', height: '60px', borderRadius: '16px', overflow: 'hidden', background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {seg.hero_image ? (
+                                    <img src={seg.hero_image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    <ImageIcon size={24} color="#CBD5E1" />
+                                )}
+                            </div>
+                            <div>
+                                <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#111827', marginBottom: '0.25rem' }}>{seg.name}</h4>
+                                <p style={{ color: '#6B7280', fontSize: '0.9rem', maxWidth: '400px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {seg.description || 'No description provided'}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Middle: Order & Status */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                            <div style={{ textAlign: 'center' }}>
+                                <span style={{ display: 'block', fontSize: '0.75rem', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Order</span>
+                                <span style={{ fontWeight: '600', color: '#374151' }}>{seg.display_order || 0}</span>
+                            </div>
+
+                            <span className={`badge ${seg.is_active ? 'badge-success' : 'badge-gray'}`} style={{
+                                padding: '0.5rem 1rem', borderRadius: '999px',
+                                background: seg.is_active ? '#ECFDF5' : '#F3F4F6',
+                                color: seg.is_active ? '#059669' : '#6B7280',
+                                fontSize: '0.85rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.4rem'
+                            }}>
+                                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor' }}></div>
+                                {seg.is_active ? 'Active' : 'Hidden'}
+                            </span>
+                        </div>
+
+                        {/* Right: Actions */}
+                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                            <button onClick={() => handleEdit(seg)} className="btn-icon-soft" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6B7280', background: 'white', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                <Edit size={18} />
+                            </button>
+                            <button onClick={() => handleDelete(seg.id)} className="btn-icon-soft" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #ffe4e6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e11d48', background: '#fff1f2', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
+                    </div>
+                ))}
+
+                {segments.length === 0 && !loading && (
+                    <div style={{ textAlign: 'center', padding: '4rem', color: '#9CA3AF' }}>No segments found. Add one to get started.</div>
+                )}
             </div>
 
             {/* Modal */}

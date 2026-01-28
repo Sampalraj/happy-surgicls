@@ -5,46 +5,35 @@ import {
     LayoutDashboard, Package, Palette, FileText, Settings, User, LogOut,
     Image, MessageSquare, List, ShieldCheck, ClipboardList
 } from 'lucide-react';
-import '../../styles/admin.css';
-import SurgicalVectors from '../../components/SurgicalVectors';
-
+import '../../styles/admin-soft.css'; // Changed to new soft theme
 import { useAuth } from '../../contexts/AuthContext';
 
 const AdminLayout = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { user, loading, logout } = useAuth();
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
 
     const isActive = (path) => location.pathname === path ? 'active' : '';
 
-    // Redirect logic is already handled by ProtectedRoute, but double check
     useEffect(() => {
         if (!loading && !user) {
             navigate('/admin/login');
         }
     }, [user, loading, navigate]);
 
-    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#0f766e' }}>Loading Admin Panel...</div>;
+    if (loading) return null; // Or a nice spinner
     if (!user) return null;
 
-    // Use Supabase user metadata or fallback
-    const userName = user.user_metadata?.name || user.email?.split('@')[0] || 'Admin';
+    const userName = user.user_metadata?.name || 'Admin';
     const userRole = user.user_metadata?.role || 'Administrator';
-    const isSuperAdmin = userRole === 'Super Admin';
-
-    // ... existing code ...
 
     return (
-        <div className="admin-layout" style={{ position: 'relative', overflow: 'hidden' }}>
-            <SurgicalVectors variant="admin" />
-            {/* Left Sidebar */}
-            <aside className="admin-sidebar" style={{ backgroundColor: 'white', position: 'relative', zIndex: 10 }}>
+        <div className="admin-layout">
+            {/* FLOATING SIDEBAR */}
+            <aside className="admin-sidebar">
                 <div className="sidebar-header">
-                    <img src="/logo.png" alt="Happy Surgicals" style={{ height: 32 }} />
-                    <span style={{ color: '#1e293b' }}>Happy Surgicals</span>
+                    <img src="/assets/logo.png" alt="Happy Surgicals" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
                 </div>
 
                 <nav className="sidebar-nav">
@@ -73,157 +62,80 @@ const AdminLayout = () => {
                         </li>
                         <li>
                             <Link to="/admin/enquiries" className={isActive('/admin/enquiries')}>
-                                <MessageSquare size={20} /> Orders / Enquiries
+                                <MessageSquare size={20} /> Orders
                             </Link>
                         </li>
-                        <li>
-                            <Link to="/admin/enquiries" className={isActive('/admin/enquiries')}>
-                                <MessageSquare size={20} /> Orders / Enquiries
-                            </Link>
-                        </li>
-
-                        {isSuperAdmin && (
-                            <li>
-                                <Link to="/admin/users" className={isActive('/admin/users')}>
-                                    <User size={20} /> Users & Roles
-                                </Link>
-                            </li>
-                        )}
 
                         <li className="nav-header">Content</li>
-
                         <li>
                             <Link to="/admin/pages" className={isActive('/admin/pages')}>
                                 <FileText size={20} /> Pages
                             </Link>
                         </li>
-
                         <li>
                             <Link to="/admin/media" className={isActive('/admin/media')}>
-                                <Image size={20} /> Media Library
+                                <Image size={20} /> Media
                             </Link>
                         </li>
                         <li>
-                            <Link to="/admin/certificates" className={location.pathname.startsWith('/admin/certificates') ? 'active' : ''}>
+                            <Link to="/admin/certificates" className={isActive('/admin/certificates')}>
                                 <ShieldCheck size={20} /> Certificates
                             </Link>
                         </li>
+
+                        <li className="nav-header">System</li>
                         <li>
-                            <Link to="/admin/audit-reports" className={isActive('/admin/audit-reports')}>
-                                <FileText size={20} /> Audit Reports
+                            <Link to="/admin/settings" className={isActive('/admin/settings')}>
+                                <Settings size={20} /> Settings
                             </Link>
                         </li>
-
-                        {/* Only Super Admin sees System Settings */}
-                        {isSuperAdmin && (
-                            <>
-                                <li className="nav-header">System</li>
-                                <li>
-                                    <Link to="/admin/settings" className={isActive('/admin/settings')}>
-                                        <Settings size={20} /> Settings
-                                    </Link>
-                                </li>
-                            </>
-                        )}
-
                         <li>
-                            <button onClick={logout} className="btn-logout-sidebar" style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', color: '#ef4444', padding: '0.75rem 1rem', display: 'flex', gap: '0.75rem', alignItems: 'center', cursor: 'pointer', marginTop: '1rem' }}>
+                            <div onClick={logout} style={{ cursor: 'pointer', padding: '0.875rem 1.25rem', color: '#EF4444', fontWeight: 500, display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                 <LogOut size={20} /> Logout
-                            </button>
+                            </div>
                         </li>
-
                     </ul>
                 </nav>
             </aside>
 
-            {/* Main Content Area */}
-            <div className="admin-main" style={{ position: 'relative', zIndex: 5 }}>
-                {/* Top Bar with Search */}
+            {/* MAIN CONTENT */}
+            <div className="admin-main">
                 <header className="admin-topbar">
-                    <h2 className="page-title" style={{ fontSize: '1.5rem' }}>Admin Panel</h2>
+                    <h2 className="page-title">
+                        {location.pathname === '/admin' ? 'Dashboard' :
+                            location.pathname.split('/').pop().charAt(0).toUpperCase() + location.pathname.split('/').pop().slice(1)}
+                    </h2>
 
-                    {/* Global Search */}
-                    <div style={{ position: 'relative', width: 300, margin: '0 2rem' }}>
-                        <input
-                            type="text"
-                            placeholder="Search (Products, Pages, Orders)..."
-                            value={searchQuery}
-                            onChange={(e) => {
-                                setSearchQuery(e.target.value);
-                                // Stubbed search
-                                setSearchResults([]);
-                            }}
-                            style={{
-                                width: '100%', padding: '0.6rem 1rem 0.6rem 2.5rem',
-                                border: '1px solid #e2e8f0', borderRadius: '8px',
-                                background: '#f8fafc', fontSize: '0.9rem'
-                            }}
-                        />
-                        <span style={{ position: 'absolute', left: 10, top: 10, color: '#94a3b8' }}>🔍</span>
+                    <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+                        <div style={{ position: 'relative', width: 300 }}>
+                            <span style={{ position: 'absolute', left: 15, top: 12, opacity: 0.4 }}>🔍</span>
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                style={{ width: '100%', height: '48px' }}
+                            />
+                        </div>
 
-                        {/* Search Results Dropdown */}
-                        {searchQuery.length > 1 && (
-                            <div className="search-dropdown" style={{
-                                position: 'absolute', top: '100%', left: 0, width: '100%',
-                                background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
-                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50,
-                                marginTop: '0.5rem', maxHeight: '300px', overflowY: 'auto'
-                            }}>
-                                {searchResults.length > 0 ? (
-                                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                        {searchResults.map((result, index) => (
-                                            <li key={index} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                                <Link
-                                                    to={result.link}
-                                                    onClick={() => { setSearchQuery(''); setSearchResults([]); }}
-                                                    style={{ display: 'block', padding: '0.75rem 1rem', textDecoration: 'none', color: 'inherit', hover: { background: '#f8fafc' } }}
-                                                >
-                                                    <div style={{ fontSize: '0.9rem', fontWeight: 500, color: '#1e293b' }}>{result.title}</div>
-                                                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                                                        <span style={{
-                                                            display: 'inline-block', padding: '2px 6px', borderRadius: '4px',
-                                                            background: result.type === 'Product' ? '#eff6ff' : result.type === 'Page' ? '#f0fdf4' : '#fff7ed',
-                                                            color: result.type === 'Product' ? '#1d4ed8' : result.type === 'Page' ? '#15803d' : '#c2410c',
-                                                            marginRight: '0.5rem', fontSize: '0.7rem'
-                                                        }}>{result.type}</span>
-                                                        {result.subtitle}
-                                                    </div>
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <div style={{ padding: '1rem', textAlign: 'center', color: '#64748b', fontSize: '0.9rem' }}>
-                                        No results found
-                                    </div>
-                                )}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{userName}</div>
+                                <div style={{ fontSize: '0.8rem', color: '#6B7280' }}>{userRole}</div>
                             </div>
-                        )}
-                    </div>
-
-                    <div className="admin-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <button className="btn-icon" style={{ position: 'relative' }}>
-                            🔔 <span style={{ position: 'absolute', top: 5, right: 5, width: 8, height: 8, background: 'red', borderRadius: '50%' }}></span>
-                        </button>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <img src={`https://ui-avatars.com/api/?name=${userName.replace(' ', '+')}&background=3b82f6&color=fff`} alt={userName} style={{ width: 36, height: 36, borderRadius: '50%' }} />
-                            <div>
-                                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{userName}</div>
-                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{userRole}</div>
-                            </div>
+                            <img src={`https://ui-avatars.com/api/?name=${userName}&background=2C3E50&color=fff`} alt={userName} style={{ width: 44, height: 44, borderRadius: '50%', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }} />
                         </div>
                     </div>
                 </header>
 
-                {/* Page Content */}
-                <main className="admin-content" style={{ background: '#f1f5f9' }}>
+                <main>
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={location.pathname}
-                            initial={{ opacity: 0, x: 10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -10 }}
-                            transition={{ duration: 0.2 }}
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.98 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
                         >
                             <Outlet />
                         </motion.div>

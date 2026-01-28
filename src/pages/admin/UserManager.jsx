@@ -109,74 +109,68 @@ const UserManager = () => {
                 </div>
             </div>
 
-            <div className="card" style={{ background: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Last Active</th>
-                            <th style={{ textAlign: 'right' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map(user => (
-                            <tr key={user.id}>
-                                <td>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <div style={{
-                                            width: 36, height: 36, borderRadius: '50%', background: '#e0e7ff', color: '#4f46e5',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', textTransform: 'uppercase'
-                                        }}>
-                                            {user.name ? user.name.charAt(0) : '?'}
-                                        </div>
-                                        <div>
-                                            <div style={{ fontWeight: '500' }}>{user.name || 'Unnamed'}</div>
-                                            <div style={{ fontSize: '0.85rem', color: '#666' }}>{user.email}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span style={{
-                                        display: 'inline-flex', alignItems: 'center', gap: '4px',
-                                        padding: '4px 8px', borderRadius: '4px', background: `${getRoleColor(user.role_id)}15`,
-                                        border: `1px solid ${getRoleColor(user.role_id)}30`, color: getRoleColor(user.role_id), fontSize: '0.85rem', fontWeight: '500'
-                                    }}>
-                                        <Shield size={12} /> {getRoleName(user.role_id)}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span className={`badge ${user.status === 'Active' ? 'badge-success' : 'badge-gray'}`}
-                                        style={{
-                                            padding: '4px 8px', borderRadius: '4px', fontSize: '12px',
-                                            background: user.status === 'Active' ? '#f0fdf4' : '#f1f5f9',
-                                            color: user.status === 'Active' ? '#15803d' : '#64748b'
-                                        }}
-                                    >
-                                        {user.status || 'Active'}
-                                    </span>
-                                </td>
-                                <td style={{ color: '#666', fontSize: '0.9rem' }}>
-                                    {user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}
-                                </td>
-                                <td style={{ textAlign: 'right' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                        <button onClick={() => handleEdit(user)} className="btn-icon" title="Edit Role"><Edit size={16} /></button>
-                                        <button onClick={() => handleDelete(user.id)} className="btn-icon" style={{ color: '#c53030' }} title="Deactivate"><Trash2 size={16} /></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                        {users.length === 0 && !loading && (
-                            <tr>
-                                <td colSpan="5" style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
-                                    No users found. (Are you running against live Supabase?)
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+            {/* Soft UI Card List */}
+            <div className="card-list">
+                {users.map(user => (
+                    <div key={user.id} className="card-list-item" style={{ background: 'white', borderRadius: '16px', padding: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'var(--shadow-soft)' }}>
+
+                        {/* 1. User Info */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: '30%' }}>
+                            <div style={{
+                                width: 48, height: 48, borderRadius: '50%', background: '#F0F9FF', color: '#0EA5E9',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', textTransform: 'uppercase', fontSize: '1.1rem'
+                            }}>
+                                {user.name ? user.name.charAt(0) : '?'}
+                            </div>
+                            <div>
+                                <div style={{ fontWeight: '700', color: '#1E293B', fontSize: '1.05rem' }}>{user.name || 'Unnamed'}</div>
+                                <div style={{ fontSize: '0.85rem', color: '#64748B' }}>{user.email}</div>
+                            </div>
+                        </div>
+
+                        {/* 2. Role */}
+                        <div>
+                            <span style={{
+                                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                                padding: '0.4rem 0.8rem', borderRadius: '999px', background: `${getRoleColor(user.role_id)}15`,
+                                border: `1px solid ${getRoleColor(user.role_id)}20`, color: getRoleColor(user.role_id), fontSize: '0.85rem', fontWeight: '600'
+                            }}>
+                                <Shield size={14} /> {getRoleName(user.role_id)}
+                            </span>
+                        </div>
+
+                        {/* 3. Status & Last Login */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                            <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontSize: '0.75rem', color: '#94A3B8', textTransform: 'uppercase' }}>Last Active</div>
+                                <div style={{ fontSize: '0.9rem', color: '#334155', fontWeight: 500 }}>{user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}</div>
+                            </div>
+                            <span className={`badge ${user.status === 'Active' ? 'badge-success' : 'badge-gray'}`}
+                                style={{
+                                    padding: '0.4rem 0.8rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: '600',
+                                    background: user.status === 'Active' ? '#ECFDF5' : '#F1F5F9',
+                                    color: user.status === 'Active' ? '#059669' : '#64748B'
+                                }}
+                            >
+                                {user.status || 'Active'}
+                            </span>
+                        </div>
+
+                        {/* 4. Actions */}
+                        <div className="action-buttons" style={{ display: 'flex', gap: '0.75rem' }}>
+                            <button onClick={() => handleEdit(user)} className="btn-icon-soft" title="Edit Role" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B', background: 'white', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                <Edit size={18} />
+                            </button>
+                            <button onClick={() => handleDelete(user.id)} className="btn-icon-soft" title="Deactivate" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #FECACA', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444', background: '#FEF2F2', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
+                    </div>
+                ))}
+
+                {users.length === 0 && !loading && (
+                    <div style={{ textAlign: 'center', padding: '3rem', color: '#94A3B8' }}>No users found.</div>
+                )}
             </div>
 
             {/* Modal */}

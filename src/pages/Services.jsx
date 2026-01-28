@@ -1,16 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Truck, Users, Activity, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabaseService } from '../utils/supabaseService';
 
 const Services = () => {
+    const [content, setContent] = useState({
+        title: 'Our Services',
+        subtitle: 'Comprehensive healthcare solutions for hospitals, clinics, and distributors.',
+        items: []
+    });
+
+    useEffect(() => {
+        const loadContent = async () => {
+            const data = await supabaseService.getPageContent('services');
+            if (data) {
+                setContent(prev => ({ ...prev, ...data }));
+            }
+        };
+        loadContent();
+    }, []);
+
     return (
         <div className="services-page">
             {/* Hero */}
             <section style={{ background: '#d32f2f', color: 'white', padding: '5rem 0', textAlign: 'center' }}>
                 <div className="container">
-                    <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Our Services</h1>
+                    <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>{content.title}</h1>
                     <p style={{ fontSize: '1.2rem', opacity: 0.9, maxWidth: '800px', margin: '0 auto' }}>
-                        Comprehensive healthcare solutions for hospitals, clinics, and distributors.
+                        {content.subtitle}
                     </p>
                 </div>
             </section>

@@ -43,7 +43,8 @@ const CertificatesList = () => {
                 </Link>
             </div>
 
-            <div className="admin-card">
+            {/* Soft UI Card List */}
+            <div className="card-list">
                 {loading ? (
                     <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>Loading certificates...</div>
                 ) : certificates.length === 0 ? (
@@ -56,71 +57,60 @@ const CertificatesList = () => {
                         </Link>
                     </div>
                 ) : (
-                    <div className="table-responsive">
-                        <table className="admin-table">
-                            <thead>
-                                <tr>
-                                    <th width="80">Logo</th>
-                                    <th>Certificate Name</th>
-                                    <th>Type</th>
-                                    <th>Visibility (Used On)</th>
-                                    <th>Status</th>
-                                    <th width="100">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {certificates.map(cert => (
-                                    <tr key={cert.id}>
-                                        <td>
-                                            <div style={{ width: 48, height: 48, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                                <img
-                                                    src={cert.image}
-                                                    alt={cert.name}
-                                                    style={{ maxWidth: '100%', maxHeight: '100%' }}
-                                                    onError={(e) => e.target.style.display = 'none'}
-                                                />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style={{ fontWeight: '600', color: '#1e293b' }}>{cert.name}</div>
-                                            <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Added: {new Date(cert.created_at).toLocaleDateString()}</div>
-                                        </td>
-                                        <td>
-                                            <span style={{
-                                                background: '#eff6ff', color: '#1d4ed8',
-                                                padding: '0.25rem 0.5rem', borderRadius: 4, fontSize: '0.75rem', fontWeight: '500'
-                                            }}>
-                                                Standard
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                {cert.show_on_products ? (
-                                                    <span title="Products" style={{ background: '#f1f5f9', color: '#475569', padding: 4, borderRadius: 4 }}><Box size={14} /> Product Pages</span>
-                                                ) : (
-                                                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>-</span>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className={`status-badge ${cert.status.toLowerCase()}`}>
-                                                {cert.status}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="action-buttons">
-                                                <Link to={`/admin/certificates/edit/${cert.id}`} className="btn-icon" title="Edit">
-                                                    <Edit size={16} />
-                                                </Link>
-                                                <button onClick={() => handleDelete(cert.id, cert.name)} className="btn-icon delete" title="Delete">
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                    <div className="card-list-items">
+                        {certificates.map(cert => (
+                            <div key={cert.id} className="card-list-item" style={{ background: 'white', borderRadius: '16px', padding: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'var(--shadow-soft)' }}>
+
+                                {/* 1. Logo & Name */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: '30%' }}>
+                                    <div style={{ width: 60, height: 60, background: 'white', border: '1px solid #F1F5F9', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem' }}>
+                                        <img
+                                            src={cert.image}
+                                            alt={cert.name}
+                                            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                                            onError={(e) => e.target.style.display = 'none'}
+                                        />
+                                    </div>
+                                    <div>
+                                        <div style={{ fontWeight: '700', color: '#1E293B', fontSize: '1.05rem' }}>{cert.name}</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>Added: {new Date(cert.created_at).toLocaleDateString()}</div>
+                                    </div>
+                                </div>
+
+                                {/* 2. Visibility */}
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    {cert.show_on_products ? (
+                                        <span style={{ fontSize: '0.8rem', fontWeight: 600, background: '#F8FAFC', color: '#64748B', padding: '0.4rem 0.8rem', borderRadius: 999, display: 'flex', alignItems: 'center', gap: '4px' }}><Box size={14} /> On Products</span>
+                                    ) : (
+                                        <span style={{ fontSize: '0.8rem', fontWeight: 600, background: '#FFF1F2', color: '#E11D48', padding: '0.4rem 0.8rem', borderRadius: 999 }}>Hidden on Products</span>
+                                    )}
+                                    {cert.show_on_homepage && (
+                                        <span style={{ fontSize: '0.8rem', fontWeight: 600, background: '#F0F9FF', color: '#0284C7', padding: '0.4rem 0.8rem', borderRadius: 999, display: 'flex', alignItems: 'center', gap: '4px' }}><Home size={14} /> On Home</span>
+                                    )}
+                                </div>
+
+                                {/* 3. Status */}
+                                <div>
+                                    <span style={{
+                                        padding: '0.4rem 0.8rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: '600',
+                                        background: cert.status === 'Active' ? '#ECFDF5' : '#F3F4F6',
+                                        color: cert.status === 'Active' ? '#059669' : '#6B7280'
+                                    }}>
+                                        {cert.status}
+                                    </span>
+                                </div>
+
+                                {/* 4. Actions */}
+                                <div className="action-buttons" style={{ display: 'flex', gap: '0.75rem' }}>
+                                    <Link to={`/admin/certificates/edit/${cert.id}`} className="btn-icon-soft" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B', background: 'white', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                        <Edit size={18} />
+                                    </Link>
+                                    <button onClick={() => handleDelete(cert.id, cert.name)} className="btn-icon-soft" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #FECACA', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444', background: '#FEF2F2', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 )}
             </div>

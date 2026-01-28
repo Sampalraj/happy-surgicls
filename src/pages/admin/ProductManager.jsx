@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, Filter } from 'lucide-react';
 import { supabaseService } from '../../utils/supabaseService';
 
 const ProductManager = () => {
@@ -24,11 +24,8 @@ const ProductManager = () => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
                 await supabaseService.deleteProduct(id);
-                // Log activity?
-                await supabaseService.logActivity('Admin', 'Deleted', `Product ID: ${id}`, 'Deleted from Product Manager');
-                loadProducts(); // Refresh list
+                loadProducts();
             } catch (error) {
-                alert('Error deleting product');
                 console.error(error);
             }
         }
@@ -44,104 +41,104 @@ const ProductManager = () => {
             {/* Page Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#1e293b' }}>Manage Products</h2>
-                    <p style={{ color: '#64748b' }}>Add, edit, and organize your medical inventory.</p>
+                    <h2 className="page-title">Manage Products</h2>
+                    <p style={{ color: '#6B7280', marginTop: '0.5rem' }}>Add, edit, and organize your medical inventory.</p>
                 </div>
-                <Link to="/admin/products/new" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}>
-                    <Plus size={18} /> Add New Product
+                <Link to="/admin/products/new" className="btn btn-primary">
+                    <Plus size={18} style={{ marginRight: '8px' }} /> Add New Product
                 </Link>
             </div>
 
-            {/* Main Card */}
-            <div className="admin-card" style={{ padding: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1e293b' }}>Product List</h3>
+            {/* Main Content */}
+            <div style={{ background: 'white', borderRadius: '24px', padding: '1.5rem', boxShadow: 'var(--shadow-soft)' }}>
 
-                {/* Filters Row */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', gap: '1rem', flex: 1 }}>
-                        <div style={{ position: 'relative', minWidth: '300px' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                style={{
-                                    width: '100%', padding: '0.6rem 1rem 0.6rem 2.5rem',
-                                    border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.95rem'
-                                }}
-                            />
-                        </div>
-                        <select style={{ padding: '0.6rem', border: '1px solid #e2e8f0', borderRadius: '6px', minWidth: '180px', color: '#64748b' }}>
-                            <option value="">All Categories</option>
-                            <option value="Surgical">Surgical Instruments</option>
-                            <option value="Consumables">Consumables</option>
-                        </select>
+                {/* Visual Filters Bar */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>
+                        <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
+                        <input
+                            type="text"
+                            placeholder="Search products..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{
+                                width: '100%', padding: '0.875rem 1rem 0.875rem 3rem',
+                                border: 'none', borderRadius: '16px', background: '#F3F4F6', color: '#1F2937', fontWeight: 500
+                            }}
+                        />
                     </div>
 
-                    {/* Mock Pagination Controls */}
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <select style={{ padding: '0.4rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-                            <option>10 / Page</option>
-                            <option>20 / Page</option>
-                        </select>
-                        <div style={{ display: 'flex', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-                            <button style={{ padding: '0.4rem 0.8rem', background: 'white', border: 'none', cursor: 'pointer', borderRight: '1px solid #e2e8f0' }}>&lt;</button>
-                            <button style={{ padding: '0.4rem 0.8rem', background: 'white', border: 'none', cursor: 'pointer' }}>&gt;</button>
-                        </div>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                        <button className="btn btn-secondary" style={{ paddingLeft: '1rem', paddingRight: '1rem' }}>
+                            <Filter size={18} style={{ marginRight: '8px' }} /> Filter
+                        </button>
                     </div>
                 </div>
 
-                {/* Table */}
+                {/* Soft Table / Card List */}
                 <div className="table-responsive">
-                    <table className="admin-table">
+                    <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 12px' }}>
                         <thead>
-                            <tr>
-                                <th style={{ width: '80px' }}>Image</th>
-                                <th>Product Name</th>
-                                <th>Category</th>
-                                <th>Stock</th>
-                                <th>Status</th>
-                                <th style={{ textAlign: 'right' }}>Actions</th>
+                            <tr style={{ color: '#6B7280', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                <th style={{ padding: '0 1.5rem', textAlign: 'left' }}>Product</th>
+                                <th style={{ padding: '0 1.5rem', textAlign: 'left' }}>Category</th>
+                                <th style={{ padding: '0 1.5rem', textAlign: 'center' }}>Stock</th>
+                                <th style={{ padding: '0 1.5rem', textAlign: 'center' }}>Status</th>
+                                <th style={{ padding: '0 1.5rem', textAlign: 'right' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredProducts.length === 0 ? (
-                                <tr><td colSpan="6" style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>No products found matching your search.</td></tr>
+                                <tr><td colSpan="5" style={{ textAlign: 'center', padding: '3rem', color: '#9CA3AF' }}>No products found.</td></tr>
                             ) : (
                                 filteredProducts.map(product => (
-                                    <tr key={product.id}>
-                                        <td>
-                                            <div style={{ width: '48px', height: '48px', background: '#f8fafc', borderRadius: '8px', overflow: 'hidden', padding: 4 }}>
-                                                <img
-                                                    src={product.img}
-                                                    alt="prod"
-                                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                                    onError={(e) => e.target.src = 'https://placehold.co/100?text=IMG'}
-                                                />
+                                    <tr key={product.id} style={{ background: 'white', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', transition: 'transform 0.1s' }}>
+                                        <td style={{ padding: '1rem 1.5rem', borderRadius: '16px 0 0 16px', border: '1px solid #F3F4F6', borderRight: 'none' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#F8FAFC', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <img
+                                                        src={product.img}
+                                                        alt=""
+                                                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                                                        onError={(e) => e.target.src = 'https://placehold.co/100?text=IMG'}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontWeight: 600, color: '#1F2937' }}>{product.name}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: '#9CA3AF' }}>#{product.code || product.id.substring(0, 6)}</div>
+                                                </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            <div style={{ fontWeight: '600', color: '#0f172a' }}>{product.name}</div>
-                                            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>ID: #{product.id.substring(0, 6)}</div>
+                                        <td style={{ padding: '1rem 1.5rem', borderTop: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6', color: '#4B5563' }}>
+                                            {product.category}
                                         </td>
-                                        <td style={{ color: '#475569' }}>{product.category}</td>
-                                        <td style={{ fontVariantNumeric: 'tabular-nums' }}>
-                                            {product.stock === 'In Stock' ? '500' : '0'} {/* Mock Stock Qty */}
+                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center', borderTop: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6', fontWeight: 600, color: '#1F2937' }}>
+                                            500
                                         </td>
-                                        <td>
-                                            <span className={`status-badge ${product.stock === 'In Stock' ? 'status-in-stock' : 'status-out-of-stock'
-                                                }`}>
-                                                {product.stock}
-                                            </span>
+                                        <td style={{ padding: '1rem 1.5rem', textAlign: 'center', borderTop: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6' }}>
+                                            <span style={{
+                                                background: '#DEF7EC', color: '#03543F',
+                                                padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600
+                                            }}>In Stock</span>
                                         </td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                                        <td style={{ padding: '1rem 1.5rem', borderRadius: '0 16px 16px 0', border: '1px solid #F3F4F6', borderLeft: 'none', textAlign: 'right' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
                                                 <button
                                                     onClick={() => navigate(`/admin/products/edit/${product.id}`)}
-                                                    className="btn-action-primary"
+                                                    className="btn btn-secondary"
+                                                    style={{ padding: '0.5rem', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                                 >
-                                                    <Edit size={14} /> Edit
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(product.id)}
+                                                    style={{
+                                                        background: '#FEE2E2', color: '#EF4444', border: 'none',
+                                                        padding: '0.5rem', borderRadius: '50%', width: '36px', height: '36px',
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <Trash2 size={16} />
                                                 </button>
                                             </div>
                                         </td>
@@ -152,14 +149,12 @@ const ProductManager = () => {
                     </table>
                 </div>
 
-                {/* Footer Pagination Mock */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', color: '#64748b', fontSize: '0.9rem' }}>
-                    <div>Showing 1 to {filteredProducts.length} of {products.length} entries</div>
+                {/* Pagination */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem', padding: '0 1rem', color: '#6B7280', fontSize: '0.9rem' }}>
+                    <div>Showing 1-10 of {products.length} products</div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button className="btn-outline" style={{ padding: '0.4rem 0.8rem' }}>1</button>
-                        <button className="btn-outline" style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: 'white', borderColor: '#3b82f6' }}>2</button>
-                        <button className="btn-outline" style={{ padding: '0.4rem 0.8rem' }}>...</button>
-                        <button className="btn-outline" style={{ padding: '0.4rem 0.8rem' }}>&gt;</button>
+                        <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem' }}>Previous</button>
+                        <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem' }}>Next</button>
                     </div>
                 </div>
 

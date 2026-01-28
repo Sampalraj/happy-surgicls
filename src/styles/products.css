@@ -2,18 +2,19 @@
 /* EXACT UI PROMPT IMPLEMENTATION */
 
 :root {
-    --pp-primary: #00A651;
-    /* Medical Green */
-    --pp-primary-dark: #008f45;
-    --pp-bg: #F7F8FA;
-    /* Light corporate grey */
+    --pp-primary: #2EBF68;
+    /* Happy Green */
+    --pp-primary-dark: #249d53;
+    /* Deep Green */
+    --pp-bg: #FFFFFF;
+    /* White Background for Minimalist feel */
     --pp-text: #1E293B;
     /* Dark Charcoal */
     --pp-text-light: #64748B;
     --pp-white: #FFFFFF;
     --pp-border: #E2E8F0;
     --pp-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    --pp-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --pp-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .premium-products-page {

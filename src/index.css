@@ -1,14 +1,14 @@
 :root {
-  /* PRIMARY BRAND COLORS (Vibrant + Trust) */
-  --primary: #0FB9B1;
-  /* Medical Teal (Buttons, Active items) */
-  --primary-hover: #0d968f;
-  --secondary: #1E3A8A;
-  /* Deep Medical Blue (Header, Footer, Sidebar) */
+  /* PRIMARY BRAND COLORS (Nature + Growth) */
+  --primary: #2EBF68;
+  /* Happy Green */
+  --primary-hover: #249d53;
+  --secondary: #E04F5F;
+  /* Coral Red */
 
-  /* ACCENT COLORS (Energy & Action) */
-  --accent: #38E8E0;
-  /* Fresh Aqua (Hover, Icons) */
+  /* ACCENT COLORS */
+  --accent: #6EE7B7;
+  /* Soft Green */
   --success: #22C55E;
   /* Vibrant Green (Badges, Success) */
 
@@ -17,8 +17,8 @@
   /* Amber (Enquire, Warnings) */
 
   /* ERROR / ALERT */
-  --danger: #EF4444;
-  /* Medical Red (Errors, Delete) */
+  --danger: #DC2626;
+  /* Dark Crimson Red (Contrast Safe) */
 
   /* NEUTRALS */
   --bg-white: #FFFFFF;

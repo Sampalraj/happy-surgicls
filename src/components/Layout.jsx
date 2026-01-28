@@ -74,11 +74,8 @@ const Layout = () => {
 
                     {/* Logo */}
                     <div className="logo">
-                        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <div style={{ background: 'var(--primary, #3b82f6)', color: 'white', width: 32, height: 32, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem' }}>+</div>
-                            <span className="logo-text" style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1e293b' }}>
-                                {settings.siteName}
-                            </span>
+                        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                            <img src="/assets/logo.png" alt="Happy Surgicals" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
                         </Link>
                     </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, List, File, Plus, MessageCircle } from 'lucide-react';
+import { Package, List, File, Plus, MessageCircle, TrendingUp, Clock, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabaseService } from '../../utils/supabaseService';
 
@@ -18,7 +18,7 @@ const Dashboard = () => {
                 const data = await supabaseService.getStats();
                 setStats({
                     totalEnquiries: data.enquiries || 0,
-                    newEnquiries: 0, // Pending implementation of "New" statuses count
+                    newEnquiries: 0, // Pending implementation
                     products: data.products || 0,
                     categories: data.categories || 0
                 });
@@ -30,56 +30,81 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div>
-            {/* Stats Grid */}
+        <div className="dashboard-container">
+            {/* STATS WIDGETS */}
             <div className="stats-grid">
-                <div className="stat-card">
+                <div className="stat-card stat-blue">
                     <h3>Total Products</h3>
                     <div className="value">{stats.products}</div>
                     <div className="icon"><Package size={24} /></div>
                 </div>
-                <div className="stat-card">
+
+                <div className="stat-card stat-orange">
                     <h3>Active Categories</h3>
                     <div className="value">{stats.categories}</div>
                     <div className="icon"><List size={24} /></div>
                 </div>
-                <div className="stat-card">
+
+                <div className="stat-card stat-pink">
                     <h3>Total Enquiries</h3>
                     <div className="value">{stats.totalEnquiries}</div>
                     <div className="icon"><MessageCircle size={24} /></div>
                 </div>
-                <div className="stat-card">
+
+                <div className="stat-card stat-green">
                     <h3>New Requests</h3>
                     <div className="value">{stats.newEnquiries}</div>
-                    <div style={{ fontSize: '0.875rem', color: '#e53935' }}>Action Required</div>
+                    <div style={{ fontSize: '0.875rem', color: '#10B981', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: 'auto' }}>
+                        <TrendingUp size={14} /> +12% this week
+                    </div>
+                    <div className="icon"><AlertCircle size={24} /></div>
                 </div>
             </div>
 
-            {/* Recent Activity */}
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
-                <div className="card" style={{ background: '#fff', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--admin-border-color)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                        <h3 style={{ fontSize: '1.1rem' }}>Recent Activity</h3>
-                    </div>
-                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <li style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid #eee' }}>
-                            <div>
-                                <div style={{ fontWeight: '500' }}>System Updated</div>
-                                <div style={{ fontSize: '0.875rem', color: '#666' }}>Backend integration complete</div>
+                {/* RECENT ACTIVITY (Card List) */}
+                <div className="section-card">
+                    <h3 className="section-title">Recent Activity</h3>
+                    <div className="card-list">
+                        <div className="card-list-item">
+                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                <div style={{ background: '#E0F2FE', padding: '0.5rem', borderRadius: '50%', color: '#0284C7' }}>
+                                    <Settings size={20} />
+                                </div>
+                                <div>
+                                    <div style={{ fontWeight: '600', color: '#1F2937' }}>System Updated</div>
+                                    <div style={{ fontSize: '0.85rem', color: '#6B7280' }}>Backend integration complete</div>
+                                </div>
                             </div>
-                            <span style={{ fontSize: '0.875rem', color: '#999' }}>Just now</span>
-                        </li>
-                    </ul>
+                            <span style={{ fontSize: '0.85rem', color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                <Clock size={14} /> Just now
+                            </span>
+                        </div>
+
+                        {/* Placeholder Items */}
+                        <div className="card-list-item">
+                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                <div style={{ background: '#DCFCE7', padding: '0.5rem', borderRadius: '50%', color: '#16A34A' }}>
+                                    <Package size={20} />
+                                </div>
+                                <div>
+                                    <div style={{ fontWeight: '600', color: '#1F2937' }}>New Product Added</div>
+                                    <div style={{ fontSize: '0.85rem', color: '#6B7280' }}>Surgical Forceps Pro</div>
+                                </div>
+                            </div>
+                            <span style={{ fontSize: '0.85rem', color: '#9CA3AF' }}>2h ago</span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="card" style={{ background: '#fff', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--admin-border-color)' }}>
-                    <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Quick Actions</h3>
+                {/* QUICK ACTIONS */}
+                <div className="section-card">
+                    <h3 className="section-title">Quick Actions</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <button onClick={() => navigate('/admin/products/new')} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+                        <button onClick={() => navigate('/admin/products')} className="btn btn-primary">
                             <Plus size={18} style={{ marginRight: '8px' }} /> Add New Product
                         </button>
-                        <button onClick={() => navigate('/admin/enquiries')} className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>
+                        <button onClick={() => navigate('/admin/enquiries')} className="btn btn-secondary">
                             View Enquiries
                         </button>
                     </div>
@@ -88,5 +113,10 @@ const Dashboard = () => {
         </div>
     );
 };
+
+// Helper for icon since Settings wasn't imported
+const Settings = ({ size }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+);
 
 export default Dashboard;

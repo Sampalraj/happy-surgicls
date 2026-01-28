@@ -72,41 +72,50 @@ const CategoryManager = () => {
                 </button>
             </div>
 
-            <div className="card" style={{ background: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Category Name</th>
-                            <th>Parent Segment</th>
-                            <th>Description</th>
-                            <th style={{ textAlign: 'right' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {categories.map(cat => {
-                            const parentSeg = segments.find(s => s.id === cat.segment_id);
-                            return (
-                                <tr key={cat.id}>
-                                    <td style={{ fontWeight: '500' }}>{cat.name}</td>
-                                    <td>
-                                        {parentSeg ? (
-                                            <span className="badge badge-gray" style={{ background: '#f0f9ff', color: '#0369a1', padding: '4px 8px', borderRadius: '4px', fontSize: '0.85rem' }}>
-                                                {parentSeg.name}
-                                            </span>
-                                        ) : <span style={{ color: '#999' }}>-</span>}
-                                    </td>
-                                    <td style={{ color: '#666' }}>{cat.description || '-'}</td>
-                                    <td style={{ textAlign: 'right' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                            <button onClick={() => handleEdit(cat)} className="btn-icon" title="Edit"><Edit size={16} /></button>
-                                            <button onClick={() => handleDelete(cat.id)} className="btn-icon" title="Delete" style={{ color: '#c53030' }}><Trash2 size={16} /></button>
+            {/* Soft UI Card List */}
+            <div className="card-list">
+                {categories.map(cat => {
+                    const parentSeg = segments.find(s => s.id === cat.segment_id);
+                    return (
+                        <div key={cat.id} className="card-list-item" style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'var(--shadow-soft)' }}>
+
+                            {/* Left: Info */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div style={{ width: 48, height: 48, borderRadius: '12px', background: '#F0F9FF', color: '#0EA5E9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{cat.name.charAt(0)}</div>
+                                </div>
+                                <div>
+                                    <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1E293B', marginBottom: '0.2rem' }}>{cat.name}</h4>
+                                    {parentSeg && (
+                                        <div style={{ fontSize: '0.8rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#0EA5E9' }}></span>
+                                            {parentSeg.name}
                                         </div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Middle: Description */}
+                            <div style={{ flex: 1, padding: '0 2rem', color: '#64748B', fontSize: '0.9rem' }}>
+                                {cat.description || <span style={{ opacity: 0.5 }}>No description</span>}
+                            </div>
+
+                            {/* Right: Actions */}
+                            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                <button onClick={() => handleEdit(cat)} className="btn-icon-soft" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B', background: 'white', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                    <Edit size={18} />
+                                </button>
+                                <button onClick={() => handleDelete(cat.id)} className="btn-icon-soft" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #FECACA', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444', background: '#FEF2F2', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
+                        </div>
+                    );
+                })}
+
+                {categories.length === 0 && !loading && (
+                    <div style={{ textAlign: 'center', padding: '3rem', color: '#94A3B8' }}>No categories found. Create one.</div>
+                )}
             </div>
 
             {/* Add Category Modal Overlay */}

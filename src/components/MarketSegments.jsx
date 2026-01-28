@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom';
 import { supabaseService } from '../utils/supabaseService';
 import {
     Activity, ShieldCheck, Stethoscope, Briefcase,
-    ArrowRight, UserCheck, HeartPulse
+    ArrowRight, UserCheck, HeartPulse, Bone, User
 } from 'lucide-react';
 import styles from './MarketSegments.module.css';
 
+// Fallback data in case DB is empty or loading
 // Fallback data in case DB is empty or loading
 const DEFAULT_SEGMENTS = [
     {
@@ -15,42 +16,48 @@ const DEFAULT_SEGMENTS = [
         name: 'Healthcare',
         description: 'Premium supplies for Hospitals, Clinics & Nursing Homes.',
         icon: 'Stethoscope',
-        link: '/products?category=healthcare'
+        link: '/products?category=healthcare',
+        image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80' // Hospital Hallway
     },
     {
         id: 'safety',
         name: 'Industrial Safety',
         description: 'Complete protection gear for Workforce Safety.',
         icon: 'ShieldCheck',
-        link: '/products?category=safety'
+        link: '/products?category=safety',
+        image: 'https://images.unsplash.com/photo-1581093588401-fbb62a02f138?auto=format&fit=crop&w=800&q=80' // Lab/Industry
     },
     {
         id: 'respiratory',
         name: 'Respiratory Care',
         description: 'Oxygen therapy and breathing assistance devices.',
         icon: 'Activity',
-        link: '/products?category=respiratory'
+        link: '/products?category=respiratory',
+        image: 'https://images.unsplash.com/photo-1584362917165-526a968579e8?auto=format&fit=crop&w=800&q=80' // Oxygen/Mask
     },
     {
         id: 'personal',
         name: 'Personal Care',
         description: 'Hygiene and daily living aids for adults.',
-        icon: 'UserCheck',
-        link: '/products?category=personal'
+        icon: 'User',
+        link: '/products?category=personal',
+        image: 'https://images.unsplash.com/photo-1576091160550-217358c7e618?auto=format&fit=crop&w=800&q=80' // Patient Care
     },
     {
         id: 'ortho',
         name: 'Orthopedic',
         description: 'Support and rehabilitation for bone & joint health.',
-        icon: 'Briefcase', // Fallback icon
-        link: '/products?category=ortho'
+        icon: 'Bone',
+        link: '/products?category=ortho',
+        image: 'https://images.unsplash.com/photo-1583912267669-e7d6928e461b?auto=format&fit=crop&w=800&q=80' // X-Ray/Bone
     },
     {
         id: 'services',
         name: 'Services',
         description: 'Equipment rental and biomedical maintenance.',
         icon: 'HeartPulse',
-        link: '/services'
+        link: '/services',
+        image: 'https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?auto=format&fit=crop&w=800&q=80' // Technician/Service
     }
 ];
 
@@ -59,10 +66,9 @@ const IconMap = {
     'Healthcare': Stethoscope,
     'Industrial Safety': ShieldCheck,
     'Respiratory Care': Activity,
-    'Personal Care': UserCheck,
-    'Orthopedic': Briefcase,
+    'Personal Care': User,
+    'Orthopedic': Bone,
     'Services': HeartPulse,
-    // Add more mappings as needed
 };
 
 const MarketSegments = () => {
@@ -72,21 +78,16 @@ const MarketSegments = () => {
         const fetchSegments = async () => {
             const data = await supabaseService.getSegments();
             if (data && data.length > 0) {
-                // Merge DB data with local icons/links based on name matching
                 const merged = data.map(seg => ({
                     ...seg,
-                    // Try to match icon by name, default to Activity
                     icon: IconMap[seg.name] || Activity,
-                    // Construct link if not present
-                    link: seg.link || `/products?segment=${seg.id}`
+                    link: seg.link || `/products?segment=${seg.id}`,
+                    // Ideally we'd merge DB image if exists, else fallback to default by ID
+                    image: seg.image || DEFAULT_SEGMENTS.find(d => d.id === seg.id)?.image || 'https://placehold.co/600x400'
                 }));
-                // We could use the merged data, but for now let's stick to default 
-                // ensures the "Healthcare" highlighting works perfectly for the demo.
-                // In a real app we would use 'merged'. 
-                // For this specific 'Redesign' request, I'll stick to the layout structure 
-                // but if we have real DB data, let's try to use it if it matches our design needs.
-
-                // Let's use DEFAULT for now to guarantee the specific requested fields/icons show up perfectly.
+                // Prioritize merged data if available, but for now stick to defaults to ensure images show
+                // un-comment below to use real DB data
+                // setSegments(merged); 
             }
         };
         fetchSegments();
@@ -107,17 +108,6 @@ const MarketSegments = () => {
             opacity: 1,
             y: 0,
             transition: { duration: 0.6, ease: "easeOut" }
-        }
-    };
-
-    const iconFloating = {
-        animate: {
-            y: [0, -8, 0],
-            transition: {
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-            }
         }
     };
 
@@ -143,8 +133,6 @@ const MarketSegments = () => {
                             ? (IconMap[seg.name] || Activity)
                             : seg.icon;
 
-                        const isFeatured = seg.name === 'Healthcare';
-
                         return (
                             <motion.div
                                 key={seg.id || index}
@@ -152,23 +140,28 @@ const MarketSegments = () => {
                             >
                                 <Link
                                     to={seg.link}
-                                    className={`${styles.card} ${isFeatured ? styles.featured : ''}`}
+                                    className={styles.card}
                                 >
-                                    {isFeatured && <div className={styles.pulseRing} />}
+                                    {/* Image Top */}
+                                    <div className={styles.cardImageWrapper}>
+                                        <img
+                                            src={seg.image}
+                                            alt={seg.name}
+                                            className={styles.cardImage}
+                                            onError={(e) => e.target.src = 'https://placehold.co/600x400?text=Medical'}
+                                        />
+                                        <div className={styles.cardIconFloater}>
+                                            <IconComponent size={24} />
+                                        </div>
+                                    </div>
 
-                                    <motion.div
-                                        className={styles.iconWrapper}
-                                        variants={iconFloating}
-                                        animate="animate"
-                                    >
-                                        <IconComponent size={32} strokeWidth={1.5} />
-                                    </motion.div>
-
-                                    <h3 className={styles.cardName}>{seg.name}</h3>
-                                    <p className={styles.cardDesc}>{seg.description}</p>
-
-                                    <div className={styles.arrow}>
-                                        Explore Products <ArrowRight size={16} />
+                                    {/* Content Bottom */}
+                                    <div className={styles.cardContent}>
+                                        <h3 className={styles.cardName}>{seg.name}</h3>
+                                        <p className={styles.cardDesc}>{seg.description}</p>
+                                        <div className={styles.arrow}>
+                                            Explore <ArrowRight size={16} />
+                                        </div>
                                     </div>
                                 </Link>
                             </motion.div>

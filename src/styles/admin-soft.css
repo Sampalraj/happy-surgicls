@@ -1,0 +1,295 @@
+/* admin-soft.css */
+/* Healthtrack "Soft UI" Theme */
+
+:root {
+    --admin-bg: #F5F7FA;
+    --card-bg: #FFFFFF;
+    --text-primary: #1F2937;
+    --text-secondary: #6B7280;
+    --accent-primary: #2EBF68;
+    /* Happy Green for Sidebar Active */
+    --accent-secondary: #E5E7EB;
+
+    --radius-xl: 24px;
+    /* Cards */
+    --radius-pill: 30px;
+    /* Buttons */
+    --radius-md: 16px;
+    /* Inputs */
+
+    --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background-color: var(--admin-bg);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- LAYOUT GRID --- */
+.admin-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+    gap: 20px;
+    padding: 20px;
+    background-color: var(--admin-bg);
+}
+
+/* --- FLOATING SIDEBAR --- */
+.admin-sidebar {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+    height: calc(100vh - 40px);
+    /* Fill screen minus padding */
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 3rem;
+    padding-left: 0.5rem;
+}
+
+.sidebar-header span {
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1.25rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-pill);
+    /* Pill shape */
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.sidebar-nav a:hover {
+    background-color: #F3F4F6;
+    color: var(--text-primary);
+}
+
+/* Active State: Black Pill */
+.sidebar-nav a.active {
+    background-color: var(--accent-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+}
+
+.nav-header {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #9CA3AF;
+    margin: 1.5rem 0 0.5rem 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+/* --- MAIN CONTENT --- */
+.admin-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
+}
+
+.admin-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+/* Global Search Input */
+.admin-topbar input {
+    border-radius: var(--radius-md) !important;
+    background-color: white !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+    padding-left: 3rem !important;
+}
+
+/* --- DASHBOARD WIDGETS --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    /* Aspect Ratio for square look */
+    aspect-ratio: 1.2 / 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Top Border Strips */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+/* Specific Colors applied via nth-child or helper classes in JSX */
+.stat-blue::before {
+    background-color: #2CB5F5;
+}
+
+.stat-green::before {
+    background-color: #2DCE89;
+}
+
+.stat-pink::before {
+    background-color: #FF4D8B;
+}
+
+.stat-orange::before {
+    background-color: #FB6340;
+}
+
+.stat-card h3 {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.stat-card .value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: auto;
+}
+
+.stat-card .icon {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    opacity: 0.1;
+    transform: scale(2.5);
+    color: var(--text-primary);
+}
+
+/* --- DATA PRESENTATION (CARD LISTS) --- */
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.card-list-item {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.1s ease;
+    border: 1px solid transparent;
+}
+
+.card-list-item:hover {
+    transform: scale(1.01);
+    border-color: #E5E7EB;
+}
+
+.section-card {
+    /* Using transparent background for the container of the list */
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    border: none;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+/* --- BUTTONS --- */
+.btn {
+    border-radius: var(--radius-pill);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background-color: #2EBF68;
+    /* Happy Green */
+    color: white;
+    box-shadow: 0 4px 12px rgba(46, 191, 104, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: #249d53;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(46, 191, 104, 0.4);
+}
+
+.btn-secondary {
+    background-color: white;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid transparent;
+}
+
+.btn-secondary:hover {
+    border-color: #E5E7EB;
+    transform: translateY(-2px);
+}

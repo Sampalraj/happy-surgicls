@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Menu, X, Phone, Mail, MapPin, ChevronDown, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabaseService } from '../utils/supabaseService';
+import './Layout.css';
 import MegaMenu from './MegaMenu';
 import '../styles/megamenu.css';
 import SurgicalVectors from './SurgicalVectors';
@@ -46,11 +47,12 @@ const Layout = () => {
 
     return (
         <div className="layout" style={{ position: 'relative' }}>
-            {/* Global Animated Vectors */}
+            {/* ... Vectors & Top Bar remain same ... */}
             <SurgicalVectors variant="public" />
 
-            {/* Top Bar */}
+            {/* Top Bar (Skipping inline style refactor for now to focus on Nav) */}
             <div className="top-bar" style={{ background: '#1e293b', color: 'white', padding: '0.5rem 0', fontSize: '0.85rem', position: 'relative', zIndex: 10 }}>
+                {/* ... content ... */}
                 <div className="container top-bar-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div className="contact-info" style={{ display: 'flex', gap: '1.5rem' }}>
                         <a href={`tel:${settings.phone}`} style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
@@ -69,8 +71,8 @@ const Layout = () => {
             </div>
 
             {/* Main Header */}
-            <header className="main-header" style={{ padding: '1rem 0', background: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', position: 'sticky', top: 0, zIndex: 1000 }}>
-                <div className="container header-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+            <header className="main-header">
+                <div className="container header-content">
 
                     {/* Logo */}
                     <div className="logo">
@@ -80,29 +82,28 @@ const Layout = () => {
                     </div>
 
                     {/* Desktop Nav */}
-                    <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-                        <Link to="/" style={{ color: '#333', fontWeight: 500, textDecoration: 'none' }}>Home</Link>
+                    <nav className="desktop-nav">
+                        <Link to="/" className="nav-link">Home</Link>
 
                         {/* Mega Menu Trigger */}
                         <div
                             className="nav-item-dropdown"
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
-                            style={{ padding: '1rem 0', cursor: 'pointer' }}
                         >
-                            <Link to="/products" className="dropdown-trigger" style={{ color: '#333', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <Link to="/products" className="dropdown-trigger nav-link">
                                 Products <ChevronDown size={14} />
                             </Link>
                         </div>
 
-                        <Link to="/manufacturing" style={{ color: '#333', fontWeight: 500, textDecoration: 'none' }}>Manufacturing</Link>
-                        <Link to="/services" style={{ color: '#333', fontWeight: 500, textDecoration: 'none' }}>Services</Link>
-                        <Link to="/about" style={{ color: '#333', fontWeight: 500, textDecoration: 'none' }}>About</Link>
-                        <Link to="/contact" className="btn btn-primary" style={{ background: 'var(--primary, #3b82f6)', color: 'white', padding: '0.5rem 1.25rem', borderRadius: 6, textDecoration: 'none', fontWeight: 500 }}>Get Quote</Link>
+                        <Link to="/manufacturing" className="nav-link">Manufacturing</Link>
+                        <Link to="/services" className="nav-link">Services</Link>
+                        <Link to="/about" className="nav-link">About</Link>
+                        <Link to="/contact" className="btn btn-primary nav-cta">Get Quote</Link>
                     </nav>
 
                     {/* Mobile Menu Toggle */}
-                    <button className="mobile-menu-toggle" onClick={toggleMenu} style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <button className="mobile-menu-toggle" onClick={toggleMenu}>
                         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
 

@@ -1,0 +1,84 @@
+/* Layout.css */
+
+.main-header {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 1rem 0;
+}
+
+/* Desktop Navigation */
+.desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: #333;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-link:hover {
+    color: var(--primary, #3b82f6);
+}
+
+.nav-item-dropdown {
+    padding: 1rem 0;
+    cursor: pointer;
+}
+
+.nav-cta {
+    background: var(--primary, #3b82f6);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.nav-cta:hover {
+    opacity: 0.9;
+    color: white;
+}
+
+/* Mobile Toggle - Hidden by default on Desktop */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+}
+
+/* --- Responsive Media Queries --- */
+
+/* Mobile & Tablet (Max-width: 768px) */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 0.75rem 0;
+    }
+
+    /* Hide Desktop Nav */
+    .desktop-nav {
+        display: none;
+    }
+
+    /* Show Mobile Toggle */
+    .mobile-menu-toggle {
+        display: block;
+    }
+}

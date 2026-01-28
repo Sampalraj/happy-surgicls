@@ -1,0 +1,217 @@
+/* Services.module.css */
+
+.servicesPage {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* Hero Section */
+.heroSection {
+    background-color: #d32f2f;
+    color: white;
+    padding: 5rem 0;
+    text-align: center;
+}
+
+.heroTitle {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Common Service Section */
+.serviceSection {
+    padding: 5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.bgLight {
+    background-color: #f8f9fa;
+}
+
+.serviceGrid {
+    display: grid;
+    gap: 4rem;
+    align-items: center;
+}
+
+/* Specific Grid Ratios (Desktop) */
+.gridLeft {
+    grid-template-columns: 1fr 1.2fr;
+}
+
+.gridRight {
+    grid-template-columns: 1.2fr 1fr;
+}
+
+.serviceIcon {
+    margin-bottom: 1rem;
+}
+
+.iconRed {
+    color: #d32f2f;
+}
+
+.iconBlue {
+    color: #004daa;
+}
+
+.serviceTitle {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #1e293b;
+}
+
+.serviceDescription {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.serviceList {
+    margin-bottom: 2rem;
+    display: grid;
+    gap: 0.5rem;
+    color: #475569;
+}
+
+.serviceImage {
+    width: 100%;
+    border-radius: 8px;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btnPrimaryRed {
+    background-color: #d32f2f;
+    color: white;
+}
+
+.btnPrimaryBlue {
+    background-color: #004daa;
+    color: white;
+}
+
+.btnOutlineRed {
+    border: 2px solid #d32f2f;
+    color: #d32f2f;
+}
+
+/* Contact Strip */
+.contactStrip {
+    background-color: #333;
+    color: white;
+    padding: 2rem 0;
+}
+
+.contactContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* --- Responsive Media Queries --- */
+
+/* Tablet (Max-width: 1024px) */
+@media (max-width: 1024px) {
+
+    .gridLeft,
+    .gridRight {
+        grid-template-columns: 1fr 1fr;
+        /* 2 columns balanced */
+        gap: 2rem;
+    }
+}
+
+/* Mobile (Max-width: 768px) */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .heroSection,
+    .serviceSection {
+        padding: 3rem 1rem;
+        /* Reduced padding */
+    }
+
+    .heroTitle {
+        font-size: 2rem;
+        /* Reduced font size */
+    }
+
+    .heroSubtitle {
+        font-size: 1rem;
+    }
+
+    .serviceGrid,
+    .gridLeft,
+    .gridRight {
+        grid-template-columns: 1fr;
+        /* Single column stack */
+        gap: 2rem;
+    }
+
+    /* Reorder for mobile cleanliness: Text first, then Image */
+    .gridRight {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .gridLeft {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    /* Wait, the user prompt said stacks vertically. 
+       Usually visual order: Image then Text, or Text then Image.
+       Let's stick to valid grid 1fr for stacking naturally.
+       If I use grid-template-columns: 1fr, the DOM order is preserved.
+    */
+    .gridLeft,
+    .gridRight {
+        display: grid;
+        grid-template-columns: 1fr !important;
+    }
+
+    .serviceTitle {
+        font-size: 1.5rem;
+        /* Reduced font size */
+    }
+
+    .serviceImage {
+        width: 100%;
+        height: auto;
+        margin-top: 1rem;
+    }
+
+    .contactContent {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}

@@ -197,9 +197,10 @@ export const supabaseService = {
     submitEnquiry: async (enquiryData) => {
         const payload = { ...enquiryData, status: 'New' };
         if (!payload.created_at) delete payload.created_at;
-        const { data, error } = await supabase.from('enquiries').insert([payload]).select().single();
+        // Don't use .select() here because RLS prevents 'anon' from reading rows
+        const { error } = await supabase.from('enquiries').insert([payload]);
         if (error) throw error;
-        return data;
+        return true;
     },
 
     // --- Enquiries ---

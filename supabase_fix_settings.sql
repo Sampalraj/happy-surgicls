@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS public.settings (
     id BIGINT PRIMARY KEY DEFAULT 1,
     data JSONB NOT NULL DEFAULT '{}'::jsonb,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW(),   
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     CONSTRAINT ensure_single_row CHECK (id = 1) -- Optional: ensure only one row if desired, but mostly just convention
 );

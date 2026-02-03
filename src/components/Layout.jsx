@@ -124,7 +124,7 @@ const Layout = () => {
                     {/* Logo */}
                     <div className="logo">
                         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                            <img src="/assets/logo.png" alt="Happy Surgicals" style={{ height: '48px', width: 'auto', objectFit: 'contain' }}
+                            <img src="/assets/logo.png" alt="Happy Surgicals" style={{ height: '40px', width: 'auto', objectFit: 'contain' }}
                                 onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<span style="font-weight:800; color:#0F766E; font-size:1.5rem">HAPPY<span style="color:#F43F5E">.</span></span>' }}
                             />
                         </Link>
@@ -148,8 +148,9 @@ const Layout = () => {
                     </nav>
 
                     {/* Mobile Menu Toggle */}
+                    {/* Mobile Menu Toggle */}
                     <button className="mobile-menu-toggle" onClick={toggleMenu} aria-label="Toggle menu">
-                        {isMenuOpen ? <X size={28} color="#FFFFFF" /> : <Menu size={28} color="#FFFFFF" />}
+                        {isMenuOpen ? <X size={28} color="#0F766E" /> : <Menu size={28} color="#0F766E" />}
                     </button>
 
                     {/* Desktop Mega Menu */}

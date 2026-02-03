@@ -77,8 +77,8 @@ const MegaMenu = ({ isVisible, onClose }) => {
                         <span>Distributor Partnerships</span>
                     </div>
                     <Link to="/virtual-tour" className="service-item" onClick={onClose} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Rotate3D size={20} className="service-icon" style={{ color: '#2EBF68' }} />
-                        <span style={{ fontWeight: '600', color: '#2EBF68' }}>Virtual Tour</span>
+                        <Rotate3D size={20} className="service-icon" style={{ color: '#0f766e' }} />
+                        <span style={{ fontWeight: '600', color: '#0f766e' }}>Virtual Tour</span>
                     </Link>
                     <Link to="/contact" className="btn-bulk-quote" onClick={onClose}>
                         Request Bulk Quote

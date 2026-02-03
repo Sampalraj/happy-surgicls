@@ -6,7 +6,8 @@ const SurgicalVectors = ({ variant = 'public' }) => {
     // Variants for opacity/intensity
     const isPublic = variant === 'public';
     const opacity = isPublic ? 0.05 : 0.03;
-    const color = isPublic ? '#0f766e' : '#3b82f6'; // Teal for public, Blue for admin
+    // Use Deep Teal for public, Slate-Blue for admin to differentiate but keep premium
+    const color = isPublic ? '#0F766E' : '#475569';
 
     // Animation Variants
     const float = {

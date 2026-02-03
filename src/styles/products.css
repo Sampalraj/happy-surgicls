@@ -1,24 +1,9 @@
 /* Premium Product UI - Happy Surgicals */
-/* EXACT UI PROMPT IMPLEMENTATION */
-
-:root {
-    --pp-primary: #2EBF68;
-    /* Happy Green */
-    --pp-primary-dark: #249d53;
-    /* Deep Green */
-    --pp-bg: #FFFFFF;
-    /* White Background for Minimalist feel */
-    --pp-text: #1E293B;
-    /* Dark Charcoal */
-    --pp-text-light: #64748B;
-    --pp-white: #FFFFFF;
-    --pp-border: #E2E8F0;
-    --pp-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    --pp-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
+/* GLOBAL THEME INTEGRATION */
 
 .premium-products-page {
-    background-color: var(--pp-bg);
+    background-color: var(--surface);
+    /* Mint Green Surface */
     min-height: 100vh;
     font-family: 'Inter', system-ui, sans-serif;
     padding-bottom: 5rem;
@@ -28,22 +13,25 @@
 /* Header */
 .pp-header {
     text-align: center;
-    padding: 3rem 1rem 2rem;
+    padding: 4rem 1rem 3rem;
+    background: linear-gradient(to bottom, white, var(--surface));
+    /* Fade into surface */
 }
 
 .pp-header h1 {
-    font-size: 2.25rem;
+    font-size: 2.75rem;
     font-weight: 800;
-    color: var(--pp-text);
-    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
     letter-spacing: -0.02em;
 }
 
 .pp-header p {
-    color: var(--pp-text-light);
-    font-size: 1.1rem;
-    max-width: 600px;
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    max-width: 650px;
     margin: 0 auto;
+    font-weight: 500;
 }
 
 /* Component 1: Segment Carousel */
@@ -51,16 +39,13 @@
     position: relative;
     padding: 2rem 0 4rem;
     overflow: hidden;
-    /* Optional: Dotted pattern */
-    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-    background-size: 20px 20px;
 }
 
 .pp-carousel-wrapper {
     position: relative;
     max-width: 1400px;
     margin: 0 auto;
-    height: 380px;
+    height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -73,35 +58,36 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Perspective for 3D feel if desired, simplified to 2D scale for now */
 }
 
 /* Segment Card */
 .pp-segment-card {
     position: absolute;
-    width: 320px;
-    height: 280px;
-    background: var(--pp-white);
+    width: 340px;
+    height: 300px;
+    background: white;
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    /* Framer motion handles transform, z-index */
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
 }
 
 .pp-segment-card.active {
-    border-bottom: 4px solid var(--pp-primary);
+    border-bottom: 5px solid var(--primary);
+    /* Deep Teal */
+    box-shadow: var(--shadow-lg);
 }
 
 .seg-title {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
-    color: var(--pp-text-light);
+    color: var(--text-secondary);
     text-align: right;
-    /* As per spec: "Top-right corner" */
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     letter-spacing: 0.05em;
 }
 
@@ -110,23 +96,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
 .seg-img img {
     max-width: 100%;
-    max-height: 160px;
+    max-height: 140px;
     object-fit: contain;
-    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
-    /* Soft shadow for "floating" object */
+    transition: transform 0.3s;
+}
+
+.pp-segment-card:hover .seg-img img {
+    transform: scale(1.05);
 }
 
 .seg-subtitle {
-    font-size: 0.9rem;
-    color: var(--pp-primary);
-    font-weight: 600;
+    font-size: 1rem;
+    color: var(--primary);
+    font-weight: 700;
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
 }
 
 /* Nav Buttons */
@@ -134,25 +123,25 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background: var(--pp-white);
-    border: 1px solid var(--pp-border);
-    color: var(--pp-text);
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     z-index: 50;
-    box-shadow: var(--pp-shadow-card);
+    box-shadow: var(--shadow-md);
     transition: all 0.2s;
 }
 
 .pp-nav-btn:hover {
-    background: var(--pp-primary);
+    background: var(--primary);
     color: white;
-    border-color: var(--pp-primary);
+    border-color: var(--primary);
 }
 
 .pp-nav-btn.prev {
@@ -172,112 +161,124 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid var(--pp-border);
-    padding-bottom: 1rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
 }
 
 .pp-grid-header h2 {
-    font-size: 1.75rem;
-    color: var(--pp-text);
-    font-weight: 700;
+    font-size: 2rem;
+    color: var(--text-primary);
+    font-weight: 800;
+    margin: 0;
 }
 
 .pp-count {
-    font-size: 0.95rem;
-    color: var(--pp-text-light);
-    font-weight: 500;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    background: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    box-shadow: var(--shadow-sm);
 }
 
 .pp-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    /* Desktop 4 cols */
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 /* Product Card */
 .pp-card {
-    background: var(--pp-white);
+    background: white;
     border-radius: 12px;
-    border: 1px solid transparent;
-    box-shadow: var(--pp-shadow-card);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
 }
 
 .pp-card:hover {
-    box-shadow: var(--pp-shadow-hover);
-    transform: translateY(-4px);
-    /* Lift */
-    border-color: #cbd5e1;
-    /* Minimal border on hover optional? */
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-5px);
+    border-color: var(--primary);
 }
 
-/* 1. Image */
+/* Image */
 .pp-card-img {
-    height: 220px;
+    height: 240px;
     background: white;
-    padding: 1.5rem;
+    padding: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
 }
 
 .pp-card-img img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+    transition: transform 0.3s;
+}
+
+.pp-card:hover .pp-card-img img {
+    transform: scale(1.05);
+    /* Subtle zoom */
 }
 
 /* Content */
 .pp-card-content {
-    padding: 1.25rem;
+    padding: 1.5rem;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-/* 3. Tag */
+/* Tag */
 .pp-tag {
     display: inline-block;
     width: fit-content;
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 700;
     padding: 0.25rem 0.75rem;
-    border-radius: 100px;
-    background: #f1f5f9;
-    color: var(--pp-text-light);
+    border-radius: 99px;
+    background: var(--bg-light);
+    color: var(--text-secondary);
     margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .pp-tag.sterile {
     background: #ecfdf5;
-    color: var(--pp-primary-dark);
+    color: var(--primary);
+    /* Teal/Greenish */
 }
 
-/* 2. Name */
+/* Name */
 .pp-card h3 {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: var(--pp-text);
+    color: var(--text-primary);
     margin: 0 0 1rem 0;
     line-height: 1.4;
-    /* Limit lines? */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-/* 4. Features */
+/* Features */
 .pp-features {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem 1rem;
+    gap: 0.75rem;
     margin-bottom: 1.5rem;
 }
 
@@ -286,61 +287,70 @@
     align-items: center;
     gap: 0.4rem;
     font-size: 0.8rem;
-    color: var(--pp-text-light);
+    color: var(--text-secondary);
+    font-weight: 500;
 }
 
 .pp-feat-icon {
-    color: var(--pp-primary);
+    color: var(--primary);
 }
 
-/* 5. Buttons */
+/* Actions */
 .pp-actions {
     margin-top: auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+    gap: 1rem;
 }
 
 .pp-btn-details {
-    background: var(--pp-primary);
-    color: white;
-    border: none;
-    padding: 0.6rem;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.pp-btn-details:hover {
-    background: var(--pp-primary-dark);
-}
-
-.pp-btn-enquire {
     background: transparent;
-    color: var(--pp-text);
-    border: 1px solid var(--pp-border);
-    padding: 0.6rem;
-    border-radius: 6px;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
+    border-radius: 8px;
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s;
+    text-align: center;
+}
+
+.pp-btn-details:hover {
+    border-color: var(--text-primary);
+    background: var(--bg-light);
+}
+
+.pp-btn-enquire {
+    background: var(--accent);
+    /* Coral Red */
+    color: white;
+    border: 1px solid var(--accent);
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
 }
 
 .pp-btn-enquire:hover {
-    border-color: var(--pp-text);
-    background: #f8fafc;
+    background: #e11d48;
+    /* Darker Coral */
+    border-color: #e11d48;
+    box-shadow: var(--shadow-md);
 }
 
 /* Empty State */
 .pp-empty-state {
     text-align: center;
-    padding: 4rem;
+    padding: 5rem;
     background: white;
-    border-radius: 12px;
-    box-shadow: var(--pp-shadow-card);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
 }
 
 /* Responsive */
@@ -356,12 +366,12 @@
     }
 
     .pp-carousel-wrapper {
-        height: 340px;
+        height: 350px;
     }
 
     .pp-segment-card {
-        width: 280px;
-        height: 260px;
+        width: 300px;
+        height: 280px;
     }
 }
 
@@ -370,17 +380,15 @@
         grid-template-columns: 1fr;
     }
 
-    .pp-header h1 {
-        font-size: 1.75rem;
-    }
-
     .pp-nav-btn {
         display: none;
-        /* Swipe usually better on mobile, but keep buttons for simple impl */
     }
 
-    /* On mobile, maybe stack or scroll? Just standard carousel logic above handles resizing fairly well via scale/offset */
-    .pp-carousel-section {
-        overflow: hidden;
+    .pp-header h1 {
+        font-size: 2rem;
+    }
+
+    .pp-card-img {
+        height: 200px;
     }
 }

@@ -1,12 +1,18 @@
 /* Hero.module.css */
 .heroSection {
     position: relative;
-    padding: 6rem 0 8rem;
-    /* Extra bottom padding for overlap */
-    background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    background-color: var(--primary);
+    /* Solid Deep Teal */
     overflow: hidden;
-    /* Diagonal Clip Path - Softer Angle */
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+    padding: 10rem 0 6rem 0;
+}
+
+/* Diagonal Slash Background */
+.heroDiagonal {
+    display: none;
 }
 
 /* Pattern Overlay */
@@ -24,6 +30,27 @@
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 1.5rem;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.heroLayout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+@media (min-width: 960px) {
+    .heroLayout {
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 5rem;
+    }
+}
+
+.heroContent {
+    max-width: 600px;
 }
 
 .grid {
@@ -38,7 +65,7 @@
     position: relative;
     z-index: 10;
     color: white;
-    /* Default text color on teal */
+    /* Force White Text */
 }
 
 .eyebrow {
@@ -46,9 +73,8 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #ccfbf1;
-    /* Very light teal */
-    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
     padding: 0.5rem 1rem;
     border-radius: 999px;
     display: inline-block;
@@ -62,18 +88,15 @@
     line-height: 1.1;
     margin-bottom: 1.5rem;
     color: white;
-    /* Override slate request for better contrast on teal bg, or use very light slate */
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-shadow: none;
 }
 
 .subtitle {
     font-size: 1.125rem;
     line-height: 1.75;
-    color: #f0fdfa;
-    /* Light teal/white */
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 2.5rem;
     max-width: 500px;
-    opacity: 0.9;
 }
 
 /* Buttons */
@@ -87,21 +110,28 @@
     align-items: center;
     justify-content: center;
     padding: 0.875rem 2rem;
-    background-color: #ffffff;
-    color: #0f766e;
-    font-weight: 600;
+    background-color: white !important;
+    /* Force White */
+    color: var(--primary) !important;
+    /* Teal Text */
+    font-weight: 700;
     border-radius: 8px;
     text-decoration: none;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease;
     border: none;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
+
+
 .btnPrimary:hover {
+    background-color: #f8fafc;
     transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    background-color: #f0fdfa;
+    color: var(--primary-dark);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
 }
 
 .btnSecondary {
@@ -110,18 +140,19 @@
     justify-content: center;
     padding: 0.875rem 2rem;
     background-color: transparent;
-    color: white;
+    color: #1a202c;
     font-weight: 600;
     border-radius: 8px;
     text-decoration: none;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    color: white;
     transition: all 0.2s ease;
     cursor: pointer;
 }
 
 .btnSecondary:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: #FFFFFF;
 }
 
 /* Image Break-out */
@@ -136,18 +167,18 @@
 }
 
 .heroImage {
-    width: 120%;
-    /* Break out of container */
-    max-width: none;
+    width: 100%;
+    max-width: 550px;
+    height: auto;
     position: relative;
     z-index: 20;
-    /* Pop above */
-    right: -10%;
-    /* Shift right */
-    /* Drop shadow request */
-    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.25));
-    transform: rotate(-5deg);
-    /* Slight dynamic tilt if suitable, or keep straight */
+    /* Removed width: 120% to prevent overflow */
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    /* Organic Blob Shape */
+    border: 8px solid rgba(255, 255, 255, 0.2);
+    /* Thick translucent border */
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+    /* Soft Glow */
     transition: transform 0.5s ease;
 }
 

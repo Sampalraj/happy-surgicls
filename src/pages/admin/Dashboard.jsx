@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, List, File, Plus, MessageCircle, TrendingUp, Clock, AlertCircle } from 'lucide-react';
+import { Package, List, File, Plus, MessageCircle, TrendingUp, Clock, AlertCircle, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabaseService } from '../../utils/supabaseService';
 
@@ -35,38 +35,39 @@ const Dashboard = () => {
             <div className="stats-grid">
                 <div className="stat-card stat-blue">
                     <h3>Total Products</h3>
+                    <div className="icon-bubble"><Package size={20} /></div>
                     <div className="value">{stats.products}</div>
-                    <div className="icon"><Package size={24} /></div>
                 </div>
 
                 <div className="stat-card stat-orange">
                     <h3>Active Categories</h3>
+                    <div className="icon-bubble"><List size={20} /></div>
                     <div className="value">{stats.categories}</div>
-                    <div className="icon"><List size={24} /></div>
                 </div>
 
                 <div className="stat-card stat-pink">
                     <h3>Total Enquiries</h3>
+                    <div className="icon-bubble"><MessageCircle size={20} /></div>
                     <div className="value">{stats.totalEnquiries}</div>
-                    <div className="icon"><MessageCircle size={24} /></div>
                 </div>
 
                 <div className="stat-card stat-green">
                     <h3>New Requests</h3>
+                    <div className="icon-bubble"><AlertCircle size={20} /></div>
                     <div className="value">{stats.newEnquiries}</div>
-                    <div style={{ fontSize: '0.875rem', color: '#10B981', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: 'auto' }}>
+                    <div style={{ fontSize: '0.85rem', color: '#10B981', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.5rem' }}>
                         <TrendingUp size={14} /> +12% this week
                     </div>
-                    <div className="icon"><AlertCircle size={24} /></div>
                 </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
-                {/* RECENT ACTIVITY (Card List) */}
+                {/* RECENT ACTIVITY (Timeline) */}
                 <div className="section-card">
                     <h3 className="section-title">Recent Activity</h3>
-                    <div className="card-list">
-                        <div className="card-list-item">
+                    <div className="timeline-list">
+                        <div className="timeline-item">
+                            <div className="timeline-dot blue"></div>
                             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                 <div style={{ background: '#E0F2FE', padding: '0.5rem', borderRadius: '50%', color: '#0284C7' }}>
                                     <Settings size={20} />
@@ -76,13 +77,14 @@ const Dashboard = () => {
                                     <div style={{ fontSize: '0.85rem', color: '#6B7280' }}>Backend integration complete</div>
                                 </div>
                             </div>
-                            <span style={{ fontSize: '0.85rem', color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                <Clock size={14} /> Just now
-                            </span>
+                            <div style={{ fontSize: '0.75rem', color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.5rem' }}>
+                                <Clock size={12} /> Just now
+                            </div>
                         </div>
 
                         {/* Placeholder Items */}
-                        <div className="card-list-item">
+                        <div className="timeline-item">
+                            <div className="timeline-dot green"></div>
                             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                 <div style={{ background: '#DCFCE7', padding: '0.5rem', borderRadius: '50%', color: '#16A34A' }}>
                                     <Package size={20} />
@@ -92,7 +94,7 @@ const Dashboard = () => {
                                     <div style={{ fontSize: '0.85rem', color: '#6B7280' }}>Surgical Forceps Pro</div>
                                 </div>
                             </div>
-                            <span style={{ fontSize: '0.85rem', color: '#9CA3AF' }}>2h ago</span>
+                            <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: '0.5rem' }}>2h ago</div>
                         </div>
                     </div>
                 </div>
@@ -105,7 +107,7 @@ const Dashboard = () => {
                             <Plus size={18} style={{ marginRight: '8px' }} /> Add New Product
                         </button>
                         <button onClick={() => navigate('/admin/enquiries')} className="btn btn-secondary">
-                            View Enquiries
+                            <Eye size={18} style={{ marginRight: '8px' }} /> View Enquiries
                         </button>
                     </div>
                 </div>

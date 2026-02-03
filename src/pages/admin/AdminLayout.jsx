@@ -5,7 +5,7 @@ import {
     LayoutDashboard, Package, Palette, FileText, Settings, User, LogOut,
     Image, MessageSquare, List, ShieldCheck, ClipboardList
 } from 'lucide-react';
-import '../../styles/admin-soft.css'; // Changed to new soft theme
+import '../../styles/admin.css'; // Premium Clinical Theme
 import { useAuth } from '../../contexts/AuthContext';
 
 const AdminLayout = () => {
@@ -33,7 +33,7 @@ const AdminLayout = () => {
             {/* FLOATING SIDEBAR */}
             <aside className="admin-sidebar">
                 <div className="sidebar-header">
-                    <img src="/assets/logo.png" alt="Happy Surgicals" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
+                    <img src="/assets/logo.png" alt="Happy Surgicals" style={{ height: '50px', width: 'auto', objectFit: 'contain' }} />
                 </div>
 
                 <nav className="sidebar-nav">
@@ -107,23 +107,23 @@ const AdminLayout = () => {
                     </h2>
 
                     <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                        <div style={{ position: 'relative', width: 300 }}>
-                            <span style={{ position: 'absolute', left: 15, top: 12, opacity: 0.4 }}>🔍</span>
+                        <div style={{ position: 'relative' }}>
+                            <span style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', opacity: 0.4, pointerEvents: 'none' }}>🔍</span>
                             <input
                                 type="text"
-                                placeholder="Search..."
+                                placeholder="Search here..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                style={{ width: '100%', height: '48px' }}
+                                className="header-search-input"
                             />
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '1px solid #E5E7EB', paddingLeft: '1.5rem', height: '40px' }}>
                             <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{userName}</div>
-                                <div style={{ fontSize: '0.8rem', color: '#6B7280' }}>{userRole}</div>
+                                <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#1F2937' }}>{userName}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>{userRole}</div>
                             </div>
-                            <img src={`https://ui-avatars.com/api/?name=${userName}&background=2C3E50&color=fff`} alt={userName} style={{ width: 44, height: 44, borderRadius: '50%', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }} />
+                            <img src={`https://ui-avatars.com/api/?name=${userName}&background=2C3E50&color=fff`} alt={userName} style={{ width: 40, height: 40, borderRadius: '50%', border: '2px solid white', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }} />
                         </div>
                     </div>
                 </header>

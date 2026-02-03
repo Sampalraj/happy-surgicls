@@ -32,12 +32,28 @@ const Manufacturing = () => {
                         {content.content}
                     </p>
 
-                    <div style={{ height: '300px', background: '#e2e8f0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem', overflow: 'hidden' }}>
-                        {content.image ? (
-                            <img src={content.image} alt="Manufacturing" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                            <span style={{ color: '#94a3b8' }}>Factory Video / Tour Placeholder</span>
-                        )}
+                    {/* Video Cover Section */}
+                    <div style={{ position: 'relative', width: '100%', height: '400px', borderRadius: '12px', overflow: 'hidden', marginBottom: '2rem', cursor: 'pointer', group: 'group' }}>
+                        <img
+                            src={content.image || "/factory-cover.jpg"}
+                            alt="Factory Tour"
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                            className="factory-image"
+                            onError={(e) => e.target.src = 'https://placehold.co/1200x600/e2e8f0/64748b?text=Factory+Tour+Video'}
+                        />
+                        {/* Overlay */}
+                        <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px rgba(0,0,0,0.2)' }}>
+                                <div style={{
+                                    width: 0,
+                                    height: 0,
+                                    borderTop: '15px solid transparent',
+                                    borderBottom: '15px solid transparent',
+                                    borderLeft: '24px solid #0F766E',
+                                    marginLeft: '6px'
+                                }}></div>
+                            </div>
+                        </div>
                     </div>
 
                     {content.facilities && content.facilities.length > 0 && (

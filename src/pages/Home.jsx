@@ -8,6 +8,7 @@ import {
 import { motion } from 'framer-motion';
 import MarketSegments from '../components/MarketSegments';
 import Hero from '../components/Hero';
+import MedicalBackground from '../components/MedicalBackground';
 import styles from './Home.module.css';
 
 const Home = () => {
@@ -43,8 +44,34 @@ const Home = () => {
 
     return (
         <div className={styles.page}>
+            <MedicalBackground />
+
             {/* HERO SECTION - Premium Redesign */}
             <Hero content={content} onScrollToProducts={scrollToProducts} />
+
+            {/* TRUST STRIP - New */}
+            <div className={styles.trustStrip}>
+                <div className={styles.container}>
+                    <div className={styles.trustGrid}>
+                        <div className={styles.trustItem}>
+                            <Award size={24} className={styles.trustLogo} />
+                            <span className={styles.trustText}>ISO 13485:2016</span>
+                        </div>
+                        <div className={styles.trustItem}>
+                            <ClipboardCheck size={24} className={styles.trustLogo} />
+                            <span className={styles.trustText}>CE Certified</span>
+                        </div>
+                        <div className={styles.trustItem}>
+                            <Building size={24} className={styles.trustLogo} />
+                            <span className={styles.trustText}>GMP Compliant</span>
+                        </div>
+                        <div className={styles.trustItem}>
+                            <Activity size={24} className={styles.trustLogo} />
+                            <span className={styles.trustText}>FDA Registered</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* QUICK CATEGORY STRIP */}
             <div className={styles.categoryStrip}>
@@ -159,9 +186,9 @@ const Home = () => {
                                 From raw material selection to final packaging, every step is monitored to ensure zero defects.
                             </p>
                             <ul style={{ color: '#E2E8F0', marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <li style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}><ClipboardCheck color="#2EBF68" /> Strict Quality Control Protocols</li>
-                                <li style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}><Building color="#2EBF68" /> High-Capacity Production Lines</li>
-                                <li style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}><Award color="#2EBF68" /> ISO Certified Clean Rooms</li>
+                                <li style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}><ClipboardCheck color="#0f766e" /> Strict Quality Control Protocols</li>
+                                <li style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}><Building color="#0f766e" /> High-Capacity Production Lines</li>
+                                <li style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}><Award color="#0f766e" /> ISO Certified Clean Rooms</li>
                             </ul>
                             <Link to="/manufacturing" className={styles.btnPrimary} style={{ border: '1px solid white' }}>Learn About Our Factory</Link>
                         </motion.div>

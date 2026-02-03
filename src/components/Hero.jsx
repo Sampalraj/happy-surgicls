@@ -2,13 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import MedicalFloatingBackground from './MedicalFloatingBackground';
 import styles from './Hero.module.css';
 
 const Hero = ({ content, onScrollToProducts }) => {
     // Animation Variants
     const fadeIn = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
     };
 
     const stagger = {
@@ -31,6 +32,7 @@ const Hero = ({ content, onScrollToProducts }) => {
 
     return (
         <section className={styles.heroSection}>
+            <MedicalFloatingBackground />
             <div className={styles.container}>
                 <div className={styles.grid}>
                     {/* Left: Content */}

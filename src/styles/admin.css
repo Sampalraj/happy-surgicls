@@ -1,24 +1,27 @@
-/* Admin Panel Styles - Modern Redesign */
+/* Admin Panel Styles - Premium Clinical Theme */
 :root {
-    --primary: #3b82f6;
-    /* Modern Blue */
-    --primary-dark: #2563eb;
-    --secondary: #64748b;
-    --success: #22c55e;
-    --danger: #ef4444;
-    --warning: #f59e0b;
+    /* Brand Colors matching Public Site */
+    --primary: #0F766E;
+    /* Deep Surgical Teal */
+    --primary-dark: #0f5d57;
+    --secondary: #64748B;
+    /* Slate */
 
-    --bg-body: #f1f5f9;
-    /* Light Gray Background */
-    --bg-card: #ffffff;
-    --bg-sidebar: #ffffff;
-    /* White Sidebar */
+    --success: #10B981;
+    --danger: #EF4444;
+    --warning: #F59E0B;
 
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --text-light: #94a3b8;
+    --bg-body: #F0FDFA;
+    /* Mint Surface - Matches site */
+    --bg-card: #FFFFFF;
+    --bg-sidebar: #FFFFFF;
 
-    --border-color: #e2e8f0;
+    --text-main: #1E293B;
+    /* Dark Slate */
+    --text-muted: #64748B;
+    --text-light: #94A3B8;
+
+    --border-color: #E2E8F0;
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
@@ -33,7 +36,7 @@
 
 /* Sidebar */
 .admin-sidebar {
-    width: 250px;
+    width: 260px;
     background-color: var(--bg-sidebar);
     border-right: 1px solid var(--border-color);
     flex-shrink: 0;
@@ -49,8 +52,9 @@
     border-bottom: 1px solid var(--border-color);
     gap: 0.75rem;
     color: var(--primary);
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1.25rem;
+    letter-spacing: -0.02em;
 }
 
 .sidebar-nav {
@@ -69,7 +73,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1rem;
-    border-radius: 6px;
+    border-radius: 8px;
     color: var(--text-muted);
     transition: all 0.2s;
     font-weight: 500;
@@ -78,139 +82,23 @@
 }
 
 .sidebar-nav a:hover {
-    background-color: #f8fafc;
+    background-color: #F0FDFA;
     color: var(--primary);
 }
 
 .sidebar-nav a.active {
     background-color: var(--primary);
     color: white;
-    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 4px 6px -1px rgba(15, 118, 110, 0.25);
 }
 
 .nav-header {
-    padding: 0.5rem 1rem 0.25rem;
+    padding: 1rem 1rem 0.5rem;
     font-size: 0.75rem;
     color: var(--text-light);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-top: 1rem;
-}
-
-/* End basic layout */
-
-.login-left img {
-    max-width: 100%;
-    max-height: 80vh;
-    object-fit: contain;
-}
-
-.login-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 4rem 8rem;
-    max-width: 800px;
-}
-
-.login-header-right {
-    margin-bottom: 3rem;
-}
-
-.login-header-right h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--color-text);
-    margin-bottom: 0.5rem;
-}
-
-.login-header-right p {
-    color: var(--color-text-light);
-    font-size: 1rem;
-}
-
-.login-form input {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid var(--admin-border-color);
-    border-radius: 6px;
-    font-size: 1rem;
-    margin-top: 0.5rem;
-}
-
-.login-form .form-group {
-    margin-bottom: 1.5rem;
-}
-
-.login-form label {
-    font-weight: 600;
-    color: var(--color-text);
-    margin-bottom: 0.5rem;
-}
-
-.login-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-}
-
-.login-options label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: normal;
-    color: var(--color-text-light);
-    cursor: pointer;
-}
-
-.login-options a {
-    color: var(--color-primary);
-    font-weight: 600;
-}
-
-.btn-login {
-    width: 100%;
-    padding: 1rem;
-    background: var(--color-primary);
-    /* Teal, can switch to Orange if strictly requested, but consistency is key */
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.btn-login:hover {
-    background: var(--color-primary-dark);
-}
-
-.login-footer-right {
-    margin-top: 2rem;
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--color-text-light);
-}
-
-.login-footer-right a {
-    color: var(--color-primary);
-    font-weight: 600;
-}
-
-@media (max-width: 1024px) {
-    .login-left {
-        display: none;
-    }
-
-    .login-right {
-        padding: 2rem;
-        max-width: 100%;
-    }
 }
 
 /* Main Content Area */
@@ -246,6 +134,69 @@
     overflow: hidden;
 }
 
+/* Stats Widgets */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-card h3 {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin: 0;
+}
+
+.stat-card .value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1;
+}
+
+.icon-bubble {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.stat-blue .icon-bubble {
+    background: #E0F2FE;
+    color: #0284C7;
+}
+
+.stat-orange .icon-bubble {
+    background: #FEF3C7;
+    color: #D97706;
+}
+
+.stat-pink .icon-bubble {
+    background: #FCE7F3;
+    color: #DB2777;
+}
+
+.stat-green .icon-bubble {
+    background: #DCFCE7;
+    color: #16A34A;
+}
+
 /* Modern Tables */
 .admin-table {
     width: 100%;
@@ -254,7 +205,7 @@
 }
 
 .admin-table th {
-    background: #f8fafc;
+    background: #F8FAFC;
     padding: 1rem 1.5rem;
     text-align: left;
     font-weight: 600;
@@ -276,33 +227,8 @@
 }
 
 .admin-table tr:hover {
-    background-color: #f8fafc;
-}
-
-/* Badges */
-.status-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.status-in-stock,
-.status-active {
-    background-color: #dcfce7;
-    color: #166534;
-}
-
-.status-out-of-stock,
-.status-inactive {
-    background-color: #fee2e2;
-    color: #991b1b;
-}
-
-.status-low-stock {
-    background-color: #fef9c3;
-    color: #854d0e;
+    background-color: #F0FDFA;
+    /* Subtle Mint Hover */
 }
 
 /* Buttons */
@@ -310,9 +236,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
     font-size: 0.9rem;
     transition: all 0.2s;
     cursor: pointer;
@@ -328,57 +254,31 @@
 
 .btn-primary:hover {
     background-color: var(--primary-dark);
-    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 6px -1px rgba(15, 118, 110, 0.3);
 }
 
-.btn-outline {
-    background: white;
+.btn-secondary {
+    background-color: white;
     border: 1px solid var(--border-color);
     color: var(--text-main);
 }
 
-.btn-outline:hover {
-    background: #f8fafc;
-    border-color: var(--text-muted);
-}
-
-/* Action Icons */
-.btn-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    color: var(--text-muted);
-    transition: all 0.2s;
-    border: 1px solid transparent;
-    background: transparent;
-}
-
-.btn-icon:hover {
-    background: #eff6ff;
+.btn-secondary:hover {
+    border-color: var(--primary);
     color: var(--primary);
 }
 
-.btn-icon.delete:hover {
-    background: #fef2f2;
-    color: var(--danger);
+/* Section Card */
+.section-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
 }
 
-.btn-action-primary {
-    background: var(--primary);
-    color: white;
-    border-radius: 6px;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-action-primary:hover {
-    background: var(--primary-dark);
+.section-title {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
 }

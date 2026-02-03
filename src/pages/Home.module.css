@@ -1,37 +1,24 @@
 /* Home.module.css */
-/* Clinical Minimalist Theme */
-
-/* Variables */
-:root {
-    --color-bg-primary: #FFFFFF;
-    --color-bg-secondary: #F8F9FA;
-    --color-accent: #2EBF68;
-    /* Happy Green */
-    --color-accent-dark: #249d53;
-    --color-text-heading: #2C3E50;
-    --color-text-body: #64748B;
-    /* Light grey */
-    --font-primary: 'Inter', 'Roboto', sans-serif;
-    --radius-sharp: 4px;
-    /* Sharp/Slightly rounded */
-}
+/* Clinical Minimalist Theme - Premium B2B Redesign */
 
 .page {
-    background-color: var(--color-bg-primary, #FFFFFF);
-    font-family: var(--font-primary, sans-serif);
-    color: var(--color-text-heading, #2C3E50);
+    background-color: var(--bg-white);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
     overflow-x: hidden;
 }
 
 /* --- HERO SECTION --- */
 .heroSection {
     position: relative;
-    min-height: 80vh;
+    min-height: 85vh;
     display: flex;
     align-items: center;
-    background-color: var(--color-bg-secondary, #F8F9FA);
+    background-color: var(--surface);
+    /* Mint Surface */
     overflow: hidden;
-    padding: 4rem 0;
+    padding: 10rem 0 6rem 0;
+    /* approx pt-32 */
 }
 
 /* Diagonal Slash Background */
@@ -39,11 +26,10 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 50%;
+    width: 55%;
     height: 100%;
-    background-color: var(--color-accent, #2EBF68);
-    background: linear-gradient(135deg, #2EBF68 0%, #249d53 100%);
-    clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, #0d9488 100%);
+    clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%);
     z-index: 0;
 }
 
@@ -53,6 +39,7 @@
     padding: 0 1.5rem;
     position: relative;
     z-index: 1;
+    width: 100%;
 }
 
 .heroLayout {
@@ -74,23 +61,24 @@
 }
 
 .heroTitle {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 800;
-    color: var(--color-text-heading, #2C3E50);
-    line-height: 1.2;
+    color: var(--text-primary);
+    line-height: 1.1;
     margin-bottom: 1.5rem;
     letter-spacing: -0.02em;
 }
 
 @media (min-width: 768px) {
     .heroTitle {
-        font-size: 3.5rem;
+        font-size: 4.5rem;
+        /* Increased size */
     }
 }
 
 .heroSubtitle {
     font-size: 1.125rem;
-    color: var(--color-text-body, #64748B);
+    color: var(--text-body);
     line-height: 1.6;
     margin-bottom: 2.5rem;
     max-width: 500px;
@@ -108,36 +96,41 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.875rem 2rem;
+    padding: 1rem 2rem;
     font-weight: 600;
     font-size: 1rem;
-    border-radius: var(--radius-sharp, 4px);
+    border-radius: 8px;
     text-decoration: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
 }
 
 .btnPrimary {
-    background-color: var(--color-accent, #2EBF68);
-    color: white;
+    background-color: white;
+    color: var(--primary);
+    /* Teal Text */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid transparent;
 }
 
 .btnPrimary:hover {
-    background-color: var(--color-accent-dark, #249d53);
-    transform: translateY(-1px);
-    color: white;
+    background-color: #f8fafc;
+    transform: translateY(-2px);
+    color: var(--primary-dark);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
 }
 
 .btnSecondary {
-    background-color: transparent;
-    border-color: #CBD5E1;
-    color: var(--color-text-heading, #2C3E50);
+    background-color: white;
+    border-color: var(--border-color);
+    color: var(--text-primary);
 }
 
 .btnSecondary:hover {
-    border-color: var(--color-text-heading, #2C3E50);
-    background-color: #F8F9FA;
+    border-color: var(--primary);
+    background-color: var(--bg-light);
+    color: var(--primary);
 }
 
 .heroImageContainer {
@@ -149,32 +142,73 @@
 
 .heroImage {
     width: 100%;
-    max-width: 500px;
+    max-width: 550px;
     height: auto;
-    border-radius: var(--radius-sharp, 4px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    /* Fallback */
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    /* Organic Blob Shape */
+    border: 8px solid rgba(255, 255, 255, 0.2);
+    /* Thick translucent border */
+    box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
     z-index: 1;
 }
 
 /* --- QUICK CATEGORY STRIP --- */
 .categoryStrip {
     background-color: white;
-    border-bottom: 1px solid #E2E8F0;
+    border-bottom: 1px solid var(--border-color);
+    padding: 3rem 0;
+}
+
+.trustStrip {
+    background-color: white;
     padding: 2rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.trustGrid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4rem;
+    flex-wrap: wrap;
+}
+
+.trustItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.trustItem:hover {
+    opacity: 1;
+}
+
+.trustLogo {
+    height: 28px;
+    width: auto;
+    color: var(--primary);
+}
+
+.trustText {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .stripGrid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 @media (min-width: 768px) {
     .stripGrid {
-        gap: 3rem;
+        gap: 4rem;
     }
 }
 
@@ -182,139 +216,133 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     cursor: pointer;
     text-decoration: none;
-    group: hover;
     transition: transform 0.2s ease;
 }
 
 .stripItem:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
 }
 
 .stripIconBox {
-    width: 60px;
-    height: 60px;
-    background-color: #F8F9FA;
-    border-radius: var(--radius-sharp, 4px);
+    width: 70px;
+    height: 70px;
+    background-color: var(--bg-light);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-text-heading, #2C3E50);
+    color: var(--primary);
     transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
 .stripItem:hover .stripIconBox {
-    background-color: var(--color-accent, #2EBF68);
+    background-color: var(--primary);
     color: white;
+    box-shadow: 0 10px 15px -3px rgba(15, 118, 110, 0.3);
 }
 
 .stripLabel {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-heading, #2C3E50);
+    color: var(--text-primary);
 }
 
 /* --- SECTIONS --- */
 .section {
-    padding: 5rem 0;
+    padding: 6rem 0;
 }
 
 .sectionHeader {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
 }
 
 .sectionTitle {
-    font-size: 2rem;
+    font-size: 2.25rem;
     font-weight: 800;
-    color: var(--color-text-heading, #2C3E50);
+    color: var(--text-primary);
     margin-bottom: 1rem;
 }
 
 .sectionSubtitle {
-    color: var(--color-text-body, #64748B);
+    color: var(--text-body);
     max-width: 600px;
     margin: 0 auto;
+    font-size: 1.1rem;
 }
 
-/* --- HIGHLIGHT CARD (General) --- */
+/* --- FLAT CARDS (Why Choose Us) --- */
 .cardGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
 }
 
 .flatCard {
     background-color: white;
-    border-radius: var(--radius-sharp, 4px);
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    /* Clean, flat shadow */
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
-    border: 1px solid #F1F5F9;
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    text-decoration: none;
     height: 100%;
 }
 
 .flatCard:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-    border-color: var(--color-accent, #2EBF68);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
 }
 
 .flatCardIcon {
     margin-bottom: 1.5rem;
-    color: var(--color-accent, #2EBF68);
+    color: var(--primary);
+    background: var(--surface);
+    padding: 1rem;
+    border-radius: 8px;
 }
 
 .flatCardTitle {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--color-text-heading, #2C3E50);
+    color: var(--text-primary);
     margin-bottom: 0.75rem;
 }
 
 .flatCardDesc {
-    font-size: 0.95rem;
-    color: var(--color-text-body, #64748B);
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-}
-
-.flatCardLink {
-    margin-top: auto;
-    font-weight: 600;
-    color: var(--color-accent, #2EBF68);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    font-size: 1rem;
+    color: var(--text-body);
+    line-height: 1.6;
 }
 
 /* --- HIGHLIGHT IMAGES --- */
 .imageCard {
     background-color: white;
-    border-radius: var(--radius-sharp, 4px);
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
     display: block;
     text-decoration: none;
+    border: 1px solid var(--border-color);
 }
 
 .imageCard:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
 }
 
 .imageContainer {
-    height: 200px;
+    height: 220px;
     width: 100%;
-    background-color: #F1F5F9;
+    background-color: var(--bg-light);
     overflow: hidden;
 }
 
@@ -336,54 +364,30 @@
 .imageTitle {
     font-weight: 700;
     font-size: 1.1rem;
-    color: var(--color-text-heading, #2C3E50);
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
 .imageLink {
-    color: var(--color-accent, #2EBF68);
+    color: var(--primary);
     font-size: 0.9rem;
     font-weight: 600;
-}
-
-/* --- STATS (Integrated in Hero or Separate) --- */
-.statsRow {
     display: flex;
-    gap: 3rem;
-    margin-top: 3rem;
-    border-top: 1px solid #E2E8F0;
-    padding-top: 2rem;
-}
-
-.statItem {
-    display: flex;
-    flex-direction: column;
-}
-
-.statNumber {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--color-accent, #2EBF68);
-}
-
-.statLabel {
-    font-size: 0.85rem;
-    color: var(--color-text-body, #64748B);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 /* --- MFG SECTION --- */
 .mfgSection {
-    background-color: #2C3E50;
-    /* Dark distinctive background for contrast */
+    background-color: var(--text-primary);
+    /* Dark Slate Background */
     color: white;
 }
 
 .mfgLayout {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 4rem;
     align-items: center;
 }
 
@@ -393,23 +397,16 @@
     }
 }
 
-.mfgList li {
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
 /* --- FINAL CTA --- */
 .finalCta {
-    background-color: #F8F9FA;
+    background-color: var(--surface);
     text-align: center;
-    padding: 6rem 0;
+    padding: 8rem 0;
 }
 
 .finalTitle {
-    font-size: 2.25rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    color: var(--color-text-heading, #2C3E50);
-    margin-bottom: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
 }

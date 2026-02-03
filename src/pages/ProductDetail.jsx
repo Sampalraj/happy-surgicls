@@ -63,7 +63,7 @@ const ProductDetail = () => {
     );
 
     return (
-        <div className="product-detail-page" style={{ background: 'white', position: 'relative' }}>
+        <div className="product-detail-page">
 
             {/* Modal */}
             {showModal && (
@@ -102,16 +102,16 @@ const ProductDetail = () => {
                 </div>
             )}
 
-            {/* Top Blue Bar */}
-            <div style={{ background: '#1E293B', color: 'white', padding: '1rem 0' }}>
-                <div className="container" style={{ display: 'flex', alignItems: 'center' }}>
-                    <Link to="/products" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'white', textDecoration: 'none', fontWeight: '500', fontSize: '0.9rem' }}>
+            {/* Breadcrumb Bar */}
+            <div className="container" style={{ padding: '1.5rem 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    <Link to="/products" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>
                         <ChevronLeft size={16} /> Back to Products
                     </Link>
                     {segment && (
                         <>
                             <span style={{ margin: '0 0.5rem', opacity: 0.5 }}>/</span>
-                            <Link to={`/products?segment=${segment.name}`} style={{ color: 'white', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>
+                            <Link to={`/products?segment=${segment.name}`} style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
                                 {segment.name}
                             </Link>
                         </>
@@ -119,27 +119,27 @@ const ProductDetail = () => {
                     {category && (
                         <>
                             <span style={{ margin: '0 0.5rem', opacity: 0.5 }}>/</span>
-                            <span style={{ opacity: 0.9, fontSize: '0.9rem' }}>{category.name}</span>
+                            <span style={{ opacity: 0.9 }}>{category.name}</span>
                         </>
                     )}
                 </div>
             </div>
 
-            <div className="container" style={{ paddingTop: '3rem' }}>
+            <div className="container" style={{ paddingBottom: '3rem' }}>
 
                 {/* Main Product Section */}
                 <div className="product-main-section">
                     <div className="product-gallery">
                         <div className="main-image-frame">
-                            <div className="best-badge">BEST</div>
-                            <img src={product.img} alt="Product" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                            <div className="best-badge">BEST SELLER</div>
+                            <img src={product.img} alt="Product" className="object-contain max-h-full max-w-full"
                                 onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerText = 'Product Image'; }} />
                         </div>
                         <div className="gallery-thumbs">
                             <div className="thumb-box"><img src="/placeholder-1.png" alt="1" style={{ width: '100%' }} onError={(e) => e.target.style.display = 'none'} /></div>
                             <div className="thumb-box"><img src="/placeholder-2.png" alt="2" style={{ width: '100%' }} onError={(e) => e.target.style.display = 'none'} /></div>
                             <div className="thumb-box"><img src="/placeholder-3.png" alt="3" style={{ width: '100%' }} onError={(e) => e.target.style.display = 'none'} /></div>
-                            <div className="thumb-box more"><span>MORE<br />5 IMAGES</span></div>
+                            <div className="thumb-box more"><span>MORE<br />IMAGES</span></div>
                         </div>
                     </div>
 
@@ -173,88 +173,75 @@ const ProductDetail = () => {
                 <div className="features-section">
                     <div className="features-grid">
                         <div>
-                            <h2 style={{ color: '#1E293B', marginBottom: '2rem', textTransform: 'uppercase' }}>Technical Specifications</h2>
+                            <h2 style={{ color: 'var(--text-primary)', marginBottom: '2rem' }}>Technical Specifications</h2>
                             <ul className="feature-list">
                                 {product.features ? product.features.map((feat, i) => (
                                     <li key={i}>{feat}</li>
                                 )) : (
                                     <>
-                                        <li><strong>Material:</strong> Medical Grade</li>
+                                        <li><strong>Material:</strong> Medical Grade Information</li>
                                         <li><strong>Sterility:</strong> EO Sterile / Non-Sterile options</li>
-                                        <li><strong>Compliance:</strong> ISO 13485, CE</li>
-                                        <li><strong>Packaging:</strong> Bulk / Individual</li>
+                                        <li><strong>Compliance:</strong> ISO 13485, CE Certified</li>
+                                        <li><strong>Packaging:</strong> Bulk / Individual / OEM</li>
                                     </>
                                 )}
                             </ul>
 
                             {/* Dynamic Compliance Badges */}
-                            <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #eee' }}>
-                                <h4 style={{ fontSize: '0.95rem', textTransform: 'uppercase', color: '#666', marginBottom: '1rem' }}>Applicable Certifications</h4>
+                            <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+                                <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: '1rem', letterSpacing: '0.05em' }}>Certifications</h4>
                                 <ProductCertificates product={product} />
                             </div>
 
                             <div className="feature-icons">
                                 <div className="feature-icon-box">
-                                    <div className="feature-icon-circle"><Truck size={32} /></div>
+                                    <div className="feature-icon-circle"><Truck size={28} /></div>
                                     <div className="feature-icon-text">Global<br />Shipping</div>
                                 </div>
                                 <div className="feature-icon-box">
-                                    <div className="feature-icon-circle"><ShieldCheck size={32} /></div>
+                                    <div className="feature-icon-circle"><ShieldCheck size={28} /></div>
                                     <div className="feature-icon-text">Quality<br />Assured</div>
                                 </div>
                                 <div className="feature-icon-box">
-                                    <div className="feature-icon-circle"><CreditCard size={32} /></div>
+                                    <div className="feature-icon-circle"><CreditCard size={28} /></div>
                                     <div className="feature-icon-text">Wholesale<br />Pricing</div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Feature Image */}
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <img src={product.img} alt="Features" style={{ maxWidth: '100%', transform: 'scaleX(-1)' }}
-                                onError={(e) => { e.target.style.display = 'none' }} />
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', opacity: 0.8 }}>
+                            {/* Optional secondary image or illustration */}
                         </div>
                     </div>
                 </div>
 
                 {/* Policies */}
                 <div className="policy-section">
-                    <div style={{ marginBottom: '2rem' }}>
-                        <h4>Shipping & Logistics</h4>
-                        <p>We handle bulk logistics securely. Shipping terms (EXW, FOB, CIF) can be discussed during the quotation process.</p>
+                    <div>
+                        <h4><Truck size={18} /> Shipping & Logistics</h4>
+                        <p>We handle bulk logistics securely. Shipping terms (EXW, FOB, CIF) can be discussed during the quotation process. Global delivery partners ensure timely arrival.</p>
                     </div>
-                    <div style={{ marginBottom: '2rem' }}>
-                        <h4>Quality Guarantee</h4>
-                        <p>All products undergo rigorous QC checks. We offer replacement for any manufacturing defects reported within 30 days.</p>
+                    <div>
+                        <h4><ShieldCheck size={18} /> Quality Guarantee</h4>
+                        <p>All products undergo rigorous QC checks at our ISO facility. We offer replacement for any manufacturing defects reported within 30 days of receipt.</p>
                     </div>
                 </div>
 
                 {/* Related Products */}
                 <div className="related-products">
                     <div className="section-header-row">
-                        <div style={{ fontSize: '0.8rem', color: '#2EBF68', fontWeight: 'bold' }}>SIMILAR PRODUCTS</div>
-                        <Link to="/products" style={{ color: '#2EBF68', fontSize: '0.9rem', fontWeight: 'bold', textDecoration: 'none' }}>View All ▶</Link>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--primary)', fontWeight: 'bold', letterSpacing: '0.05em' }}>SIMILAR PRODUCTS</div>
+                        <Link to="/products" style={{ color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 'bold', textDecoration: 'none' }}>View Catalog ▶</Link>
                     </div>
-                    <h3 style={{ textTransform: 'uppercase', marginBottom: '2rem', color: '#333' }}>You May Also Interested In</h3>
+                    <h3 style={{ marginBottom: '2rem', color: 'var(--text-primary)', fontSize: '1.5rem' }}>You May Also Be Interested In</h3>
 
                     <RelatedProducts currentProductId={id} categoryId={product.category_id} segmentId={product.segment_id} />
                 </div>
 
                 {/* Brand Banner */}
                 <div className="brand-banner">
-                    <div style={{ fontSize: '0.9rem', fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
-                        SUPPLY
-                    </div>
-                    <h3 style={{ margin: 0, marginBottom: '1rem' }}>HOSPITAL EQUIPMENT BRANDS</h3>
-                    <div className="brand-scroll">
-                        <ChevronLeft />
-                        <div className="brand-logo-box"><span style={{ color: 'black', fontWeight: 'bold' }}>BMC</span></div>
-                        <div className="brand-logo-box"><span style={{ color: 'black', fontWeight: 'bold' }}>dnve</span></div>
-                        <div className="brand-logo-box"><span style={{ color: 'black', fontWeight: 'bold' }}>ResMed</span></div>
-                        <div className="brand-logo-box"><span style={{ color: 'black', fontWeight: 'bold' }}>hypnus</span></div>
-                        <div className="brand-logo-box"><span style={{ color: 'black', fontWeight: 'bold' }}>RESPRO</span></div>
-                        <ChevronRight />
-                    </div>
+                    <h3 style={{ margin: 0 }}>TRUSTED BY LEADING HOSPITALS WORLDWIDE</h3>
                 </div>
 
             </div>

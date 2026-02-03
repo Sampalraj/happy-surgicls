@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Mail, MapPin, ChevronDown, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { Menu, X, Phone, Mail, MapPin, ChevronDown, Facebook, Twitter, Linkedin, Instagram, ChevronRight, ArrowRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabaseService } from '../utils/supabaseService';
 import './Layout.css';
@@ -8,9 +8,50 @@ import MegaMenu from './MegaMenu';
 import '../styles/megamenu.css';
 import SurgicalVectors from './SurgicalVectors';
 
+// Navigation Data (Mirrors MegaMenu)
+const MENU_DATA = [
+    {
+        title: 'Medical Consumables',
+        link: '/products?category=consumables',
+        items: [
+            { name: 'Surgical Gloves', link: '/products?category=consumables' },
+            { name: 'Face Masks & PPE', link: '/products?category=consumables' },
+            { name: 'Disposables', link: '/products?category=consumables' }
+        ]
+    },
+    {
+        title: 'Medical Equipment',
+        link: '/products?category=equipment',
+        items: [
+            { name: 'Pulse Oximeters', link: '/products?category=equipment' },
+            { name: 'BP Monitors', link: '/products?category=equipment' },
+            { name: 'Nebulizers', link: '/products?category=equipment' }
+        ]
+    },
+    {
+        title: 'Hospital Furniture',
+        link: '/products?category=furniture',
+        items: [
+            { name: 'Hospital Beds', link: '/products?category=furniture' },
+            { name: 'Wheel Chairs', link: '/products?category=furniture' },
+            { name: 'Ward Furniture', link: '/products?category=furniture' }
+        ]
+    },
+    {
+        title: 'Orthopedic & Safety',
+        link: '/products?category=ortho',
+        items: [
+            { name: 'Ortho Supports', link: '/products?category=ortho' },
+            { name: 'Adult Diapers', link: '/products?category=hygiene' },
+            { name: 'Safety Gloves', link: '/products?category=safety' }
+        ]
+    }
+];
+
 const Layout = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+    const [mobileProductsOpen, setMobileProductsOpen] = useState(false); // Mobile Accordion State
     const [settings, setSettings] = useState({
         siteName: 'Happy Surgicals',
         logo: '/logo.png',
@@ -32,40 +73,47 @@ const Layout = () => {
         fetchSettings();
     }, []);
 
+    // Close mobile menu on route change
+    useEffect(() => {
+        setIsMenuOpen(false);
+        setMobileProductsOpen(false);
+    }, [location]);
+
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     const handleMouseEnter = () => {
-        clearTimeout(timeoutId);
-        setIsMegaMenuOpen(true);
+        if (window.innerWidth > 960) { // Only hover on desktop
+            clearTimeout(timeoutId);
+            setIsMegaMenuOpen(true);
+        }
     };
 
     const handleMouseLeave = () => {
-        timeoutId = setTimeout(() => {
-            setIsMegaMenuOpen(false);
-        }, 200);
+        if (window.innerWidth > 960) {
+            timeoutId = setTimeout(() => {
+                setIsMegaMenuOpen(false);
+            }, 200);
+        }
     };
 
     return (
         <div className="layout" style={{ position: 'relative' }}>
-            {/* ... Vectors & Top Bar remain same ... */}
             <SurgicalVectors variant="public" />
 
-            {/* Top Bar (Skipping inline style refactor for now to focus on Nav) */}
-            <div className="top-bar" style={{ background: '#1e293b', color: 'white', padding: '0.5rem 0', fontSize: '0.85rem', position: 'relative', zIndex: 10 }}>
-                {/* ... content ... */}
-                <div className="container top-bar-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div className="contact-info" style={{ display: 'flex', gap: '1.5rem' }}>
-                        <a href={`tel:${settings.phone}`} style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
-                            <Phone size={14} /> {settings.phone}
+            {/* Top Bar - Mobile Optimized */}
+            <div className="top-bar">
+                <div className="container top-bar-content">
+                    <div className="contact-info">
+                        <a href={`tel:${settings.phone}`} className="top-link">
+                            <Phone size={14} /> <span>{settings.phone}</span>
                         </a>
-                        <a href={`mailto:${settings.email}`} style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
-                            <Mail size={14} /> {settings.email}
+                        <a href={`mailto:${settings.email}`} className="top-link hidden-mobile">
+                            <Mail size={14} /> <span>{settings.email}</span>
                         </a>
                     </div>
-                    <div className="top-links" style={{ display: 'flex', gap: '1rem' }}>
-                        <Link to="/about" style={{ color: 'white', opacity: 0.8, textDecoration: 'none' }}>About Us</Link>
-                        <Link to="/contact" style={{ color: 'white', opacity: 0.8, textDecoration: 'none' }}>Contact</Link>
-                        <Link to="/admin" style={{ color: 'white', opacity: 0.8, textDecoration: 'none' }}>Admin Login</Link>
+                    <div className="top-links">
+                        <Link to="/about">About</Link>
+                        <Link to="/contact">Contact</Link>
                     </div>
                 </div>
             </div>
@@ -73,19 +121,18 @@ const Layout = () => {
             {/* Main Header */}
             <header className="main-header">
                 <div className="container header-content">
-
                     {/* Logo */}
                     <div className="logo">
                         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                            <img src="/assets/logo.png" alt="Happy Surgicals" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
+                            <img src="/assets/logo.png" alt="Happy Surgicals" style={{ height: '48px', width: 'auto', objectFit: 'contain' }}
+                                onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<span style="font-weight:800; color:#0F766E; font-size:1.5rem">HAPPY<span style="color:#F43F5E">.</span></span>' }}
+                            />
                         </Link>
                     </div>
 
                     {/* Desktop Nav */}
                     <nav className="desktop-nav">
                         <Link to="/" className="nav-link">Home</Link>
-
-                        {/* Mega Menu Trigger */}
                         <div
                             className="nav-item-dropdown"
                             onMouseEnter={handleMouseEnter}
@@ -95,19 +142,17 @@ const Layout = () => {
                                 Products <ChevronDown size={14} />
                             </Link>
                         </div>
-
                         <Link to="/manufacturing" className="nav-link">Manufacturing</Link>
                         <Link to="/services" className="nav-link">Services</Link>
-                        <Link to="/about" className="nav-link">About</Link>
-                        <Link to="/contact" className="btn btn-primary nav-cta">Get Quote</Link>
+                        <Link to="/contact" className="nav-cta">Get Quote</Link>
                     </nav>
 
                     {/* Mobile Menu Toggle */}
-                    <button className="mobile-menu-toggle" onClick={toggleMenu}>
-                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    <button className="mobile-menu-toggle" onClick={toggleMenu} aria-label="Toggle menu">
+                        {isMenuOpen ? <X size={28} color="#FFFFFF" /> : <Menu size={28} color="#FFFFFF" />}
                     </button>
 
-                    {/* Mega Menu Component */}
+                    {/* Desktop Mega Menu */}
                     <MegaMenu
                         isVisible={isMegaMenuOpen}
                         onClose={() => setIsMegaMenuOpen(false)}
@@ -117,27 +162,81 @@ const Layout = () => {
                 </div>
             </header>
 
-            {/* Mobile Nav Overlay */}
+            {/* Mobile Nav Overlay (Drawer) */}
+            <AnimatePresence>
+                {isMenuOpen && (
+                    <motion.div
+                        className="mobile-nav-drawer"
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                    >
+                        <div className="mobile-nav-content">
+                            <Link to="/" className="mobile-link">Home</Link>
+
+                            {/* Mobile Accordion for Products */}
+                            <div className="mobile-accordion">
+                                <button className="mobile-link accordion-trigger" onClick={() => setMobileProductsOpen(!mobileProductsOpen)}>
+                                    Products
+                                    <ChevronDown size={18} style={{ transform: mobileProductsOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                                </button>
+                                <AnimatePresence>
+                                    {mobileProductsOpen && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            className="accordion-content"
+                                        >
+                                            <Link to="/products" className="mobile-sublink highlight">View All Products</Link>
+                                            {MENU_DATA.map((cat, i) => (
+                                                <div key={i} className="mobile-cat-group">
+                                                    <span className="mobile-cat-title">{cat.title}</span>
+                                                    {cat.items.map((item, j) => (
+                                                        <Link key={j} to={item.link} className="mobile-sublink">
+                                                            {item.name}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            ))}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
+                            <Link to="/manufacturing" className="mobile-link">Manufacturing</Link>
+                            <Link to="/services" className="mobile-link">Services</Link>
+                            <Link to="/about" className="mobile-link">About Us</Link>
+
+                            <div style={{ marginTop: '2rem' }}>
+                                <Link to="/contact" className="btn-mobile-cta">
+                                    Request Quote <ArrowRight size={18} />
+                                </Link>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Overlay Backdrop for Mobile Menu */}
             {isMenuOpen && (
-                <div className="mobile-nav" style={{ position: 'fixed', top: 60, left: 0, right: 0, background: 'white', padding: '1rem', borderBottom: '1px solid #eee', zIndex: 999, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <Link to="/" onClick={toggleMenu}>Home</Link>
-                    <Link to="/products" onClick={toggleMenu}>Products</Link>
-                    <Link to="/manufacturing" onClick={toggleMenu}>Manufacturing</Link>
-                    <Link to="/services" onClick={toggleMenu}>Services</Link>
-                    <Link to="/about" onClick={toggleMenu}>About</Link>
-                    <Link to="/contact" onClick={toggleMenu}>Contact</Link>
-                </div>
+                <motion.div
+                    initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} exit={{ opacity: 0 }}
+                    onClick={toggleMenu}
+                    style={{ position: 'fixed', inset: 0, background: 'black', zIndex: 998 }}
+                />
             )}
 
-            {/* Main Content with Transition */}
+            {/* Main Content */}
             <main onClick={() => setIsMegaMenuOpen(false)} style={{ minHeight: '60vh', position: 'relative', zIndex: 5 }}>
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={location.pathname}
-                        initial={{ opacity: 0, y: 15 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -15 }}
-                        transition={{ duration: 0.3, ease: 'easeOut' }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
                     >
                         <Outlet />
                     </motion.div>
@@ -145,40 +244,49 @@ const Layout = () => {
             </main>
 
             {/* Footer */}
-            <footer className="footer" style={{ background: '#1e293b', color: '#e2e8f0', padding: '4rem 0 2rem', position: 'relative', zIndex: 10 }}>
-                <div className="container footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+            <footer className="footer">
+                <div className="container footer-grid">
                     <div className="footer-col">
-                        <h3 style={{ color: 'white', fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>{settings.siteName}</h3>
-                        <p style={{ opacity: 0.8, lineHeight: 1.6 }}>
-                            {settings.footerDesc || 'Your trusted partner for high-quality medical supplies and hospital equipment. ISO 13485:2016 Certified.'}
+                        <img src="/assets/logo-white.png" alt={settings.siteName} style={{ height: '40px', marginBottom: '1.5rem', opacity: 0.9 }} onError={(e) => { e.target.style.display = 'none'; }} />
+                        <h3 className="footer-title">{settings.siteName}</h3>
+                        <p className="footer-desc">
+                            {settings.footerDesc || 'Global manufacturer of premium surgical instruments and hospital furniture. ISO 13485:2016 Certified.'}
                         </p>
-                        <div className="social-links" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                            {settings.socials?.facebook && <a href={settings.socials.facebook} style={{ color: 'white', opacity: 0.8 }}><Facebook size={20} /></a>}
-                            {settings.socials?.twitter && <a href={settings.socials.twitter} style={{ color: 'white', opacity: 0.8 }}><Twitter size={20} /></a>}
-                            {settings.socials?.linkedin && <a href={settings.socials.linkedin} style={{ color: 'white', opacity: 0.8 }}><Linkedin size={20} /></a>}
-                            {settings.socials?.instagram && <a href={settings.socials.instagram} style={{ color: 'white', opacity: 0.8 }}><Instagram size={20} /></a>}
+                        <div className="social-links">
+                            {settings.socials?.facebook && <a href={settings.socials.facebook}><Facebook size={20} /></a>}
+                            {settings.socials?.linkedin && <a href={settings.socials.linkedin}><Linkedin size={20} /></a>}
+                            {settings.socials?.twitter && <a href={settings.socials.twitter}><Twitter size={20} /></a>}
                         </div>
                     </div>
+
                     <div className="footer-col">
-                        <h3 style={{ color: 'white', fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem' }}>Quick Links</h3>
-                        <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <li><Link to="/" style={{ color: 'inherit', textDecoration: 'none', opacity: 0.8 }}>Home</Link></li>
-                            <li><Link to="/products" style={{ color: 'inherit', textDecoration: 'none', opacity: 0.8 }}>Products</Link></li>
-                            <li><Link to="/manufacturing" style={{ color: 'inherit', textDecoration: 'none', opacity: 0.8 }}>Manufacturing</Link></li>
-                            <li><Link to="/about" style={{ color: 'inherit', textDecoration: 'none', opacity: 0.8 }}>About Us</Link></li>
-                            <li><Link to="/contact" style={{ color: 'inherit', textDecoration: 'none', opacity: 0.8 }}>Contact</Link></li>
+                        <h4>PRODUCTS</h4>
+                        <ul>
+                            <li><Link to="/products?category=consumables">Consumables</Link></li>
+                            <li><Link to="/products?category=furniture">Hospital Furniture</Link></li>
+                            <li><Link to="/products?category=equipment">Medical Equipment</Link></li>
                         </ul>
                     </div>
+
                     <div className="footer-col">
-                        <h3 style={{ color: 'white', fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem' }}>Contact Us</h3>
-                        <ul className="contact-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            <li style={{ display: 'flex', gap: '0.5rem', opacity: 0.8 }}><MapPin size={18} /> {settings.address}</li>
-                            <li style={{ display: 'flex', gap: '0.5rem', opacity: 0.8 }}><Phone size={18} /> {settings.phone}</li>
-                            <li style={{ display: 'flex', gap: '0.5rem', opacity: 0.8 }}><Mail size={18} /> {settings.email}</li>
+                        <h4>COMPANY</h4>
+                        <ul>
+                            <li><Link to="/about">About Us</Link></li>
+                            <li><Link to="/manufacturing">Our Factory</Link></li>
+                            <li><Link to="/contact">Contact Support</Link></li>
+                        </ul>
+                    </div>
+
+                    <div className="footer-col">
+                        <h4>CONTACT</h4>
+                        <ul className="contact-list">
+                            <li><MapPin size={18} className="icon-teal" /> <span>{settings.address}</span></li>
+                            <li><Phone size={18} className="icon-teal" /> <span>{settings.phone}</span></li>
+                            <li><Mail size={18} className="icon-teal" /> <span>{settings.email}</span></li>
                         </ul>
                     </div>
                 </div>
-                <div className="footer-bottom" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem', textAlign: 'center', opacity: 0.6, fontSize: '0.9rem' }}>
+                <div className="footer-bottom">
                     <p>&copy; {new Date().getFullYear()} {settings.siteName}. All rights reserved.</p>
                 </div>
             </footer>

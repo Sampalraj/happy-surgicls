@@ -1,110 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import { Truck, Users, Activity, Phone } from 'lucide-react';
+import React from 'react';
+import { Truck, Users, Activity, ArrowRight, Settings, ShieldCheck, Microscope } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabaseService } from '../utils/supabaseService';
-
 import styles from './Services.module.css';
 
 const Services = () => {
-    const [content, setContent] = useState({
-        title: 'Our Services',
-        subtitle: 'Comprehensive healthcare solutions for hospitals, clinics, and distributors.',
-        items: []
-    });
-
-    useEffect(() => {
-        const loadContent = async () => {
-            const data = await supabaseService.getPageContent('services');
-            if (data) {
-                setContent(prev => ({ ...prev, ...data }));
-            }
-        };
-        loadContent();
-    }, []);
+    const services = [
+        {
+            icon: <Activity size={24} />,
+            title: 'Equipment Rental',
+            desc: 'Flexible rental terms for high-end medical equipment. Ideal for temporary capacity expansion.',
+            list: ['Ventilators & BiPAPs', 'Oxygen Concentrators', 'Cardiac Monitors', 'ICU Beds'],
+            link: '/contact'
+        },
+        {
+            icon: <Truck size={24} />,
+            title: 'Bulk Supply',
+            desc: 'End-to-end procurement for hospitals. Tiered pricing for consumables and disposables.',
+            list: ['Consumables', 'Surgical Disposables', 'Ward Furniture', 'Bulk Order discounts'],
+            link: '/contact'
+        },
+        {
+            icon: <Users size={24} />,
+            title: 'Distributor Program',
+            desc: 'Join our network as an authorized dealer. We provide marketing support and training.',
+            list: ['Attractive Margins', 'Marketing Support', 'Product Training', 'Exclusive Territories'],
+            link: '/contact'
+        },
+        {
+            icon: <Settings size={24} />,
+            title: 'Maintenance',
+            desc: 'Annual Maintenance Contracts (AMC) and on-demand repair services for all equipment.',
+            list: ['Preventive Maintenance', 'Calibration Services', 'Spare Parts', '24/7 Support'],
+            link: '/contact'
+        },
+        {
+            icon: <ShieldCheck size={24} />,
+            title: 'Sterilization',
+            desc: 'CSSD planning and sterilization assurance products for infection control.',
+            list: ['Autoclaves', 'Sterilization Rolls', 'Indicators', 'Consultancy'],
+            link: '/contact'
+        },
+        {
+            icon: <Microscope size={24} />,
+            title: 'Lab Setup',
+            desc: 'Turnkey solutions for pathology and microbiology laboratory setup.',
+            list: ['Analyzers', 'Microscopes', 'Reagents', 'Lab Furniture'],
+            link: '/contact'
+        }
+    ];
 
     return (
         <div className={styles.servicesPage}>
-            {/* Hero */}
-            <section className={styles.heroSection}>
-                <div className={styles.container}>
-                    <h1 className={styles.heroTitle}>{content.title}</h1>
-                    <p className={styles.heroSubtitle}>
-                        {content.subtitle}
+            <div className={styles.container}>
+                {/* Header */}
+                <div className={styles.headerSection}>
+                    <h1 className={styles.title}>Comprehensive Medical Services</h1>
+                    <p className={styles.subtitle}>
+                        We go beyond manufacturing to provide a complete ecosystem of healthcare solutions for hospitals and distributors.
                     </p>
                 </div>
-            </section>
 
-            {/* Service 1: Rentals */}
-            <section className={styles.serviceSection}>
-                <div className={styles.container}>
-                    <div className={`${styles.serviceGrid} ${styles.gridLeft}`}>
-                        <div>
-                            <div className={`${styles.serviceIcon} ${styles.iconRed}`}><Activity size={48} /></div>
-                            <h2 className={styles.serviceTitle}>Medical Equipment Rental</h2>
-                            <p className={styles.serviceDescription}>
-                                We provide high-end medical equipment on flexible rental terms. Ideal for home care setups or hospitals needing temporary capacity expansion during peak loads.
-                            </p>
-                            <ul className={styles.serviceList}>
-                                <li>• Ventilators & BiPAPs</li>
-                                <li>• Oxygen Concentrators (5L/10L)</li>
-                                <li>• Cardiac Monitors & Pulse Oximeters</li>
-                                <li>• Hospital Beds (ICU/Fowler)</li>
+                {/* 3-Column Grid */}
+                <div className={styles.servicesGrid}>
+                    {services.map((service, index) => (
+                        <div key={index} className={styles.serviceCard}>
+                            <div className={styles.cardIcon}>
+                                {service.icon}
+                            </div>
+                            <h3 className={styles.cardTitle}>{service.title}</h3>
+                            <p className={styles.cardDescription}>{service.desc}</p>
+                            <ul className={styles.cardList}>
+                                {service.list.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                ))}
                             </ul>
-                            <Link to="/contact" className={`${styles.btn} ${styles.btnPrimaryRed}`}>Request Rental Quote</Link>
+                            <Link to={service.link} className={styles.cardLink}>
+                                Learn More <ArrowRight size={16} />
+                            </Link>
                         </div>
-                        <div>
-                            <img src="/services-rental.jpg" alt="Equipment Rental" className={styles.serviceImage}
-                                onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=Medical+Equipment+Rental' }} />
-                        </div>
-                    </div>
+                    ))}
                 </div>
-            </section>
-
-            {/* Service 2: Bulk Supply */}
-            <section className={`${styles.serviceSection} ${styles.bgLight}`}>
-                <div className={styles.container}>
-                    <div className={`${styles.serviceGrid} ${styles.gridRight}`}>
-                        <div>
-                            <img src="/services-bulk.jpg" alt="Bulk Supply" className={styles.serviceImage}
-                                onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=Bulk+Supply' }} />
-                        </div>
-                        <div>
-                            <div className={`${styles.serviceIcon} ${styles.iconBlue}`}><Truck size={48} /></div>
-                            <h2 className={styles.serviceTitle}>Bulk Supply for Hospitals</h2>
-                            <p className={styles.serviceDescription}>
-                                End-to-end procurement solutions for large institutions. We offer competitive tiered pricing for bulk orders of consumables, disposables, and furniture.
-                            </p>
-                            <p className={`${styles.serviceDescription} ${styles.italic}`}>
-                                "Trusted by over 150+ Hospitals across India for timely supplies."
-                            </p>
-                            <Link to="/contact" className={`${styles.btn} ${styles.btnPrimaryBlue}`}>Get Institutional Rates</Link>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Service 3: Partnerships */}
-            <section className={styles.serviceSection}>
-                <div className={styles.container}>
-                    <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
-                        <div className={`${styles.serviceIcon} ${styles.iconRed}`} style={{ display: 'flex', justifyContent: 'center' }}><Users size={48} /></div>
-                        <h2 className={styles.serviceTitle}>Distributor Partnership Program</h2>
-                        <p className={styles.serviceDescription}>
-                            We are expanding our network! Join us as an authorized dealer or distributor. We provide complete marketing support, attractive margins, and product training to help you grow.
-                        </p>
-                        <Link to="/contact" className={`${styles.btn} ${styles.btnOutlineRed}`}>Apply for Partnership</Link>
-                    </div>
-                </div>
-            </section>
-
-            {/* Contact Strip */}
-            <section className={styles.contactStrip}>
-                <div className={styles.container}>
-                    <div className={styles.contactContent}>
-                        <Phone /> <span>Need immediate assistance? Call our Support Line: <strong>+91 98765 43210</strong></span>
-                    </div>
-                </div>
-            </section>
+            </div>
         </div>
     );
 };
